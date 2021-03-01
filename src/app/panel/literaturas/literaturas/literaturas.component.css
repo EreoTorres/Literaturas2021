@@ -1,0 +1,71 @@
+.titulo{
+    text-align: center;
+}
+
+th{
+    text-align: center;
+}
+
+.itemP{
+    cursor: pointer;
+}
+
+.table{
+    margin-top: 2% !important
+}
+
+.headerT{
+    background: #212529;
+    color: white;
+}
+
+.paginationp{
+    text-align: center;
+}
+
+input[type=text]{
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    resize: vertical;
+    background: #e4e4e41a !important;
+    color: white;
+}
+
+textarea{
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    resize: vertical;
+    background: #e4e4e409;
+    resize: vertical; 
+    max-height: 50px;
+    color: white;
+}
+
+label{
+    color: white;
+}
+
+video {
+    width: 100%;
+    height: auto;
+}
+
+.card{
+    transition: none !important;
+    box-shadow: none !important;
+    padding: 0px 0 0 0 !important;
+    background: none !important;
+    margin: 0px !important;
+    border: 0px;
+}
+input{
+    color: black;
+}
+
+.mat-icon {
+    vertical-align: middle;
+ }
