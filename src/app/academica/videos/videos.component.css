@@ -1,0 +1,125 @@
+.card-header,.modal-header{
+    background: #172441;
+    color: #FFF;
+}
+.card-body{
+    background: #FFF;
+}
+
+.material-icons{
+    color: red !important;
+}
+
+.page-item.disabled .page-link {
+	color: darkgray !important;
+}
+.page-item.active .page-link {
+	background: black !important;
+	color: white !important;
+	border: 1px solid black !important;
+}
+.page-item {
+	margin: 3px;
+}
+.page-link {
+	color: black !important;
+	padding: 8px;
+	padding-left: 14px;
+	padding-right: 14px;
+	border-radius: 4px !important;
+}
+.page-link:hover {
+	background-color: black !important;
+	color: white !important;
+	border: 1px solid black;
+}
+.ng2-smart-pagination .page-link-next,
+.ng2-smart-pagination .page-link-prev {
+	font-size: 14px !important;
+}
+.ng2-smart-page-item a:hover {
+	text-decoration: none !important;
+}
+
+.modal-body span{
+    font-weight: bold;
+}
+
+.titulo{
+    text-align: center;
+}
+
+th{
+    text-align: center;
+}
+
+.itemP{
+    cursor: pointer;
+}
+
+.table{
+    margin-top: 2% !important
+}
+
+.headerT{
+    background: #212529;
+    color: white;
+}
+
+.paginationp{
+    text-align: center;
+}
+
+input[type=text]{
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    resize: vertical;
+    background: #e4e4e41a !important;
+    color: white;
+}
+
+textarea{
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    resize: vertical;
+    background: #e4e4e409;
+    resize: vertical; 
+    max-height: 50px;
+    color: white;
+}
+
+label{
+    color: white;
+}
+
+video {
+    width: 100%;
+    height: auto;
+}
+
+.card{
+    transition: none !important;
+    box-shadow: none !important;
+    padding: 0px 0 0 0 !important;
+    background: none !important;
+    margin: 0px !important;
+    border: 0px;
+}
+input{
+    color: black !important;
+}
+
+textarea{
+    color: black  !important;
+}
+
+.mat-icon {
+    vertical-align: middle;
+ }
+
+
+ 

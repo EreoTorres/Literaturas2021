@@ -40,8 +40,16 @@ export class LoginComponent implements OnInit {
         var res: any = datas;
         if(res.codigo == 200){
           sessionStorage.setItem('id', res.resultado[0].id); 
+          sessionStorage.setItem('departamento', res.resultado[0].id_area); 
 
-          this.router.navigate(['/panel']);      
+          if(res.resultado[0].id_area == 2){
+            this.router.navigate(['/academica']);      
+          }else if(res.resultado[0].id_area == 6){
+            this.router.navigate(['/promociones']);
+          }else if(res.resultado[0].id_area == 4){
+            this.router.navigate(['/academica']);
+          }
+
           this.resetForm()
         }else{
           this.MessagesService.showSuccessDialog(res.mensaje,'error');

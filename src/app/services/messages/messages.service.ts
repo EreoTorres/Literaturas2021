@@ -67,6 +67,7 @@ export class MessagesService {
       text: "",
       buttonsStyling: false,
       icon: sweetAlertType,
+      confirmButtonText: 'Aceptar',
       customClass: {
         confirmButton: 'btn btn-success'        
       }

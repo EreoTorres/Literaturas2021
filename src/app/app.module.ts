@@ -13,27 +13,55 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
-import { PanelComponent } from './panel/panel.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SesionService } from './services/sesion/sesion.service';
+import { AcademicaSesionService } from './services/sesions-validations/sesion/academica/academica-sesion.service';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
-import { LiteraturasComponent } from './panel/literaturas/literaturas/literaturas.component';
-import { DatePipe } from '@angular/common';
-import { VideosComponent } from './panel/videos/videos.component';
+import { CommonModule, DatePipe } from '@angular/common';
+import { SmartTableDatepickerComponent, SmartTableDatepickerRenderComponent } from './components/smart-table-datepicker/smart-table-datepicker.component';
+import { OwlDateTimeIntl, OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
+import { SmartTableDatepickerComponentTime, SmartTableDatepickerRenderComponentTime } from './components/smart-table-datepicker-time/smart-table-datepicker-time.component';
+import { NumberComponentDynamicComponent } from './components/number-component-dynamic/number-component-dynamic.component';
+import { InputprogramasComponent } from './components/inputprogramas/inputprogramas.component';
+import { EstatusSelectComponent } from './components/estatus-select-component/estatus-select.component';
+import { AcademicaComponent } from './academica/academica.component';
+import { PromocionesComponent } from './promociones/promociones.component';
+import { PromocionesSesionService } from './services/sesions-validations/sesion/promociones/promociones-sesion.service';
+import { InputImagenComponent } from './components/input-imagen/input-imagen.component';
+import { OpcionesLiteraturasComponent } from './components/opciones-literaturas/opciones-literaturas.component';
+import { SmatTablePickerDatetimeComponent } from './components/smat-table-picker-datetime/smat-table-picker-datetime.component';
+
+export class DefaultIntl extends OwlDateTimeIntl {
+  /** A label for the cancel button */
+  cancelBtnLabel= 'Cancelar';
+
+  /** A label for the set button */
+  setBtnLabel= 'Aceptar';
+};
+
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    PanelComponent,
-    LiteraturasComponent,
-    VideosComponent
+    PromocionesComponent,
+    AcademicaComponent,
+    SmartTableDatepickerComponent,
+    SmartTableDatepickerRenderComponent,
+    SmartTableDatepickerComponentTime,
+    SmartTableDatepickerRenderComponentTime,
+    NumberComponentDynamicComponent,
+    InputprogramasComponent,
+    EstatusSelectComponent,
+    AcademicaComponent,
+    InputImagenComponent,
+    OpcionesLiteraturasComponent,
+    SmatTablePickerDatetimeComponent,
   ],
   imports: [
     BrowserModule,
@@ -53,12 +81,26 @@ import { VideosComponent } from './panel/videos/videos.component';
     ReactiveFormsModule,
     HttpClientModule,
     NgxPaginationModule,
+    NgbModule,
     BrowserAnimationsModule,
-    NgbModule
+    OwlDateTimeModule, 
+    OwlNativeDateTimeModule,
+    CommonModule
+  ],
+  entryComponents: [
+    SmartTableDatepickerComponent,
+    SmartTableDatepickerRenderComponent,
+    SmartTableDatepickerComponentTime,
+    SmartTableDatepickerRenderComponentTime,
+    NumberComponentDynamicComponent,
+    InputprogramasComponent,
+    EstatusSelectComponent
   ],
   providers: [    
-    SesionService,
-    DatePipe
+    AcademicaSesionService,
+    PromocionesSesionService,
+    DatePipe,
+    { provide: OwlDateTimeIntl, useClass: DefaultIntl }
   ],
   bootstrap: [AppComponent]
 })

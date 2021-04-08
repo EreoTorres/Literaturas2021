@@ -1,0 +1,24 @@
+<div class="example-container" [class.example-is-mobile]="mobileQuery.matches">
+    <mat-toolbar class="mat-elevation-z8" >
+      <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
+      <span>AG Administrator 2021</span>
+      <span class="example-spacer"></span>
+      <button mat-icon-button class="btn btn-succes mr-5" (click)="logout();">
+        <mat-icon>power_settings_new</mat-icon> Salir
+      </button>
+    </mat-toolbar>
+  
+    <mat-sidenav-container class="example-sidenav-container">
+      <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches" fixedTopGap="40">
+        <mat-nav-list *ngFor="let menu of menus">
+          <a mat-list-item [routerLink]="menu.link" routerLinkActive="active" (click)="snav.toggle()">
+            <mat-icon fontSet="material-icons-outlined">{{menu.icon}}</mat-icon>
+            {{menu.title}}
+          </a>
+        </mat-nav-list>
+      </mat-sidenav>
+      <mat-sidenav-content>
+        <router-outlet></router-outlet>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+</div>

@@ -1,14 +1,31 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router'; // CLI imports router
 import { LoginComponent } from './login/login.component';
-import { PanelComponent } from './panel/panel.component';
-import { SesionService } from './services/sesion/sesion.service';
 
 export const routes: Routes = [
-  { path: 'login', component: LoginComponent },
-  { path: 'panel', component: PanelComponent,canActivate:[SesionService] },
-  { path: '',   redirectTo: '/login', pathMatch: 'full' }, // redirect to `first-component`
-  { path: '**', component: LoginComponent }, 
+  { 
+    path: 'login', 
+    component: LoginComponent 
+  },
+  {
+    path: 'academica',
+    loadChildren: () => import('./academica/academica.module')
+      .then(m => m.AcademicaModule)
+  },
+  {
+    path: 'promociones',
+    loadChildren: () => import('./promociones/promociones.module')
+      .then(m => m.PromocionesModule)
+  },
+  { 
+    path: '',   
+    redirectTo: '/login', 
+    pathMatch: 'full' 
+  }, // redirect to `first-component`
+  { 
+    path: '**', 
+    component: LoginComponent 
+  }, 
 ];
 
 // configures NgModule imports and exports
