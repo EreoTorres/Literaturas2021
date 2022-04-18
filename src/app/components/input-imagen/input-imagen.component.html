@@ -1,0 +1,5 @@
+<div class="input-group">
+    <label for="archivo" class="btn btn-primary" style="width: 100%;">{{titulo_btn}}</label>
+    {{nombre_file}}
+    <input type="file" id="archivo" style="visibility:hidden;" accept="image/*"  (change)="onFileChange($event.target.files)" />
+</div> 

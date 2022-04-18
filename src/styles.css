@@ -1,0 +1,54 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background: #e4e4e4 !important;}
+mat-sidenav-content{
+    background: none !important;
+}
+
+.add{
+    color: #82ce34 !important;
+    font-size: 40px !important
+}
+
+
+.page-item.disabled .page-link {
+	color: darkgray !important;
+}
+.page-item.active .page-link {
+	background: #1E6BBC !important;
+	color: white !important;
+	border: 1px solid #1E6BBC !important;
+}
+.page-item {
+	margin: 3px;
+    justify-content: flex-end !important;
+}
+.page-link {
+	color: black !important;
+	padding: 8px;
+	padding-left: 14px;
+	padding-right: 14px;
+	border-radius: 4px !important;
+}
+.page-link:hover {
+	background-color: #1E6BBC !important;
+	color: white !important;
+	border: 1px solid #1E6BBC;
+}
+.ng2-smart-pagination .page-link-next,
+.ng2-smart-pagination .page-link-prev {
+	font-size: 14px !important;
+}
+.ng2-smart-page-item a:hover {
+	text-decoration: none !important;
+}
+
+.ng2-smart-actions{
+    width : 10%; 
+}
+
+.responsive{
+    width : 100%; 
+    table-layout: fixed; 
+}

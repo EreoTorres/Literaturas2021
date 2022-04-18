@@ -1,0 +1,84 @@
+<div class="contentT m-5">
+    <div class="card border-secondary shadow ">
+        <div class="card-header text-center" style="font-size: 1.3vw;">
+            Módulo de Relación de Materias
+        </div>
+        <div class="card-body text-secondary">
+            <div class="row">
+                <div class="col-12">
+                    <div class="float-left">
+                        <span>Planes de estudio:</span>
+                        <select class="form-control" id="id_plan_estudio" name="id_plan_estudio" [(ngModel)]="id_plan_estudio" (change)="getRelacion();">
+                            <option value="0" disabled selected>Selecciona un plan de estudio</option>
+                            <option [value]="item.id" *ngFor="let item of programas">{{item.nombre_corto}}</option>
+                        </select>
+                    </div>
+                    <div class="float-right">
+                        <span>Planes de estudio autoridad:</span>
+                        <select class="form-control" id="id_plan_autoridad" name="id_plan_autoridad" [(ngModel)]="id_plan_autoridad" (change)="getRelacion();">
+                            <option value="0" disabled selected>Selecciona un plan autoridad</option>
+                            <option [value]="item.id" *ngFor="let item of planes_autoridad">{{item.nombre_corto}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-12" *ngIf="id_plan_estudio != 0 && id_plan_autoridad != 0">
+                    <div class="mr-3 mt-3">
+                        <button class="btn btn-success float-right" (click)="openModal(docs2)">
+                          <mat-icon class="mr-2" style="color: white !important;">add</mat-icon><span>Agregar Relacion</span> 
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <br>
+
+            <div class="row" *ngIf="id_plan_estudio != 0 && id_plan_autoridad != 0">
+                <div class="col-12">
+                    <ng2-smart-table [settings]="settings" [source]="registros" (custom)="onCustomAction($event)"></ng2-smart-table>
+                </div>
+            </div>
+
+            <div class="row" *ngIf="id_plan_estudio == 0 || id_plan_autoridad == 0">
+                <div class="col-12 text-center">
+                    <h5>Selecciona el plan de estudios y la autoridad de interes</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<ng-template #docs2 let-modal [config]="{backdrop: 'static',  keyboard: false}">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{titulo_videos}}</h4>
+        <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');id_materia_autoridad = 0; id_materia_programa = 0;">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12">
+                <span>Materia Plan Estudio:</span>
+                <select class="form-control" [(ngModel)]="id_materia_programa">
+                    <option value="0" disabled selected>Selecciona una materia</option>
+                    <option value="{{item.id}}" *ngFor="let item of materias_plan">{{item.nombre}} - [Periodo {{item.periodo}}]</option>
+                </select>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-12">
+                <span>Materia Autoridad:</span>
+                <select class="form-control" [(ngModel)]="id_materia_autoridad">
+                    <option value="0" disabled selected>Selecciona una materia</option>
+                    <option [value]="item.id" *ngFor="let item of materias_autoridad">{{item.nombre}} - [Periodo {{item.periodo}}]</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" name="submit" class="btn btn-success" (click)="guardar()">
+            <mat-icon class="mr-2" style="color: white !important;" >save</mat-icon>Guardar
+        </button>
+    </div>
+</ng-template>

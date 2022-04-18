@@ -1,0 +1,5 @@
+<div class="input-group">
+    <select class="form-control" [(ngModel)]='cell.newValue'>
+      <option *ngFor="let datos of programas" [value]="datos.id" >{{datos.nombre_corto}}</option>
+    </select>
+</div>

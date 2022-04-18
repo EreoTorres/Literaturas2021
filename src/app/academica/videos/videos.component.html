@@ -1,0 +1,82 @@
+<div class="contentT m-5">
+    <div class="card border-secondary shadow ">
+        <div class="card-header text-center" style="font-size: 1.3vw;">
+            Módulo de Videos
+        </div>
+        <div class="card-body text-secondary">
+            <div class="mr-3">
+                <button class="btn btn-success float-right" (click)="openModal(docs2)">
+                  <mat-icon class="mr-2" style="color: white !important;">cloud_upload</mat-icon><span>Agregar Video</span> 
+                </button>
+            </div>
+            <div style="margin-top: 5% !important;">
+                <ng2-smart-table [settings]="settings" [source]="registros" (custom)="onCustomAction($event)"></ng2-smart-table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #docs2 let-modal [config]="{backdrop: 'static',  keyboard: false}">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{titulo_videos}}</h4>
+        <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');cerrarModal();">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <form id="agregar-video" class="form" #formul2="ngForm" (ngSubmit)="guardar_articulo(formul2.value)" [formGroup]="formulario">
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-4">
+                    <span>Planes de estudio:</span>
+                    <select class="form-control" id="id_plan_estudio" name="id_plan_estudio" formControlName="id_plan_estudio">
+                        <option value="0" disabled selected>Selecciona un plan de estudio</option>
+                        <option [value]="item.id" *ngFor="let item of programas">{{item.nombre_corto}}</option>
+                    </select>
+                </div>
+                <div class="col-4">
+                    <span>Servicio:</span>
+                    <select class="form-control" id="servicio" name="servicio" formControlName="servicio">
+                        <option value="vimeo" >vimeo</option>
+                    </select>
+                </div>
+                <div class="col-4">
+                    <span>Título:</span>
+                    <input type="text" class="form-control" id="titulo_video" name="titulo_video" formControlName="titulo_video" placeholder="Título" (keypress)="validText.onlyTextAndNumers($event)">
+                </div>
+                <!--<div class="col-6">
+                <span>Materia:</span>
+                <select class="form-control" [(ngModel)]="obj_detalle">
+                    <option value="0" disabled selected>Selecciona una materia</option>
+                    <option [value]="item | json" *ngFor="let item of materias2">[Periodo {{item.periodo}}] {{item.nombre}}</option>
+                </select>
+                </div>-->
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-12">
+                    <span>URL del video:</span>
+                    <input type="text" class="form-control" id="url_video" name="url_video" formControlName="url_video" placeholder="https://vimeo.com">
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-12">
+                    <span>Código de inserción:</span>
+                    <input type="text" class="form-control" id="html_iframe" name="html_iframe" formControlName="html_iframe" placeholder="iframe">
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-12">
+                    <span>Descripcion:</span>
+                    <textarea class="form-control" id="descripcion" name="descripcion" formControlName="descripcion" style="height: 100px !important;max-height: 100px !important;" placeholder="Descripción del video"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" name="submit" class="btn btn-success">
+                <mat-icon class="mr-2" style="color: white !important;" >save</mat-icon>Guardar
+            </button>
+        </div>
+    </form>
+</ng-template>
