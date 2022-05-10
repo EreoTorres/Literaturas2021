@@ -10,9 +10,9 @@ export class ControlEscolarService {
   public url = environment.urlProduccion;
   httpHeaders: any;
 
-  constructor(public http:HttpClient, public router: Router) { 
+  constructor(public http:HttpClient, public router: Router) {
     this.httpHeaders = {
-      headers: new HttpHeaders({        
+      headers: new HttpHeaders({
         'Content-Type': 'application/json'
       })
     };
@@ -20,7 +20,8 @@ export class ControlEscolarService {
 
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
-    if(sessionStorage.getItem('departamento') == '3' || sessionStorage.getItem('departamento') == '6'){
+    if(sessionStorage.getItem('departamento') == '3' || sessionStorage.getItem('departamento') == '6' ||
+    sessionStorage.getItem('departamento') == '4'){
       return true;
     }else{
       this.router.navigate(['login']);

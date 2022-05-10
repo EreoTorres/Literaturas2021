@@ -17,5 +17,10 @@ export const MENU_ITEMS = [
       link: '/academica/materias',
       home: true,
     },
+    {
+      title: 'Gaceta',
+      icon: 'videocam_outline',
+      link: '/academica/gaceta',
+      home: true,
+    }
 ];
-  

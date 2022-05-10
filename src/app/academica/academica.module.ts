@@ -19,11 +19,13 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
 import { CommonModule } from '@angular/common';
 import { AcademicaRoutingModule } from './academica-routing.module';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { GacetaComponent } from '../academica/gaceta/gaceta.component';
 
 @NgModule({
   declarations: [
     LiteraturasComponent,
     VideosComponent,
+    GacetaComponent,
   ],
   imports: [
     AcademicaRoutingModule,

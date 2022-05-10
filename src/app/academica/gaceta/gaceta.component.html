@@ -1,0 +1,109 @@
+<div class="contentT m-5">
+  <div class="card border-secondary shadow ">
+      <div class="card-header text-center" style="font-size: 1.3vw;">
+          Módulo de Gaceta
+      </div>
+      <div class="card-body text-secondary">
+          <div class="mr-3">
+              <button class="btn btn-success float-right" (click)="openModal(docs)">
+          <mat-icon class="mr-2">cloud_upload</mat-icon><span>Subir Libro</span>
+        </button>
+          </div>
+          <div style="margin-top: 5% !important;width: 100%;">
+              <ng2-smart-table [settings]="settings" [source]="registros" (custom)="onCustom($event)"></ng2-smart-table>
+          </div>
+      </div>
+  </div>
+</div>
+
+<ng-template #docs let-modal [config]="{backdrop: 'static',  keyboard: false}">
+  <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">{{titulo_literatura}}</h4>
+      <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');cerrarModal();">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+      <form id="formLibro">
+        <div class="row">
+          <div class="col-4">
+            <span>Título del libro:</span>
+            <input class="form-control" type="text" id="titulo" name="titulo" [(ngModel)]="libro.titulo">
+          </div>
+          <div class="col-4">
+            <span>Fecha de Publicación:</span>
+            <input class="form-control" type="date" id="fecha_publicacion" name="fecha_publicacion" [(ngModel)]="libro.fecha_publicacion">
+          </div>
+          <div class="col-4">
+            <span>Plan de estudio:</span>
+            <select class="form-control" id="id_plan_estudio" name="id_plan_estudio" [(ngModel)]="libro.id_plan_estudio">
+              <option value="0" disabled selected>Selecciona un plan de estudio</option>
+              <option [value]="item.id" *ngFor="let item of programas">{{item.nombre_corto}}</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <span>Descripción:</span>
+            <textarea class="form-control" type="text" rows="5" id="descripcion" name="descripcion" [(ngModel)]="libro.descripcion"></textarea>
+          </div>
+        </div>
+      </form>
+      <br>
+      <ngx-dropzone (change)="onSelect($event)">
+          <ngx-dropzone-label>
+              Suelte sus archivos o haga clic en el navegador
+          </ngx-dropzone-label>
+          <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemove()">
+              <ngx-dropzone-label style=" white-space: nowrap;text-overflow: ellipsis;overflow: hidden;width: 90%;">
+                  {{ f.name }}
+              </ngx-dropzone-label>
+          </ngx-dropzone-preview>
+      </ngx-dropzone>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-success" (click)="guardar(modal,links);">
+      <mat-icon class="mr-2">save</mat-icon>Guardar
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #links let-modal [config]="{backdrop: 'static',  keyboard: false}">
+  <div class="modal-header" style="background: #172441 !important;">
+      <h4 class="modal-title" id="modal-basic-title">Literaturas Agregadas</h4>
+      <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');cerrarModal();">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+      <table class="table table-hover table-bordered table-striped">
+          <thead class="headerT ">
+              <tr>
+                  <th width="300">Nombre</th>
+                  <th width="300">URL</th>
+                  <th>Estado</th>
+                  <!--<th>Opciones</th>-->
+              </tr>
+          </thead>
+          <tbody>
+              <tr *ngFor="let dato of listalinks | paginate: { itemsPerPage: 10, currentPage: pagination2 }; let i = index" [style.background]="dato.encontrado == 1 ? '#ffa3a3' : ''">
+                  <td>{{dato.nombre_original}}</td>
+                  <td>{{dato.ruta_publica}}</td>
+                  <td *ngIf="dato.encontrado == 1">Ya existe</td>
+                  <td *ngIf="dato.encontrado == 0">Guardado</td>
+                  <!--<td>
+            <button class="btn btn-success" *ngIf="dato.encontrado == 1">
+              <mat-icon class="mr-2">cloud_upload</mat-icon><span>Actualizar</span>
+            </button>
+          </td>-->
+              </tr>
+          </tbody>
+      </table>
+      <div class="col-12 paginationp">
+          <pagination-controls (pageChange)="pagination2 = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-success" (click)="copyMessage(copiatodo);">
+      <mat-icon class="mr-2">link</mat-icon>Copiar Todo
+    </button>
+  </div>
+</ng-template>

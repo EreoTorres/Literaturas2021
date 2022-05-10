@@ -29,5 +29,10 @@ export const MENU_ITEMS_ADMIN = [
         link: '/control-escolar/relacion-materias',
         home: true,
     },
+    {
+      title: 'Gaceta',
+      icon: 'videocam_outline',
+      link: '/academica/gaceta',
+      home: true,
+    }
 ];
-  

@@ -4,6 +4,7 @@ import { AcademicaSesionService } from '../services/sesions-validations/sesion/a
 import { AcademicaComponent } from './academica.component';
 import { LiteraturasComponent } from './literaturas/literaturas.component';
 import { VideosComponent } from './videos/videos.component';
+import { GacetaComponent } from './gaceta/gaceta.component';
 
 const routes: Routes = [{
   path: '',
@@ -19,17 +20,22 @@ const routes: Routes = [{
       component: VideosComponent,
       canActivate:[AcademicaSesionService]
     },
-    { 
-      path: '',   
-      redirectTo: 'literaturas', 
+    {
+      path: 'gaceta',
+      component: GacetaComponent,
+      canActivate:[AcademicaSesionService]
+    },
+    {
+      path: '',
+      redirectTo: 'literaturas',
       pathMatch: 'full',
       canActivate:[AcademicaSesionService]
     },
-    { 
-      path: '**', 
-      redirectTo: 'literaturas', 
+    {
+      path: '**',
+      redirectTo: 'literaturas',
       canActivate:[AcademicaSesionService]
-    }, 
+    },
   ],
 }];
 
