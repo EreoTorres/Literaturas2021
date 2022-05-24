@@ -26,9 +26,27 @@ export class VideosService {
     });
   }
 
-  setVideos(video){
+  getCategorias(){
     return new Promise((resolve, reject) => {
-      this.http.post(this.url+'academica/videos/setVideos', video,this.httpHeaders)
+      this.http.post(this.url+'academica/videos/getCategorias', {},this.httpHeaders)
+      .subscribe(data => {
+        resolve(data)
+      })
+    });
+  }
+
+  getVideoUno(video){
+    return new Promise((resolve, reject) => {
+      this.http.post(this.url+'academica/videos/getVideoUno', video,this.httpHeaders)
+      .subscribe(data => {
+        resolve(data)
+      })
+    });
+  }
+
+  updateVideos(video){
+    return new Promise((resolve, reject) => {
+      this.http.post(this.url+'academica/videos/updateVideos', video,this.httpHeaders)
       .subscribe(data => {
         resolve(data)
       })
