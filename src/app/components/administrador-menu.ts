@@ -34,5 +34,11 @@ export const MENU_ITEMS_ADMIN = [
       icon: 'videocam_outline',
       link: '/academica/gaceta',
       home: true,
+    },
+    {
+      title: 'Consejeria Estudiantil',
+      icon: 'sticky_note_2_outline',
+      link: '/consejeria-estudiantil/citas',
+      home: true,
     }
 ];

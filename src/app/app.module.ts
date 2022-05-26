@@ -39,6 +39,8 @@ import { ControlEscolarComponent } from './control-escolar/control-escolar.compo
 import { ControlEscolarService } from './services/http-service/control-escolar/control-escolar.service';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { InputprogramasAllComponent } from './components/inputprogramas-all/inputprogramas-all.component';
+import { ConsejeriaEstudiantilComponent } from './consejeria-estudiantil/consejeria-estudiantil.component';
+import { ConsejeriaEstudiantilService } from './services/http-service/consejeria-estudiantil/consejeria-estudiantil.service';
 
 export class DefaultIntl extends OwlDateTimeIntl {
   /** A label for the cancel button */
@@ -62,12 +64,12 @@ export class DefaultIntl extends OwlDateTimeIntl {
     NumberComponentDynamicComponent,
     InputprogramasComponent,
     EstatusSelectComponent,
-    AcademicaComponent,
     InputImagenComponent,
     OpcionesLiteraturasComponent,
     SmatTablePickerDatetimeComponent,
     ControlEscolarComponent,
     InputprogramasAllComponent,
+    ConsejeriaEstudiantilComponent
   ],
   imports: [
     BrowserModule,
@@ -89,7 +91,7 @@ export class DefaultIntl extends OwlDateTimeIntl {
     NgxPaginationModule,
     NgbModule,
     BrowserAnimationsModule,
-    OwlDateTimeModule, 
+    OwlDateTimeModule,
     OwlNativeDateTimeModule,
     CommonModule,
     Ng2SmartTableModule
@@ -103,10 +105,11 @@ export class DefaultIntl extends OwlDateTimeIntl {
     InputprogramasComponent,
     EstatusSelectComponent
   ],
-  providers: [    
+  providers: [
     AcademicaSesionService,
     PromocionesSesionService,
     ControlEscolarService,
+    ConsejeriaEstudiantilService,
     DatePipe,
     { provide: OwlDateTimeIntl, useClass: DefaultIntl }
   ],

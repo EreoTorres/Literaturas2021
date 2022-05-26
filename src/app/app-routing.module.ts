@@ -3,9 +3,9 @@ import { Routes, RouterModule } from '@angular/router'; // CLI imports router
 import { LoginComponent } from './login/login.component';
 
 export const routes: Routes = [
-  { 
-    path: 'login', 
-    component: LoginComponent 
+  {
+    path: 'login',
+    component: LoginComponent
   },
   {
     path: 'academica',
@@ -22,15 +22,20 @@ export const routes: Routes = [
     loadChildren: () => import('./control-escolar/control-escolar.module')
       .then(m => m.ControlEscolarModule)
   },
-  { 
-    path: '',   
-    redirectTo: '/login', 
-    pathMatch: 'full' 
+  {
+    path: 'consejeria-estudiantil',
+    loadChildren: () => import('./consejeria-estudiantil/consejeria-estudiantil.module')
+      .then(m => m.ConsejeriaEstudiantilModule)
+  },
+  {
+    path: '',
+    redirectTo: '/login',
+    pathMatch: 'full'
   }, // redirect to `first-component`
-  { 
-    path: '**', 
-    component: LoginComponent 
-  }, 
+  {
+    path: '**',
+    component: LoginComponent
+  },
 ];
 
 // configures NgModule imports and exports
