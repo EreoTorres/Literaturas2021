@@ -1,3 +1,7 @@
+input.ng-touched.ng-invalid, textarea.ng-touched.ng-invalid , select.ng-touched.ng-invalid{
+    border: 1px solid red;
+}
+
 .card-header,.modal-header{
     background: #172441;
     color: #FFF;

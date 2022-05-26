@@ -5,76 +5,95 @@
         </div>
         <div class="card-body text-secondary">
             <div class="mr-3">
-                <button class="btn btn-success float-right" (click)="openModal(docs2)">
+                <button class="btn btn-success float-right" (click)="openModal(0)">
                   <mat-icon class="mr-2" style="color: white !important;">cloud_upload</mat-icon><span>Agregar Video</span> 
                 </button>
             </div>
             <div style="margin-top: 5% !important;">
-                <ng2-smart-table [settings]="settings" [source]="registros" (custom)="onCustomAction($event)"></ng2-smart-table>
+                <ng2-smart-table [settings]="settings" [source]="registros" (custom)="onCustom($event)"></ng2-smart-table>
             </div>
         </div>
     </div>
 </div>
 
-<ng-template #docs2 let-modal [config]="{backdrop: 'static',  keyboard: false}">
+<ng-template #links let-modal [config]="{backdrop: 'static',  keyboard: false}">
     <div class="modal-header">
         <h4 class="modal-title" id="modal-basic-title">{{titulo_videos}}</h4>
-        <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');cerrarModal();">
+        <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-    <form id="agregar-video" class="form" #formul2="ngForm" (ngSubmit)="guardar_articulo(formul2.value)" [formGroup]="formulario">
+    <form #formularioP="ngForm" id="agregar-video">
         <div class="modal-body">
             <div class="row">
                 <div class="col-4">
                     <span>Planes de estudio:</span>
-                    <select class="form-control" id="id_plan_estudio" name="id_plan_estudio" formControlName="id_plan_estudio">
-                        <option value="0" disabled selected>Selecciona un plan de estudio</option>
+                    <select class="form-control" required id="id_plan_estudio" name="id_plan_estudio" (change)="getMaterias(1,$event.target.value)" [(ngModel)]="video.id_plan_estudio">
+                        <option value="undefined" disabled selected>Selecciona un plan de estudio</option>
                         <option [value]="item.id" *ngFor="let item of programas">{{item.nombre_corto}}</option>
                     </select>
                 </div>
                 <div class="col-4">
                     <span>Servicio:</span>
-                    <select class="form-control" id="servicio" name="servicio" formControlName="servicio">
-                        <option value="vimeo" >vimeo</option>
+                    <select class="form-control" required id="servicio" name="servicio" [(ngModel)]="video.servicio">
+                        <option value="video" >video</option>
+                        <option value="pdf" >pdf</option>
+                        <option value="audio" >audio</option>
                     </select>
                 </div>
                 <div class="col-4">
                     <span>Título:</span>
-                    <input type="text" class="form-control" id="titulo_video" name="titulo_video" formControlName="titulo_video" placeholder="Título" (keypress)="validText.onlyTextAndNumers($event)">
-                </div>
-                <!--<div class="col-6">
-                <span>Materia:</span>
-                <select class="form-control" [(ngModel)]="obj_detalle">
-                    <option value="0" disabled selected>Selecciona una materia</option>
-                    <option [value]="item | json" *ngFor="let item of materias2">[Periodo {{item.periodo}}] {{item.nombre}}</option>
-                </select>
-                </div>-->
-            </div>
-            <br>
-            <div class="row">
-                <div class="col-12">
-                    <span>URL del video:</span>
-                    <input type="text" class="form-control" id="url_video" name="url_video" formControlName="url_video" placeholder="https://vimeo.com">
+                    <input type="text" class="form-control" required id="titulo_video" name="titulo_video" [(ngModel)]="video.titulo_video" placeholder="Título" (keypress)="validText.onlyTextAndNumers($event)">
                 </div>
             </div>
             <br>
             <div class="row">
                 <div class="col-12">
+                    <span>URL del {{video.servicio}}:</span>
+                    <input type="text" class="form-control" required id="url_video" name="url_video" [(ngModel)]="video.url_video" placeholder="URL del {{video.servicio}}">
+                </div>
+            </div>
+            <div class="row" *ngIf="video.servicio == 'video'">
+                <div class="col-12">
+                    <br>
                     <span>Código de inserción:</span>
-                    <input type="text" class="form-control" id="html_iframe" name="html_iframe" formControlName="html_iframe" placeholder="iframe">
+                    <input type="text" [required]="video.servicio == 'video'" class="form-control" id="html_iframe" name="html_iframe" [(ngModel)]="video.html_iframe" placeholder="iframe">
                 </div>
             </div>
             <br>
             <div class="row">
                 <div class="col-12">
                     <span>Descripcion:</span>
-                    <textarea class="form-control" id="descripcion" name="descripcion" formControlName="descripcion" style="height: 100px !important;max-height: 100px !important;" placeholder="Descripción del video"></textarea>
+                    <textarea class="form-control" required id="descripcion" name="descripcion" [(ngModel)]="video.descripcion" style="height: 100px !important;max-height: 100px !important;" placeholder="Descripción del {{video.servicio}}"></textarea>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-6">
+                    <span>Tipo:</span>
+                    <select class="form-control" required id="tipo" name="tipo" [(ngModel)]="video.tipo">
+                        <option value="1">Por materia</option>
+                        <option value="2">Por categoria</option>
+                    </select>
+                </div>
+                <div class="col-6" *ngIf="video.tipo == 1">
+                    <span>Materia:</span>
+                    <select class="form-control" [required]="video.tipo == 1" id="id_materia" name="id_materia" [(ngModel)]="video.id_materia" >
+                        <option value="undefined" disabled selected>Selecciona una materia</option>
+                        <option [value]="item.id_moodle" *ngFor="let item of materias2">[Periodo {{item.periodo}}] {{item.nombre}}</option>
+                    </select>
+                </div>
+                <div class="col-6" *ngIf="video.tipo == 2">
+                    <span>Categoría:</span>
+                    <select class="form-control" [required]="video.tipo == 2" id="id_categoria" name="id_categoria" [(ngModel)]="video.id_categoria" >
+                        <option value="undefined" disabled selected>Selecciona una categoría</option>
+                        <option [value]="item.id" *ngFor="let item of categorias">{{item.categoria}}</option>
+                    </select>
                 </div>
             </div>
         </div>
         <div class="modal-footer">
-            <button type="submit" name="submit" class="btn btn-success">
+            <button type="button" class="btn btn-success" [disabled]="!formularioP.valid" (click)="guardar(modal,links);">
                 <mat-icon class="mr-2" style="color: white !important;" >save</mat-icon>Guardar
             </button>
         </div>
