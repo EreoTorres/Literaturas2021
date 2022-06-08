@@ -6,7 +6,7 @@
       <div class="card-body text-secondary">
           <div class="mr-3">
               <button class="btn btn-success float-right" (click)="openModal(agregarNuevaCita)">
-                <mat-icon class="mr-2">cloud_upload</mat-icon><span>Agregar nueva cita</span>
+                <mat-icon class="mr-2">calendar_today</mat-icon><span>Agregar nueva cita</span>
               </button>
           </div>
           <div style="margin-top: 5% !important;width: 100%;">
@@ -16,141 +16,136 @@
   </div>
 </div>
 
-<ng-template #asignarEstatusConsejero let-modal [config]="{backdrop: 'static',  keyboard: false}">
-  <div class="modal-header">
-      <h4 class="modal-title" id="modal-basic-title">Asignar Estatus / Consejero</h4>
-      <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');cerrarModal();">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-      <form id="formAsignacion">
-        <div class="row">
-          <div class="col-12">
-            <span>Nombre del alumno:</span>
-            <input class="form-control" type="text" id="nombre" name="nombre" [(ngModel)]="asignacion.nombre" disabled>
-          </div>
-          <div class="col-12">
-            <span>Motivo de la llamada:</span>
-            <input class="form-control" type="text" id="motivo" name="motivo" [(ngModel)]="asignacion.motivo" disabled>
-          </div>
-          <div class="col-12">
-            <span>Estatus:</span>
-            <select class="form-control" id="estatus" name="estatus" [(ngModel)]="asignacion.estatus">
-              <option value="0" disabled selected>Selecciona un estatus</option>
-              <option [value]="item.id" *ngFor="let item of programas">{{item.nombre_corto}}</option>
-            </select>
-          </div>
-          <div class="col-12">
-            <span>Consejero asignado:</span>
-            <select class="form-control" id="consejero" name="consejero" [(ngModel)]="asignacion.consejero">
-              <option value="0" disabled selected>Selecciona un consejero</option>
-              <option [value]="item.id" *ngFor="let item of programas">{{item.nombre_corto}}</option>
-            </select>
-          </div>
-        </div>
-      </form>
-  </div>
-  <div class="modal-footer">
-      <button type="button" class="btn btn-success" (click)="guardar(modal,links);">
-      <mat-icon class="mr-2">save</mat-icon>Guardar
-    </button>
-  </div>
-</ng-template>
-
 <ng-template #agregarNuevaCita let-modal [config]="{backdrop: 'static',  keyboard: false}">
   <div class="modal-header">
       <h4 class="modal-title" id="modal-basic-title">Agregar nueva cita</h4>
-      <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');cerrarModal();">
+      <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-  <div class="modal-body">
-      <form id="formLibro">
+  <form [formGroup]="formCita" (ngSubmit)="validarCita(1)" novalidate>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-6">
+          <span>Número de empleado:</span>
+          <input class="form-control" type="text" formControlName="numero_empleado" (change)="getAlumno()">
+        </div>
+        <div class="col-6">
+          <span>Programa:</span>
+          <select class="form-control" formControlName="plan_estudio" (change)="getAlumno()">
+            <option [value]="programa.id" *ngFor="let programa of programas">{{programa.nombre_corto}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="row alumno" *ngIf="bandera.alumno">
+        <div class="col-12">
+          <h5>{{bandera.text}}</h5>
+        </div>
+      </div>
+      <div class="row loading" *ngIf="bandera.loading">
+        <div class="col-12">
+          <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+        </div>
+      </div>
+      <div *ngIf="bandera.formulario">
         <div class="row">
           <div class="col-12">
-            <span>Número de empleado:</span>
-            <!-- <input class="form-control" type="text" id="titulo" name="titulo" [(ngModel)]="libro.titulo"> -->
-          </div>
-          <div class="col-12">
             <span>Nombre del alumno:</span>
-            <!-- <input class="form-control" type="date" id="fecha_publicacion" name="fecha_publicacion" [(ngModel)]="libro.fecha_publicacion"> -->
-          </div>
-          <div class="col-12">
-            <span>Programa:</span>
-            <!-- <select class="form-control" id="id_plan_estudio" name="id_plan_estudio" [(ngModel)]="libro.id_plan_estudio">
-              <option value="0" disabled selected>Selecciona un plan de estudio</option>
-              <option [value]="item.id" *ngFor="let item of programas">{{item.nombre_corto}}</option>
-            </select> -->
-          </div>
-          <div class="col-12">
-            <span>Motivo de la llamada:</span>
-            <!-- <textarea class="form-control" type="text" rows="5" id="descripcion" name="descripcion" [(ngModel)]="libro.descripcion"></textarea> -->
-          </div>
-          <div class="col-12">
-            <span>Contacto:</span>
-            <!-- <textarea class="form-control" type="text" rows="5" id="descripcion" name="descripcion" [(ngModel)]="libro.descripcion"></textarea> -->
-          </div>
-          <div class="col-12">
-            <span>Horario:</span>
-            <!-- <textarea class="form-control" type="text" rows="5" id="descripcion" name="descripcion" [(ngModel)]="libro.descripcion"></textarea> -->
-          </div>
-          <div class="col-12">
-            <span>Estatus de la cita:</span>
-            <!-- <textarea class="form-control" type="text" rows="5" id="descripcion" name="descripcion" [(ngModel)]="libro.descripcion"></textarea> -->
-          </div>
-          <div class="col-12">
-            <span>Consejero:</span>
-            <!-- <textarea class="form-control" type="text" rows="5" id="descripcion" name="descripcion" [(ngModel)]="libro.descripcion"></textarea> -->
+            <input class="form-control" type="text" formControlName="nombre_alumno" disabled>
           </div>
         </div>
-      </form>
-  </div>
-  <div class="modal-footer">
-      <button type="button" class="btn btn-success" (click)="guardar(modal,links);">
-      <mat-icon class="mr-2">save</mat-icon>Guardar
-    </button>
-  </div>
+        <div class="row">
+          <div class="col-12">
+            <span>Motivo de la llamada:</span>
+            <select class="form-control" formControlName="motivo">
+              <option [value]="motivo.id" *ngFor="let motivo of motivos">{{motivo.descripcion}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <span>Contacto:</span>
+            <select class="form-control" formControlName="contacto">
+              <option [value]="contacto.telefono" *ngFor="let contacto of contactos">{{contacto.telefono}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <span>Horario:</span>
+            <select class="form-control" formControlName="horario">
+              <option [value]="horario.id" *ngFor="let horario of horarios">{{horario.descripcion}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <span>Estatus de la cita:</span>
+            <select class="form-control" formControlName="estatus">
+              <option [value]="estatu.id" *ngFor="let estatu of estatus">{{estatu.descripcion}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <span>Consejero:</span>
+            <select class="form-control" formControlName="consejero">
+              <option [value]="consejero.id" *ngFor="let consejero of consejeros">{{consejero.nombre}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" [disabled]="formCita.invalid" class="btn btn-success">
+        <mat-icon class="mr-2">save</mat-icon>Guardar
+      </button>
+    </div>
+  </form>
 </ng-template>
 
-<ng-template #links let-modal [config]="{backdrop: 'static',  keyboard: false}">
-  <div class="modal-header" style="background: #172441 !important;">
-      <h4 class="modal-title" id="modal-basic-title">Literaturas Agregadas</h4>
-      <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');cerrarModal();">
+<ng-template #asignarEstatusConsejero let-modal [config]="{backdrop: 'static',  keyboard: false}">
+  <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Asignar Estatus / Consejero</h4>
+      <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-  <div class="modal-body">
-      <table class="table table-hover table-bordered table-striped">
-          <thead class="headerT ">
-              <tr>
-                  <th width="300">Nombre</th>
-                  <th width="300">URL</th>
-                  <th>Estado</th>
-                  <!--<th>Opciones</th>-->
-              </tr>
-          </thead>
-          <tbody>
-              <tr *ngFor="let dato of listalinks | paginate: { itemsPerPage: 10, currentPage: pagination2 }; let i = index" [style.background]="dato.encontrado == 1 ? '#ffa3a3' : ''">
-                  <td>{{dato.nombre_original}}</td>
-                  <td>{{dato.ruta_publica}}</td>
-                  <td *ngIf="dato.encontrado == 1">Ya existe</td>
-                  <td *ngIf="dato.encontrado == 0">Guardado</td>
-                  <!--<td>
-            <button class="btn btn-success" *ngIf="dato.encontrado == 1">
-              <mat-icon class="mr-2">cloud_upload</mat-icon><span>Actualizar</span>
-            </button>
-          </td>-->
-              </tr>
-          </tbody>
-      </table>
-      <div class="col-12 paginationp">
-          <pagination-controls (pageChange)="pagination2 = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
+  <form [formGroup]="formAsignacion" (ngSubmit)="validarCita(2)" novalidate>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-12">
+          <span>Nombre del alumno:</span>
+          <input class="form-control" type="text" formControlName="nombre_alumno" disabled>
+        </div>
       </div>
-  </div>
-  <div class="modal-footer">
-      <button type="button" class="btn btn-success" (click)="copyMessage(copiatodo);">
-      <mat-icon class="mr-2">link</mat-icon>Copiar Todo
-    </button>
-  </div>
+      <div class="row">
+        <div class="col-12">
+          <span>Motivo de la llamada:</span>
+          <input class="form-control" type="text" formControlName="motivo" disabled>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <span>Estatus:</span>
+          <select class="form-control" formControlName="estatus2">
+            <option [value]="estatu.id" *ngFor="let estatu of estatus2">{{estatu.descripcion}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <span>Consejero asignado:</span>
+          <select class="form-control" formControlName="consejero">
+            <option [value]="consejero.id" *ngFor="let consejero of consejeros">{{consejero.nombre}}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="submit" [disabled]="formAsignacion.invalid" class="btn btn-success">
+        <mat-icon class="mr-2">save</mat-icon>Guardar
+      </button>
+    </div>
+  </form>
 </ng-template>

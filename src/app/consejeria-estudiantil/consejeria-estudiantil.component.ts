@@ -13,6 +13,7 @@ export class ConsejeriaEstudiantilComponent implements OnInit {
   private _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   menus: any = MENU_ITEMS;
+  programas: any = [];
 
   constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher,public router: Router) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
@@ -33,6 +34,13 @@ export class ConsejeriaEstudiantilComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.mobileQuery.removeListener(this._mobileQueryListener);
+  }
+
+  getProgramasAcademicos(){
+    for(let datos of JSON.parse(localStorage.getItem('programas'))){
+      this.programas.push({id: datos.id, nombre_corto: datos.nombre_corto})
+    }
+    return this.programas;
   }
 
 }

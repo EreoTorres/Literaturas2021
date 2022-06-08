@@ -2,6 +2,7 @@
   background: #172441;
   color: #FFF;
 }
+
 .card-body{
   background: #FFF;
 }
@@ -9,14 +10,17 @@
 .page-item.disabled .page-link {
 color: darkgray !important;
 }
+
 .page-item.active .page-link {
 background: black !important;
 color: white !important;
 border: 1px solid black !important;
 }
+
 .page-item {
 margin: 3px;
 }
+
 .page-link {
 color: black !important;
 padding: 8px;
@@ -24,15 +28,18 @@ padding-left: 14px;
 padding-right: 14px;
 border-radius: 4px !important;
 }
+
 .page-link:hover {
 background-color: black !important;
 color: white !important;
 border: 1px solid black;
 }
+
 .ng2-smart-pagination .page-link-next,
 .ng2-smart-pagination .page-link-prev {
 font-size: 14px !important;
 }
+
 .ng2-smart-page-item a:hover {
 text-decoration: none !important;
 }
@@ -127,6 +134,7 @@ textarea{
 
 :host /deep/ table td .rojo {
   background-color: #f44336;
+  color: white;
 }
 
 :host /deep/ table td .amarillo {
@@ -135,12 +143,92 @@ textarea{
 
 :host /deep/ table td .azul {
   background-color: #2196f3;
+  color: white;
 }
 
 :host /deep/ table td .verde {
   background-color: #4caf50;
+  color: white;
 }
 
 :host /deep/ table td .naranja {
   background-color: #ff9800;
+  color: white;
+}
+
+.col-12 {
+  margin-top: 10px;
+}
+
+.loading {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.lds-ellipsis {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.lds-ellipsis div {
+  position: absolute;
+  top: 33px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #172441;
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+}
+
+.lds-ellipsis div:nth-child(1) {
+  left: 8px;
+  animation: lds-ellipsis1 0.6s infinite;
+}
+
+.lds-ellipsis div:nth-child(2) {
+  left: 8px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+
+.lds-ellipsis div:nth-child(3) {
+  left: 32px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+
+.lds-ellipsis div:nth-child(4) {
+  left: 56px;
+  animation: lds-ellipsis3 0.6s infinite;
+}
+
+@keyframes lds-ellipsis1 {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes lds-ellipsis3 {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+
+@keyframes lds-ellipsis2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(24px, 0);
+  }
+}
+
+.alumno {
+  margin-top: 15px;
 }
