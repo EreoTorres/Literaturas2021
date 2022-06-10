@@ -91,7 +91,7 @@ export class HorariosSesionesVirtualesComponent implements OnInit {
       hora: {
         title: 'Hora del evento',
         type: 'html',
-        width: '15%',
+        width: '10%',
         filter: true,
         editor: {
           type: 'custom',
@@ -117,11 +117,16 @@ export class HorariosSesionesVirtualesComponent implements OnInit {
       maximo_asistentes: {
         title: 'Máximo de asistentes',
         type: 'string',
-        width: '15%',
+        width: '10%',
         editor: {
           type: 'custom',
           component: NumberComponentDynamicComponent,
         }
+      },
+      url_sesion: {
+        title: 'Url enlace a sesión',
+        type: 'string',
+        width: '15%',
       },
       estatus: {
         title: 'Estatus',
@@ -130,7 +135,7 @@ export class HorariosSesionesVirtualesComponent implements OnInit {
           type: 'custom',
           component: EstatusSelectComponent,
         },
-        width: '15%',
+        width: '10%',
         filter: {
           type: 'list',
           config: {
@@ -202,7 +207,7 @@ export class HorariosSesionesVirtualesComponent implements OnInit {
 
     ev.newData.fecha_programada_f = this.newUYDate(ev.newData.fecha_programada);
     ev.newData.fecha_caducidad_registro_f = this.newUYDate(ev.newData.fecha_caducidad_registro);
-
+    
     this.MessagesService.showLoading();
     this.programacionHTTP.setProgramacion(ev.newData).then(datas => {
       var res: any = datas;
