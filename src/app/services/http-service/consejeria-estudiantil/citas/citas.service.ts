@@ -88,4 +88,13 @@ export class CitasService {
       })
     })
   }
+
+  getMovimientos(cita) {
+    return new Promise((resolve, reject) => {
+      this.http.post(this.url+'consejeria_estudiantil/citas/getMovimientos', cita, this.httpHeaders)
+      .subscribe(data => {
+          resolve(data)
+      })
+    })
+  }
 }

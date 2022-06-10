@@ -13,6 +13,7 @@ import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 })
 export class CitasComponent implements OnInit {
   @Input() registros: any;
+  @Input() movimientos: any;
   formCita: FormGroup;
   formAsignacion: FormGroup;
   formFinal: FormGroup;
@@ -29,7 +30,8 @@ export class CitasComponent implements OnInit {
     alumno: false,
     text: ''
   }
-  @ViewChild('asignarEstatusConsejero') modal: ElementRef;
+  @ViewChild('asignarEstatusConsejero') asignarEstatusConsejero: ElementRef;
+  @ViewChild('historialMovimientos') historialMovimientos: ElementRef;
   asignacion: any = {
     nombre: '',
     motivo: '',
@@ -43,7 +45,8 @@ export class CitasComponent implements OnInit {
       edit: false,
       delete: false,
       custom: [
-        { name: 'asignar', title: '<i class="material-icons-outlined">edit</i>&nbsp;'}
+        { name: 'asignar', title: '<i class="material-icons-outlined">edit</i>&nbsp;'},
+        { name: 'historial', title: '<i class="material-icons-outlined">description</i>&nbsp;'}
       ],
       position: 'right'
     },
@@ -116,6 +119,43 @@ export class CitasComponent implements OnInit {
       }
     }
   };
+  settings_movimientos = {
+    actions: {
+      columnTitle: '',
+      add: false,
+      edit: false,
+      delete: false,
+      position: 'right'
+    },
+    attr: {
+      class: 'table table-bordered responsive'
+    },
+    pager: {
+      perPage: 10,
+    },
+    columns: {
+      movimiento: {
+        title: 'Movimiento',
+        type: 'string',
+        width: '15%'
+      },
+      responsable: {
+        title: 'Responsable',
+        type: 'string',
+        width: '30%'
+      },
+      fecha: {
+        title: 'Fecha',
+        type: 'string',
+        filter: true,
+        width: '15%',
+        editor: {
+          type: 'custom',
+          component: SmartTableDatepickerComponent,
+        }
+      }
+    }
+  };
 
   constructor(
     private citasHTTP: CitasService,
@@ -134,8 +174,11 @@ export class CitasComponent implements OnInit {
       contacto: [null, [Validators.required]],
       horario: [null, [Validators.required]],
       estatus: [null, [Validators.required]],
-      consejero: [null, [Validators.required]]
+      consejero: [null],
+      responsable: [null]
     });
+
+    this.defaultFormCita();
 
     this.formAsignacion = this.formBuilder.group({
       id_cita: [null, [Validators.required]],
@@ -143,7 +186,9 @@ export class CitasComponent implements OnInit {
       nombre_alumno: ['', [Validators.required]],
       motivo: ['', [Validators.required]],
       estatus: [null, [Validators.required]],
-      consejero: [null, [Validators.required]]
+      consejero: [null],
+      comentarios: [null],
+      responsable: [null]
     });
   }
 
@@ -178,6 +223,16 @@ export class CitasComponent implements OnInit {
       var res: any = datas;
       this.consejeros = res.resultado;
     });
+  }
+
+  defaultFormCita() {
+    this.formCita.controls['id_cita'].setValue(0);
+    this.formCita.controls['plan_estudio'].setValue('');
+    this.formCita.controls['motivo'].setValue('');
+    this.formCita.controls['contacto'].setValue('');
+    this.formCita.controls['horario'].setValue('');
+    this.formCita.controls['estatus'].setValue('');
+    this.formCita.controls['consejero'].setValue('');
   }
 
   getCitas() {
@@ -224,18 +279,20 @@ export class CitasComponent implements OnInit {
 
   validarCita(tipo: any) {
     (tipo == 1 ? this.formFinal = this.formCita : this.formFinal = this.formAsignacion);
+    this.formFinal.controls['responsable'].setValue(sessionStorage.getItem('id'));
     if (this.formFinal.valid) {
       if(this.formFinal.value.estatus == 7) {
         this.MessagesService.showConfirmDialog('¿Está seguro de que desea eliminar este registro?', '').then((result) => {
-          if(result.isConfirmed) this.actualizarCita(tipo);
+          if(result.isConfirmed) this.actualizarCita();
         });
       }
-      else this.actualizarCita(tipo);
+      else this.actualizarCita();
     }
-    else this.MessagesService.showSuccessDialog('Todos los campos son obligatorios.', 'error')
+    else this.MessagesService.showSuccessDialog('Todos los campos son obligatorios.', 'error');
   }
 
-  actualizarCita(tipo: any) {
+  actualizarCita() {
+    this.MessagesService.showLoading();
     this.citasHTTP.actualizarCita(this.formFinal.value).then(datas => {
       var res: any = datas;
       if(res.codigo == 0) this.MessagesService.showSuccessDialog(res.mensaje, 'error');
@@ -245,30 +302,23 @@ export class CitasComponent implements OnInit {
           .then(() => {
             this.modalService.dismissAll();
             this.getCitas();
-            (tipo == 1 ? this.resetCita() : this.resetAsignacion());
-            this.formCita.reset();
           });
         }
-        else this.MessagesService.showSuccessDialog('Ocurrio un error al registrar/actualizar cita.', 'error');
+        else this.MessagesService.showSuccessDialog(res.resultado[0][0].message, 'error');
       }
     });
   }
 
-  resetCita() {
+  resetAll() {
     this.formCita.reset();
-  }
-
-  resetAsignacion() {
     this.formAsignacion.reset();
-  }
-
-  cerrarModal() {
-    this.resetCita();
-    this.resetAsignacion
-    this.getCitas();
+    this.defaultFormCita();
+    this.bandera.alumno = false;
+    this.bandera.formulario = false;
   }
 
   openModal(modal) {
+    this.resetAll();
     this.modalService.open(modal, {
       backdrop: 'static',
       keyboard: false,
@@ -278,13 +328,28 @@ export class CitasComponent implements OnInit {
 
   onCustom(ev) {
     if(ev.action == 'asignar') {
+      this.openModal(this.asignarEstatusConsejero);
       this.formAsignacion.controls['id_cita'].setValue(ev.data.id_cita);
       this.formAsignacion.controls['plan_estudio'].setValue(ev.data.id_plan_estudio);
       this.formAsignacion.controls['nombre_alumno'].setValue(ev.data.nombre_alumno);
       this.formAsignacion.controls['motivo'].setValue(ev.data.motivo);
       this.formAsignacion.controls['estatus'].setValue(ev.data.id_estatus);
-      this.formAsignacion.controls['consejero'].setValue(ev.data.id_consejero);
-      this.openModal(this.modal);
+      let c = '';
+      (ev.data.id_consejero == 0 ? c = '' : c = ev.data.id_consejero);
+      this.formAsignacion.controls['consejero'].setValue(c);
+    }
+    else if(ev.action == 'historial') {
+      this.MessagesService.showLoading();
+      let cita = {
+        id_cita: ev.data.id_cita,
+        responsable: sessionStorage.getItem('id')
+      }
+      this.citasHTTP.getMovimientos(cita).then(datas => {
+        var res: any = datas;
+        this.movimientos = res.resultado;
+        this.openModal(this.historialMovimientos);
+        this.MessagesService.closeLoading();
+      });
     }
   }
 
