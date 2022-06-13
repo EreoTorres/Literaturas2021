@@ -30,15 +30,21 @@ export const MENU_ITEMS_ADMIN = [
         home: true,
     },
     {
-      title: 'Gaceta',
-      icon: 'videocam_outline',
-      link: '/academica/gaceta',
-      home: true,
+        title: 'Gaceta',
+        icon: 'videocam_outline',
+        link: '/academica/gaceta',
+        home: true,
     },
     {
-      title: 'Consejeria Estudiantil',
-      icon: 'sticky_note_2_outline',
-      link: '/consejeria-estudiantil/citas',
-      home: true,
+        title: 'Biblioteca Virtual',
+        icon: 'sticky_note_2_outline',
+        link: '/academica/biblioteca-virtual',
+        home: true,
+    },
+    {
+        title: 'Consejeria Estudiantil',
+        icon: 'sticky_note_2_outline',
+        link: '/consejeria-estudiantil/citas',
+        home: true,
     }
 ];

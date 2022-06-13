@@ -5,6 +5,8 @@ import { AcademicaComponent } from './academica.component';
 import { LiteraturasComponent } from './literaturas/literaturas.component';
 import { VideosComponent } from './videos/videos.component';
 import { GacetaComponent } from './gaceta/gaceta.component';
+import { BibliotecaVirtualComponent } from './biblioteca-virtual/biblioteca-virtual.component';
+import { VisualizadorComponent } from '../visualizador/visualizador/visualizador.component';
 
 const routes: Routes = [{
   path: '',
@@ -23,6 +25,16 @@ const routes: Routes = [{
     {
       path: 'gaceta',
       component: GacetaComponent,
+      canActivate:[AcademicaSesionService]
+    },
+    {
+      path: 'biblioteca-virtual',
+      component: BibliotecaVirtualComponent,
+      canActivate:[AcademicaSesionService]
+    },
+    {
+      path: 'visualizador/:id',
+      component: VisualizadorComponent,
       canActivate:[AcademicaSesionService]
     },
     {

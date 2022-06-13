@@ -120,7 +120,7 @@ export class GacetaComponent implements OnInit {
     this.files = [];
   }
 
-  guardar(modal, links) {
+  guardar(modal) {
     if(!this.libro.titulo || !this.libro.fecha_publicacion || !this.libro.descripcion ||
       this.libro.id_plan_estudio == 0 || this.files.length == 0) {
       this.MessagesService.showSuccessDialog("Todos los campos son requeridos.", 'error');
@@ -195,21 +195,6 @@ export class GacetaComponent implements OnInit {
         }
       });
     }
-  }
-
-  copyMessage(val: string) {
-    const selBox = document.createElement('textarea');
-    selBox.style.position = 'fixed';
-    selBox.style.left = '0';
-    selBox.style.top = '0';
-    selBox.style.opacity = '0';
-    selBox.value = '';
-    selBox.value = val;
-    document.body.appendChild(selBox);
-    selBox.focus();
-    selBox.select();
-    document.execCommand('copy');
-    document.body.removeChild(selBox);
   }
 
 }

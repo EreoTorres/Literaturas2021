@@ -41,6 +41,7 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { InputprogramasAllComponent } from './components/inputprogramas-all/inputprogramas-all.component';
 import { ConsejeriaEstudiantilComponent } from './consejeria-estudiantil/consejeria-estudiantil.component';
 import { ConsejeriaEstudiantilService } from './services/http-service/consejeria-estudiantil/consejeria-estudiantil.service';
+import { VisualizadorComponent } from './visualizador/visualizador/visualizador.component';
 
 export class DefaultIntl extends OwlDateTimeIntl {
   /** A label for the cancel button */
@@ -69,7 +70,8 @@ export class DefaultIntl extends OwlDateTimeIntl {
     SmatTablePickerDatetimeComponent,
     ControlEscolarComponent,
     InputprogramasAllComponent,
-    ConsejeriaEstudiantilComponent
+    ConsejeriaEstudiantilComponent,
+    VisualizadorComponent
   ],
   imports: [
     BrowserModule,
