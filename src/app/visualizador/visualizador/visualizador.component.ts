@@ -14,6 +14,8 @@ declare var visualizador_js: any;
 export class VisualizadorComponent implements OnInit {
 
   id: any = 0;
+  messageError: boolean = false;
+  message: string = 'No se encontró archivo, intenta más tarde.';
 
   constructor(
     private rutaActiva: ActivatedRoute,
@@ -42,8 +44,8 @@ export class VisualizadorComponent implements OnInit {
           new visualizador_js(ruta_final);
         }
         else {
-          this.messagesService.showSuccessDialog('Ocurrio un error al obtener archivo.', 'error').then((result) => {
-            if(result.isConfirmed) this.router.navigate(['biblioteca-virtual']);
+          this.messagesService.showSuccessDialog(this.message, 'error').then((result) => {
+            this.messageError = true;
           });
         }
       }

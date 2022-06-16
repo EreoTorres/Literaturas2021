@@ -21,70 +21,63 @@ export class GlobalFunctionsService {
     };
   }
 
-  update(archivo) {
+  update(archivo: any) {
     return new Promise((resolve, reject) => {
       this.http.post(this.url + 'academica/' + archivo['modulo'] + '/update', archivo, this.httpHeaders)
       .subscribe(data => {
-          resolve(data)
+        resolve(data)
       })
     })
   }
 
-  uploadFile(formdata) {
+  uploadFile(archivo: any, files: File[], id: any) {
+    const formData = new FormData();
+    archivo.id = id;
+    archivo.credencial_id = 1;
+    archivo.ruta = archivo.modulo + '/' + archivo.id;
+
+    const blobOverrides = new Blob([JSON.stringify(archivo)], {
+      type: 'application/json',
+    });
+
+    formData.append('data', blobOverrides);
+    formData.append('files', files[0]);
+
     return new Promise((resolve, reject) => {
-      this.http.post(this.url + 'generico/files/setFiles', formdata)
+      this.http.post(this.url + 'generico/files/setFiles', formData)
       .subscribe(data => {
-          resolve(data)
+        archivo.archivo = data['resultado'][0].nombre_anterior;
+        archivo.ruta = data['resultado'][0].nombre;
+        resolve(this.update(archivo))
       })
     })
   }
 
-  // INICIO FUNCIONES GLOBALES ARCHIVOS GENERICOS
-
-  // GUARDAR ARCHIVO
-  guardarArchivo(archivo, files) {
+  // ACTUALIZAR ARCHIVO
+  actualizarArchivo(archivo: any, files: File[]) {
     return new Promise((resolve) => {
       this.messagesService.showLoading();
       this.update(archivo)
       .then(data => {
-        return data['resultado'][0].id;
+        return data;
       })
       .then(data => {
-        const formData = new FormData();
-        archivo.id = data;
-        archivo.credencial_id = 1;
-        archivo.ruta = archivo.modulo + '/' + archivo.id;
-
-        const blobOverrides = new Blob([JSON.stringify(archivo)], {
-          type: 'application/json',
-        });
-
-        formData.append('data', blobOverrides);
-        formData.append('files', files[0]);
-
-        return this.uploadFile(formData)
-      })
-      .then(data => {
-        archivo.archivo = data['resultado'][0].nombre_anterior;
-        archivo.ruta = data['resultado'][0].nombre;
-        return this.update(archivo);
+        return (files.length ? this.uploadFile(archivo, files, data['resultado'][0].id) : data);
       })
       .then (data => {
         this.messagesService.closeLoading();
         if(data['resultado'][0].success) {
           this.messagesService.showSuccessDialog(data['resultado'][0].message, 'success')
-          .then(() => {
-            resolve(true)
-          });
+          .then(() => { resolve(true) });
         }
-        else this.messagesService.showSuccessDialog('Error al registrar archivo.', 'error');
+        else this.messagesService.showSuccessDialog('Error al actualizar archivo.', 'error');
       })
       .catch(err => this.messagesService.showSuccessDialog(err, 'error'))
     });
   }
 
   // DESCARGAR ARCHIVO
-  descargarArchivo(ruta) {
+  descargarArchivo(ruta: string) {
     if(ruta) {
       var url = environment.urlProduccion + 'generico/files/downloadfile/1/' + ruta;
       window.open(url, "_blank");
@@ -93,7 +86,7 @@ export class GlobalFunctionsService {
   }
 
   // ELIMINAR ARCHIVO
-  eliminarArchivo(archivo) {
+  eliminarArchivo(archivo: any) {
     return new Promise((resolve) => {
       this.messagesService.showConfirmDialog('¿Seguro que deseas eliminarlo?', '')
       .then((result) => {
@@ -116,14 +109,14 @@ export class GlobalFunctionsService {
   }
 
   // COPIAR VALOR
-  obtenerRutaArchivo(val: string) {
+  obtenerRutaArchivo(valor: string) {
     const selBox = document.createElement('textarea');
     selBox.style.position = 'fixed';
     selBox.style.left = '0';
     selBox.style.top = '0';
     selBox.style.opacity = '0';
     selBox.value = '';
-    selBox.value = val;
+    selBox.value = valor;
     document.body.appendChild(selBox);
     selBox.focus();
     selBox.select();
@@ -131,5 +124,4 @@ export class GlobalFunctionsService {
     document.body.removeChild(selBox);
   }
 
-  // FIN FUNCIONES GLOBALES ARCHIVOS GENERICOS
 }

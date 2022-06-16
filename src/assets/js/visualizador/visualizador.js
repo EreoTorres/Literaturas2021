@@ -19,7 +19,7 @@ function visualizador_js(pdf) {
     thumbnailsPosition : 'left',
     responsiveHandleWidth : 50,
     container: window,
-    containerBackground: '#e5e5e5 radial-gradient(ellipse at center, #bbbbbb 20%, #d1d1d1 100%)',
+    containerBackground: '#e4e4e4',
     containerPadding: "5px",
     toolbarContainerPosition: "bottom",
     pdf: pdf

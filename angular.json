@@ -21,14 +21,14 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets",
-              "src/assets/wow_book/wow_book.css"
+              "src/assets"
             ],
             "styles": [
               "node_modules/ng-pick-datetime/assets/style/picker.min.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/custom-theme.scss",
-              "src/styles.css"
+              "src/styles.css",
+              "src/assets/wow_book/wow_book.css"
             ],
             "scripts": [
               "src/assets/wow_book/pdf.combined.min.js",

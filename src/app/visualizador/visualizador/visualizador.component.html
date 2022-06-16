@@ -1,3 +1,6 @@
 <div style="margin-top: 30px">
     <div id="book"></div>
+    <div *ngIf="messageError">
+        <h3 class="messageError">{{ message }}.</h3>
+    </div>
 </div>

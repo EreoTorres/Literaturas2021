@@ -5,7 +5,7 @@
         </div>
         <div class="card-body text-secondary">
             <div class="mr-3">
-                <button class="btn btn-success float-right" (click)="openModal(docs)">
+                <button class="btn btn-success float-right" (click)="openModal(subirLectura, 1)">
             <mat-icon class="mr-2">cloud_upload</mat-icon><span>Subir Lectura</span>
           </button>
             </div>
@@ -16,10 +16,10 @@
     </div>
   </div>
   
-  <ng-template #docs let-modal [config]="{backdrop: 'static',  keyboard: false}">
+  <ng-template #subirLectura let-modal [config]="{backdrop: 'static',  keyboard: false}">
     <div class="modal-header">
         <h4 class="modal-title" id="modal-basic-title">{{titulo_literatura}}</h4>
-        <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');cerrarModal();">
+        <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
@@ -35,17 +35,17 @@
         <br>
         <ngx-dropzone (change)="onSelect($event)">
             <ngx-dropzone-label>
-                Suelte sus archivos o haga clic en el navegador
+                {{ messageArchivos }}
             </ngx-dropzone-label>
             <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemove()">
-                <ngx-dropzone-label style=" white-space: nowrap;text-overflow: ellipsis;overflow: hidden;width: 90%;">
+                <ngx-dropzone-label style=" white-space: nowrap; text-overflow: ellipsis; overflow: hidden; width: 90%;">
                     {{ f.name }}
                 </ngx-dropzone-label>
             </ngx-dropzone-preview>
         </ngx-dropzone>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-success" (click)="guardar(modal,links);">
+        <button type="button" class="btn btn-success" (click)="guardar(modal);">
         <mat-icon class="mr-2">save</mat-icon>Guardar
       </button>
     </div>
