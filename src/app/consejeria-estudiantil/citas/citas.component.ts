@@ -131,7 +131,7 @@ export class CitasComponent implements OnInit {
       class: 'table table-bordered responsive'
     },
     pager: {
-      perPage: 10,
+      perPage: 5,
     },
     columns: {
       movimiento: {

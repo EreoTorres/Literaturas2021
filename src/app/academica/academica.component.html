@@ -1,5 +1,5 @@
 <div class="example-container" [class.example-is-mobile]="mobileQuery.matches">
-    <mat-toolbar class="mat-elevation-z8" >
+    <mat-toolbar *ngIf="showMenu" class="mat-elevation-z8" >
       <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
       <span>AG Administrator 2021</span>
       <span class="example-spacer"></span>

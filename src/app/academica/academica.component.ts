@@ -4,6 +4,7 @@ import {MediaMatcher} from '@angular/cdk/layout';
 import { MENU_ITEMS } from './academica-menu';
 import { MENU_ITEMS_ADMIN } from '../components/administrador-menu';
 import { Router } from '@angular/router';
+import { GlobalConstants } from './global-constants';
 
 @Component({
   selector: 'app-academica',
@@ -15,6 +16,7 @@ export class AcademicaComponent implements OnInit {
   mobileQuery: MediaQueryList;
   menus: any = MENU_ITEMS;
   programas: any = [];
+  showMenu: boolean = true;
 
   constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher,public router: Router) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
@@ -23,6 +25,8 @@ export class AcademicaComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.showMenu = GlobalConstants.showMenu;
+
     if(sessionStorage.getItem('departamento') == '4'){
       this.menus = MENU_ITEMS_ADMIN;
     }

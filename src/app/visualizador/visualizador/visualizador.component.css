@@ -1,0 +1,12 @@
+.icon {
+    position: absolute;
+    top: 0;
+    z-index: 1000;
+    cursor: pointer;
+    margin: 5px 0px 0px 5px;
+}
+
+.messageError {
+    text-align: center;
+    padding: 30px;
+}
