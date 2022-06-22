@@ -197,9 +197,7 @@ export class HorariosSesionesVirtualesComponent implements OnInit {
     }
 
     ev.newData.id_usuario = sessionStorage.getItem('id');
-
     for (let datos of this.programas) {
-      console.log(datos)
       if (ev.newData.nombre_plan_estudio == datos.title) {
         ev.newData.id_plan_estudio = datos.id
       }

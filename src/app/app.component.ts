@@ -24,20 +24,18 @@ export class AppComponent {
       var res: any = datas;
       
       localStorage.setItem("programas",JSON.stringify(res.resultado));
+    });
 
-      this.formulariosHTTP.getFormularios().then(datas => {
-        var res: any = datas;
-        var registrosForms = res.resultado
-        var programas = [];
-  
-        for (let datos of JSON.parse(localStorage.getItem('programas'))) {
-          if (registrosForms.find(programa => programa.nombre_plan_estudio == datos.nombre_corto)) {
-            programas.push({ value: datos.nombre_corto, title: datos.nombre_corto, id: datos.id })
-          }
-        }
-  
-        localStorage.setItem("programas-formularios",JSON.stringify(programas));
-      })
+    this.formulariosHTTP.getFormularios().then(datas => {
+      var res: any = datas;
+      var registrosForms = res.resultado
+      var programas = [];
+
+      for (let datos of registrosForms) {
+        programas.push({ value: datos.nombre_plan_estudio, title: datos.nombre_plan_estudio, id: datos.id_plan_estudio });
+      }
+
+      localStorage.setItem("programas-formularios",JSON.stringify(programas));
     });
 
     this.literaturasHTTP.getCorporaciones().then(datas => {
