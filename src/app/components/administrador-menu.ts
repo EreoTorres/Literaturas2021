@@ -46,5 +46,11 @@ export const MENU_ITEMS_ADMIN = [
         icon: 'sticky_note_2_outline',
         link: '/consejeria-estudiantil/citas',
         home: true,
+    },
+    {
+        title: 'Asistentes Campañas de Promoción',
+        icon: 'sticky_note_2_outline',
+        link: '/promociones/campanias-asistentes',
+        home: true,
     }
 ];

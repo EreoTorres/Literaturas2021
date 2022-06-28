@@ -21,6 +21,7 @@ import { PublicidadComponent } from './publicidad/publicidad.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { FormularioSesionesVirtualesComponent } from './programaciones/formulario-sesiones-virtuales/formulario-sesiones-virtuales.component';
 import { HorariosSesionesVirtualesComponent } from './programaciones/horarios-sesiones-virtuales/horarios-sesiones-virtuales.component';
+import { AsistentesComponent } from './campanias-asistentes/campanias-asistentes.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { HorariosSesionesVirtualesComponent } from './programaciones/horarios-se
     PublicidadComponent,
     FormularioSesionesVirtualesComponent,
     HorariosSesionesVirtualesComponent,
+    AsistentesComponent,
   ],
   imports: [
     PromocionesRoutingModule,

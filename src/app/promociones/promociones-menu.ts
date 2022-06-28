@@ -11,5 +11,12 @@ export const MENU_ITEMS = [
         link: '/promociones/publicidad',
         home: true,
     },
+    {
+        title: 'Asistentes Campañas de Promoción',
+        icon: 'sticky_note_2_outline',
+        link: '/promociones/campanias-asistentes',
+        home: true,
+    },
+
 ];
   
