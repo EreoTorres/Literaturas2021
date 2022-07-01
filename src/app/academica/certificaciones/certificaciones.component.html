@@ -1,0 +1,67 @@
+<div class="contentT m-5">
+    <div class="card border-secondary shadow ">
+        <div class="card-header text-center" style="font-size: 1.3vw;">
+            Módulo de Certificaciones CISCO
+        </div>
+        <div class="card-body text-secondary">
+            <div class="mr-3">
+                <button class="btn btn-success float-right" (click)="openModal(certificacion)">
+                    <mat-icon class="mr-2">cloud_upload</mat-icon><span>Actualizar certificación</span>
+                </button>
+            </div>
+            <div style="margin-top: 5% !important;width: 100%;">
+                <ng2-smart-table (editConfirm)="actualizarCertificacion($event)" [settings]="settings" [source]="registros"></ng2-smart-table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #certificacion let-modal [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Actualizar certificación</h4>
+        <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <form [formGroup]="formCertificacion" (ngSubmit)="actualizarCertificacion()" novalidate>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-6">
+                <span>Certificacion:</span>
+                <select class="form-control" formControlName="id_certificacion">
+                    <option value="">Selecciona una opción</option>
+                    <option [value]="certificacion.id" *ngFor="let certificacion of certificaciones">{{certificacion.nombre}}</option>
+                </select>
+            </div>
+            <div class="col-6">
+                <span>Plan de estudios:</span>
+                <select class="form-control" formControlName="plan_estudio">
+                    <option value="">Selecciona una opción</option>
+                    <option [value]="plan_estudio.id" *ngFor="let plan_estudio of planes_estudio">{{plan_estudio.nombre}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 15px;">
+            <div class="col-6">
+                <span>Fecha inicio:</span>
+                <input class="form-control" type="date" formControlName="fecha_inicio">
+            </div>
+            <div class="col-6">
+                <span>Fecha fin:</span>
+                <input class="form-control" type="date" formControlName="fecha_fin">
+            </div>
+        </div>
+        <div class="row" style="margin-top: 15px;">
+            <div class="col-12">
+                <span>Url:</span>
+                <input class="form-control" type="text" formControlName="url">
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+          <button type="submit" [disabled]="formCertificacion.invalid" class="btn btn-success">
+          <mat-icon class="mr-2">save</mat-icon>Guardar
+        </button>
+      </div>
+    </form>
+</ng-template>

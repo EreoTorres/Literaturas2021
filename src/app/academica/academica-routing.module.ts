@@ -7,6 +7,7 @@ import { VideosComponent } from './videos/videos.component';
 import { GacetaComponent } from './gaceta/gaceta.component';
 import { BibliotecaVirtualComponent } from './biblioteca-virtual/biblioteca-virtual.component';
 import { VisualizadorComponent } from '../visualizador/visualizador/visualizador.component';
+import { CertificacionesComponent } from './certificaciones/certificaciones.component';
 
 const routes: Routes = [{
   path: '',
@@ -30,6 +31,11 @@ const routes: Routes = [{
     {
       path: 'biblioteca-virtual',
       component: BibliotecaVirtualComponent,
+      canActivate:[AcademicaSesionService]
+    },
+    {
+      path: 'certificaciones',
+      component: CertificacionesComponent,
       canActivate:[AcademicaSesionService]
     },
     {

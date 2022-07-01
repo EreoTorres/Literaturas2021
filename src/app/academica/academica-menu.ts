@@ -28,5 +28,11 @@ export const MENU_ITEMS = [
       icon: 'sticky_note_2_outline',
       link: '/academica/biblioteca-virtual',
       home: true,
+    },
+    {
+      title: 'Certificaciones',
+      icon: 'sticky_note_2_outline',
+      link: '/academica/certificaciones',
+      home: true,
     }
 ];

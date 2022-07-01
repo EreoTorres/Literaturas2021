@@ -46,5 +46,11 @@ export const MENU_ITEMS_ADMIN = [
         icon: 'sticky_note_2_outline',
         link: '/consejeria-estudiantil/citas',
         home: true,
+    },
+    {
+        title: 'Certificaciones',
+        icon: 'sticky_note_2_outline',
+        link: '/academica/certificaciones',
+        home: true,
     }
 ];

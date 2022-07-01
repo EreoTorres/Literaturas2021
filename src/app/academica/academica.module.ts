@@ -21,6 +21,7 @@ import { AcademicaRoutingModule } from './academica-routing.module';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { GacetaComponent } from '../academica/gaceta/gaceta.component';
 import { BibliotecaVirtualComponent } from './biblioteca-virtual/biblioteca-virtual.component';
+import { CertificacionesComponent } from './certificaciones/certificaciones.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { BibliotecaVirtualComponent } from './biblioteca-virtual/biblioteca-virt
     VideosComponent,
     GacetaComponent,
     BibliotecaVirtualComponent,
+    CertificacionesComponent,
   ],
   imports: [
     AcademicaRoutingModule,

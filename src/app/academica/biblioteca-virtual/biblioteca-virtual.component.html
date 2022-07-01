@@ -5,9 +5,12 @@
         </div>
         <div class="card-body text-secondary">
             <div class="mr-3">
-                <button class="btn btn-success float-right" (click)="openModal(subirLectura, 1)">
-            <mat-icon class="mr-2">cloud_upload</mat-icon><span>Subir Lectura</span>
-          </button>
+              <a class="btn btn-secondary float-right" style="margin-left: 1% !important;" href="http://agcollege.edu.mx/literaturas/47/4/MANUAL_PARA_EL_USU_CORRECTO_DEL_MODULO_DE_BIBLIOTECA_VIRTUAL.pdf" target="_blank">
+                  <mat-icon class="mr-2">cloud_download</mat-icon><span>Descargar Manual</span>
+              </a>
+              <button class="btn btn-success float-right" (click)="openModal(subirLectura, 1)">
+                <mat-icon class="mr-2">cloud_upload</mat-icon><span>Subir Lectura</span>
+              </button>
             </div>
             <div style="margin-top: 5% !important;width: 100%;">
                 <ng2-smart-table [settings]="settings" [source]="registros" (custom)="onCustom($event)"></ng2-smart-table>

@@ -124,4 +124,12 @@ export class GlobalFunctionsService {
     document.body.removeChild(selBox);
   }
 
+  fecha(fecha) {
+    let dd = fecha.split("/")[0];
+    let mm = fecha.split("/")[1];
+    let yyyy = fecha.split("/")[2];
+    if(mm.length == 1) mm = '0' + mm;
+    return yyyy + '-' + mm + '-' + dd;
+  }
+
 }

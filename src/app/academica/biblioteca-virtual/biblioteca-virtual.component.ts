@@ -143,7 +143,6 @@ export class BibliotecaVirtualComponent implements OnInit {
         this.openModal(this.subirLectura, 2);
         this.lectura.id = ev.data.id;
         this.lectura.titulo = ev.data.titulo;
-        console.log(this.lectura);
         break;
       }
       case 'eliminar': {
