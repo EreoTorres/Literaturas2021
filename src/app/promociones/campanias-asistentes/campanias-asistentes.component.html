@@ -1,0 +1,71 @@
+<div class="contentT m-5">
+  <div class="card border-secondary shadow ">
+      <div class="card-header text-center" style="font-size: 1.3vw;">
+          Registro de Asistentes a Campañas  de Promoción
+      </div>
+      <div class="card-body text-secondary">
+          <div class="mr-3">
+              <button class="btn btn-success float-right" (click)="openModal(0)">
+               <!-- <mat-icon class="mr-2">calendar_today</mat-icon>--><span>Agregar Asistentes</span>
+              </button>
+          </div>
+          <div style="margin-top: 5% !important;width: 100%;">
+              <ng2-smart-table [settings]="settings" [source]="registros" (custom)="onCustom($event)"></ng2-smart-table>
+          </div>
+      </div>
+  </div>
+</div>
+
+<ng-template #agregarAsistentes let-modal [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">{{titulo}}</h4>
+      <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <form [formGroup]="formAsistentes" (ngSubmit)="validarAsistentes(1)" novalidate>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-12">
+          <span>Región {{isUpdate}}:</span>
+          <select class="form-control" formControlName="region" (change)="getPlanes()">
+            <option value="" disabled>Selecciona una opción</option>
+            <option [value]="region.id" *ngFor="let region of regiones">{{region.nomenclatura}} - {{region.nombre}}</option>
+          </select>
+        </div>
+        <div class="col-12">
+          <span>Plan de Estudio:</span>
+          <select class="form-control" formControlName="plan_estudio" (change)="getCampanias()">
+            <option value="" disabled>Selecciona una opción</option>
+            <option [value]="p.id" *ngFor="let p of planes_estudio">{{p.nombre_corto}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <span>Campaña:</span>
+          <select class="form-control" formControlName="campania" (change)="getResponsables()">
+            <option value="" disabled>Selecciona una opción</option>
+            <option [value]="c.id" *ngFor="let c of campanias">{{c.nombre}}</option>
+          </select>
+        </div>
+        <div class="col-12">
+          <span>Responsable:</span>
+          <select class="form-control" formControlName="responsable">
+            <option value="" disabled>Selecciona una opción</option>
+            <option [value]="r.id" *ngFor="let r of responsables">{{r.nombre}}</option>
+          </select>
+        </div>
+        <div class="col-12">
+          <span>Cantidad:</span>
+          <input class="form-control" type="number" formControlName="cantidad">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" [disabled]="formAsistentes.invalid" class="btn btn-success">
+        <mat-icon class="mr-2">save</mat-icon>Guardar
+      </button>
+    </div>
+  </form>
+</ng-template>

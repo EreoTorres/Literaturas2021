@@ -4,6 +4,7 @@ import { ProgramacionesComponent } from './programaciones/programaciones.compone
 import { PromocionesComponent } from './promociones.component';
 import { PromocionesSesionService } from '../services/sesions-validations/sesion/promociones/promociones-sesion.service';
 import { PublicidadComponent } from './publicidad/publicidad.component';
+import { AsistentesComponent } from './campanias-asistentes/campanias-asistentes.component';
 
 const routes: Routes = [{
   path: '',
@@ -17,6 +18,11 @@ const routes: Routes = [{
     {
       path: 'publicidad',
       component: PublicidadComponent,
+      canActivate:[PromocionesSesionService]
+    },
+    {
+      path: 'campanias-asistentes',
+      component: AsistentesComponent,
       canActivate:[PromocionesSesionService]
     },
     { 
