@@ -29,10 +29,10 @@ export const MENU_ITEMS = [
       link: '/academica/biblioteca-virtual',
       home: true,
     },
-    // {
-    //   title: 'Certificaciones',
-    //   icon: 'today',
-    //   link: '/academica/certificaciones',
-    //   home: true,
-    // }
+    {
+      title: 'Certificaciones',
+      icon: 'today',
+      link: '/academica/certificaciones',
+      home: true,
+    }
 ];

@@ -53,10 +53,10 @@ export const MENU_ITEMS_ADMIN = [
         link: '/promociones/campanias-asistentes',
         home: true,
     },
-    // {
-    //     title: 'Certificaciones',
-    //     icon: 'today',
-    //     link: '/academica/certificaciones',
-    //     home: true,
-    // }
+    {
+        title: 'Certificaciones',
+        icon: 'today',
+        link: '/academica/certificaciones',
+        home: true,
+    }
 ];
