@@ -27,7 +27,7 @@ export class HorariosSesionesVirtualesComponent implements OnInit {
       width: '2%',
       add: true,
       edit: true,
-      delete: false,
+      delete: true,
     },
     add: {
       addButtonContent: '<i class="material-icons-outlined add">add_box</i>',
@@ -43,6 +43,7 @@ export class HorariosSesionesVirtualesComponent implements OnInit {
     },
     delete: {
       deleteButtonContent: '<i class="material-icons-outlined">delete</i>',
+      confirmDelete: true
     },
     attr: {
       class: 'table table-bordered responsive'
@@ -215,6 +216,30 @@ export class HorariosSesionesVirtualesComponent implements OnInit {
       if (res.success == 1) {
         ev.newData.id_programacion = res.id;
         ev.confirm.resolve(ev.newData);
+
+        this.MessagesService.showSuccessDialog(
+          res.message,
+          'success'
+        );
+      } else {
+        this.MessagesService.showSuccessDialog(
+          res.message,
+          'error'
+        );
+      }
+    });
+  }
+
+  eliminar(ev) {
+    this.MessagesService.showLoading();
+    ev.data.id_usuario = sessionStorage.getItem('id');
+    this.programacionHTTP.delProgramacion(ev.data).then(datas => {
+      var res: any = datas;
+      res = res.resultado[0];
+      this.MessagesService.closeLoading();
+
+      if (res.success == 1) {
+        ev.confirm.resolve(ev.data);
 
         this.MessagesService.showSuccessDialog(
           res.message,
