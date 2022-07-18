@@ -34,4 +34,13 @@ export class ProgramacionService {
       })
     });
   }
+
+  delProgramacion(programacion){
+    return new Promise((resolve, reject) => {
+      this.http.post(this.url+'promocion/programacion/delProgramacion', programacion, this.httpHeaders)
+      .subscribe(data => {
+        resolve(data)
+      })
+    });
+  }
 }
