@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { ConsejeriaEstudiantilService } from '../services/http-service/consejeria-estudiantil/consejeria-estudiantil.service';
 import { CitasComponent } from './citas/citas.component';
 import { ConsejeriaEstudiantilComponent } from './consejeria-estudiantil.component';
+import { EncuestasComponent } from './encuestas/encuestas.component';
 
 const routes: Routes = [{
   path: '',
@@ -11,6 +12,11 @@ const routes: Routes = [{
     {
       path: 'citas',
       component: CitasComponent,
+      canActivate:[ConsejeriaEstudiantilService]
+    },
+    {
+      path: 'encuestas',
+      component: EncuestasComponent,
       canActivate:[ConsejeriaEstudiantilService]
     },
     {

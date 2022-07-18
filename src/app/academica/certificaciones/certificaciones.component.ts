@@ -159,6 +159,8 @@ export class CertificacionesComponent implements OnInit {
     }
   };
 
+  fecha_actual:any = new Date();
+
   constructor(
     private certificacionesHTTP: CertificacionesService,
     private modalService: NgbModal,
@@ -176,6 +178,7 @@ export class CertificacionesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.fecha_actual = this.fecha_actual.toISOString().split('T')[0];
     this.getCertificaciones();
     this.getListaCertificaciones();
   }
@@ -235,6 +238,16 @@ export class CertificacionesComponent implements OnInit {
         return false;
       }
       else data = this.formCertificacion.value
+
+      if(data.fecha_inicio < this.fecha_actual) {
+        this.messagesService.showSuccessDialog('La fecha inicio es inválida.', 'warning');
+        return false;
+      }
+    }
+
+    if(data.fecha_fin < this.fecha_actual) {
+      this.messagesService.showSuccessDialog('La fecha fin es inválida.', 'warning');
+      return false;
     }
 
     if(data.fecha_inicio > data.fecha_fin) {

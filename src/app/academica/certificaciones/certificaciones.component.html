@@ -44,11 +44,11 @@
         <div class="row" style="margin-top: 15px;">
             <div class="col-6">
                 <span>Fecha inicio:</span>
-                <input class="form-control" type="date" formControlName="fecha_inicio">
+                <input class="form-control" type="date" formControlName="fecha_inicio" min="{{ fecha_actual }}">
             </div>
             <div class="col-6">
                 <span>Fecha fin:</span>
-                <input class="form-control" type="date" formControlName="fecha_fin">
+                <input class="form-control" type="date" formControlName="fecha_fin" min="{{ fecha_actual }}">
             </div>
         </div>
         <div class="row" style="margin-top: 15px;">

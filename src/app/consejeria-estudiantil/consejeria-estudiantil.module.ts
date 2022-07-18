@@ -18,10 +18,12 @@ import { CommonModule } from '@angular/common';
 import { CitasComponent } from './citas/citas.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { ConsejeriaEstudiantilRoutingModule } from './consejeria-estudiantil-routing.module';
+import { EncuestasComponent } from './encuestas/encuestas.component';
 
 @NgModule({
   declarations: [
     CitasComponent,
+    EncuestasComponent,
   ],
   imports: [
     ConsejeriaEstudiantilRoutingModule,
