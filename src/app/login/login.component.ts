@@ -40,18 +40,21 @@ export class LoginComponent implements OnInit {
         var res: any = datas;
         if(res.codigo == 200){
           sessionStorage.setItem('id', res.resultado[0].id); 
-          sessionStorage.setItem('departamento', res.resultado[0].id_area); 
+          sessionStorage.setItem('departamento', res.resultado[0].id_area);
 
-          if(res.resultado[0].id_area == 2){
-            this.router.navigate(['/academica']);      
-          }else if(res.resultado[0].id_area == 6){
-            this.router.navigate(['/promociones']);
-          }else if(res.resultado[0].id_area == 4){
+          if(res.resultado[0].id_area == 2 || res.resultado[0].id_area == 4){
             this.router.navigate(['/academica']);
-          }else if(res.resultado[0].id_area == 3){
-            console.log('entro')
+          }
+          else if(res.resultado[0].id_area == 6){
+            this.router.navigate(['/promociones']);
+          }
+          else if(res.resultado[0].id_area == 3){
             this.router.navigate(['/control-escolar']);
           }
+          else if(res.resultado[0].id_area == 16){
+            this.router.navigate(['/consejeria-estudiantil']);
+          }
+          else this.MessagesService.showSuccessDialog('Acceso denegado.','error');
 
           this.resetForm()
         }else{

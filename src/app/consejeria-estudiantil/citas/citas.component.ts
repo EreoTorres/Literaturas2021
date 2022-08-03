@@ -95,7 +95,14 @@ export class CitasComponent implements OnInit {
       estatus: {
         title: 'Estatus',
         type: 'html',
-        width: '20%'
+        width: '20%',
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'TODOS',
+            list: ''
+          },
+        }
       },
       fecha_registro: {
         title: 'Fecha de registro',
@@ -209,14 +216,20 @@ export class CitasComponent implements OnInit {
       this.horarios = res.resultado;
     });
 
-    this.citasHTTP.getEstatus({tipo : 1}).then(datas => {
+    this.citasHTTP.getEstatus({tipo : 1, select: 0}).then(datas => {
       var res: any = datas;
       this.estatus = res.resultado;
     });
 
-    this.citasHTTP.getEstatus({tipo : 2}).then(datas => {
+    this.citasHTTP.getEstatus({tipo : 2, select: 0}).then(datas => {
       var res: any = datas;
       this.estatus2 = res.resultado;
+    });
+
+    this.citasHTTP.getEstatus({tipo : 2, select: 1}).then(datas => {
+      var res: any = datas;
+      this.settings.columns.estatus.filter.config.list = res.resultado
+      this.settings = Object.assign({}, this.settings)
     });
 
     this.citasHTTP.getConsejeros().then(datas => {
@@ -277,11 +290,31 @@ export class CitasComponent implements OnInit {
     }
   }
 
+  validarEstatus(tipo: any) {
+    if(tipo == 1) {
+      if(this.formCita.value.estatus == 3) {
+        this.formCita.controls['consejero'].disable()
+        this.formCita.controls['consejero'].setValue('')
+      }
+      else this.formCita.controls['consejero'].enable()
+    }
+    else {
+      if(this.formAsignacion.value.estatus == 3) {
+        this.formAsignacion.controls['consejero'].disable()
+        this.formAsignacion.controls['consejero'].setValue('')
+      }
+      else this.formAsignacion.controls['consejero'].enable()
+    }
+  }
+
   validarCita(tipo: any) {
     (tipo == 1 ? this.formFinal = this.formCita : this.formFinal = this.formAsignacion);
     this.formFinal.controls['responsable'].setValue(sessionStorage.getItem('id'));
     if (this.formFinal.valid) {
-      if(this.formFinal.value.estatus == 7) {
+      let estatus = this.formFinal.value.estatus
+      let consejero = this.formFinal.value.consejero
+      if((estatus == 2 || estatus == 5) && !consejero) this.MessagesService.showSuccessDialog('Lo siento, para aplicar el estatus "' + (estatus = 2 ? 'Asignado' : 'Atendido') + '" se necesita seleccionar un consejero.', 'warning')
+      else if(estatus == 7) {
         this.MessagesService.showConfirmDialog('¿Está seguro de que desea eliminar este registro?', '').then((result) => {
           if(result.isConfirmed) this.actualizarCita();
         });

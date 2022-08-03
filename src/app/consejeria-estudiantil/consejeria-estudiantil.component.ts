@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { MENU_ITEMS } from '../control-escolar/control-escolar-menu';
+import { MENU_ITEMS } from '../consejeria-estudiantil/consejeria-estudiantil-menu';
 import { MENU_ITEMS_ADMIN } from '../components/administrador-menu';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { Router } from '@angular/router';

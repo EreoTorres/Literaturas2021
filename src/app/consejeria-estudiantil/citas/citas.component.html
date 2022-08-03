@@ -85,7 +85,7 @@
         <div class="row">
           <div class="col-12">
             <span>Estatus de la cita:</span>
-            <select class="form-control" formControlName="estatus">
+            <select class="form-control" formControlName="estatus" (change)="validarEstatus(1)">
               <option value="">Selecciona una opción</option>
               <option [value]="estatu.id" *ngFor="let estatu of estatus">{{estatu.descripcion}}</option>
             </select>
@@ -94,7 +94,7 @@
         <div class="row">
           <div class="col-12">
             <span>Consejero:</span>
-            <select class="form-control" formControlName="consejero">
+            <select class="form-control" formControlName="consejero" (change)="validarEstatus(1)">
               <option value="">Selecciona una opción</option>
               <option [value]="consejero.id" *ngFor="let consejero of consejeros">{{consejero.nombre}}</option>
             </select>
@@ -134,7 +134,7 @@
       <div class="row">
         <div class="col-12">
           <span>Estatus:</span>
-          <select class="form-control" formControlName="estatus">
+          <select class="form-control" formControlName="estatus" (change)="validarEstatus(2)">
             <option value="">Selecciona una opción</option>
             <option [value]="estatu.id" *ngFor="let estatu of estatus2">{{estatu.descripcion}}</option>
           </select>
@@ -143,7 +143,7 @@
       <div class="row">
         <div class="col-12">
           <span>Consejero asignado:</span>
-          <select class="form-control" formControlName="consejero">
+          <select class="form-control" formControlName="consejero" (change)="validarEstatus(2)">
             <option value="">Selecciona una opción</option>
             <option [value]="consejero.id" *ngFor="let consejero of consejeros">{{consejero.nombre}}</option>
           </select>

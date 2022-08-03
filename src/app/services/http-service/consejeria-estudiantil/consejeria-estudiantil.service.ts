@@ -20,8 +20,7 @@ export class ConsejeriaEstudiantilService {
 
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
-    if(sessionStorage.getItem('departamento') == '3' || sessionStorage.getItem('departamento') == '6' ||
-    sessionStorage.getItem('departamento') == '4'){
+    if(sessionStorage.getItem('departamento') == '16' || sessionStorage.getItem('departamento') == '4'){
       return true;
     }else{
       this.router.navigate(['login']);
