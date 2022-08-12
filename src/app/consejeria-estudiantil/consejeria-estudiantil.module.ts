@@ -19,11 +19,13 @@ import { CitasComponent } from './citas/citas.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { ConsejeriaEstudiantilRoutingModule } from './consejeria-estudiantil-routing.module';
 import { EncuestasComponent } from './encuestas/encuestas.component';
+import { ExpedienteDigitalComponent } from './expediente-digital/expediente-digital.component';
 
 @NgModule({
   declarations: [
     CitasComponent,
     EncuestasComponent,
+    ExpedienteDigitalComponent,
   ],
   imports: [
     ConsejeriaEstudiantilRoutingModule,

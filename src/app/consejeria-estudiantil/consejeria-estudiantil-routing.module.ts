@@ -4,6 +4,7 @@ import { ConsejeriaEstudiantilService } from '../services/http-service/consejeri
 import { CitasComponent } from './citas/citas.component';
 import { ConsejeriaEstudiantilComponent } from './consejeria-estudiantil.component';
 import { EncuestasComponent } from './encuestas/encuestas.component';
+import { ExpedienteDigitalComponent } from './expediente-digital/expediente-digital.component';
 
 const routes: Routes = [{
   path: '',
@@ -17,6 +18,11 @@ const routes: Routes = [{
     {
       path: 'encuestas',
       component: EncuestasComponent,
+      canActivate:[ConsejeriaEstudiantilService]
+    },
+    {
+      path: 'expediente-digital',
+      component: ExpedienteDigitalComponent,
       canActivate:[ConsejeriaEstudiantilService]
     },
     {

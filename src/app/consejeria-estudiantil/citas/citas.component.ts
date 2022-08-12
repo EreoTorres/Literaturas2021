@@ -192,6 +192,7 @@ export class CitasComponent implements OnInit {
       plan_estudio: [null, [Validators.required]],
       nombre_alumno: ['', [Validators.required]],
       motivo: ['', [Validators.required]],
+      detalle: [null],
       estatus: [null, [Validators.required]],
       consejero: [null],
       comentarios: [null],
@@ -366,10 +367,12 @@ export class CitasComponent implements OnInit {
       this.formAsignacion.controls['plan_estudio'].setValue(ev.data.id_plan_estudio);
       this.formAsignacion.controls['nombre_alumno'].setValue(ev.data.nombre_alumno);
       this.formAsignacion.controls['motivo'].setValue(ev.data.motivo);
+      this.formAsignacion.controls['detalle'].setValue(ev.data.detalle);
       this.formAsignacion.controls['estatus'].setValue(ev.data.id_estatus);
       let c = '';
       (ev.data.id_consejero == 0 ? c = '' : c = ev.data.id_consejero);
       this.formAsignacion.controls['consejero'].setValue(c);
+      this.formAsignacion.controls['comentarios'].setValue(ev.data.comentarios);
     }
     else if(ev.action == 'historial') {
       this.MessagesService.showLoading();

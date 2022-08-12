@@ -1,0 +1,69 @@
+<div class="contentT m-5">
+    <div class="card border-secondary shadow ">
+        <div class="card-header text-center" style="font-size: 1.3vw;">
+            Módulo de Expediente Digital
+        </div>
+        <div class="card-body text-secondary">
+            <form [formGroup]="formAlumnos" novalidate>
+                <div class="row">
+                    <div class="col-2">
+                        <span>Plan de estudio:</span>
+                        <select class="form-control" formControlName="id_plan_estudio">
+                            <option value="" disabled selected>Selecciona una opción</option>
+                            <option [value]="programa.id" *ngFor="let programa of programas">{{ programa.nombre_corto }}</option>
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        <span>Plan de estudio:</span>
+                        <select class="form-control" formControlName="id_plan_estudio">
+                            <option value="" disabled selected>Selecciona una opción</option>
+                            <option [value]="programa.id" *ngFor="let programa of programas">{{ programa.nombre_corto }}</option>
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        <span>Plan de estudio:</span>
+                        <select class="form-control" formControlName="id_plan_estudio">
+                            <option value="" disabled selected>Selecciona una opción</option>
+                            <option [value]="programa.id" *ngFor="let programa of programas">{{ programa.nombre_corto }}</option>
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        <span>Plan de estudio:</span>
+                        <select class="form-control" formControlName="id_plan_estudio">
+                            <option value="" disabled selected>Selecciona una opción</option>
+                            <option [value]="programa.id" *ngFor="let programa of programas">{{ programa.nombre_corto }}</option>
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        <span>Plan de estudio:</span>
+                        <select class="form-control" formControlName="id_plan_estudio">
+                            <option value="" disabled selected>Selecciona una opción</option>
+                            <option [value]="programa.id" *ngFor="let programa of programas">{{ programa.nombre_corto }}</option>
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        <span>Plan de estudio:</span>
+                        <select class="form-control" formControlName="id_plan_estudio">
+                            <option value="" disabled selected>Selecciona una opción</option>
+                            <option [value]="programa.id" *ngFor="let programa of programas">{{ programa.nombre_corto }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: -60px;">
+                    <div class="col-2">
+                        <div class="float-left">
+                            <span>Realizar búsqueda por:</span>
+                            <select class="form-control" formControlName="tipo_busqueda">
+                                <option value="" disabled selected>Selecciona una opción</option>
+                                <option [value]="tipo.id" *ngFor="let tipo of tipos_busqueda">{{ tipo.nombre }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div style="margin-top: 5% !important; width: 100%;">
+                <ng2-smart-table [settings]="settings" [source]="registros" (custom)="onCustom($event)"></ng2-smart-table>
+            </div>
+        </div>
+    </div>
+</div>
