@@ -129,6 +129,11 @@ export class HorariosSesionesVirtualesComponent implements OnInit {
         type: 'string',
         width: '15%',
       },
+      url_calendario: {
+        title: 'Url agregar a calendario',
+        type: 'string',
+        width: '15%',
+      },
       estatus: {
         title: 'Estatus',
         type: 'html',
