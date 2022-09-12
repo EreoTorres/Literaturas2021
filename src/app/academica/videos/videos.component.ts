@@ -26,6 +26,7 @@ export class VideosComponent implements OnInit {
 
   pagination: any;
   programas: any = [];
+  generaciones: any = [];
   tipofiltro: any = '1';
   date: any;
   filtrotxt: any = '';
@@ -42,6 +43,7 @@ export class VideosComponent implements OnInit {
     html_iframe: '',
     descripcion: '',
     id_plan_estudio: undefined,
+    id_generacion:undefined,
     tipo: 1,
     id_materia: undefined,
     id_categoria: undefined,
@@ -155,7 +157,7 @@ export class VideosComponent implements OnInit {
     this.MessagesService.showLoading();
     this.videosHTTP.getVideoUno(video).then(datas => {
       var res: any = datas;
-      this.getMaterias(1, res.resultado[0].id_plan_estudio);
+      this.getPlanEstudioChange(1, res.resultado[0].id_plan_estudio);
       this.video = res.resultado[0];
       this.MessagesService.closeLoading();
     });
@@ -168,6 +170,21 @@ export class VideosComponent implements OnInit {
       this.categorias = res.resultado
       this.MessagesService.closeLoading();
     });
+  }
+
+  getGeneraciones(id_plan_estudio){
+    this.generaciones = null;
+    if(id_plan_estudio > 0 ){
+      this.MessagesService.showLoading();
+      this.videosHTTP.getGeneraciones({id:id_plan_estudio}).then(datas => {
+        var res: any = datas;
+        this.generaciones = res.resultado
+        this.MessagesService.closeLoading();
+      });
+    }else{
+      this.getVideos();
+    }
+    this.video.id_generacion = undefined;
   }
 
   openModal(id_video){
@@ -199,6 +216,11 @@ export class VideosComponent implements OnInit {
       return;
     }
 
+    if(this.video.id_plan_estudio == 50 && (this.video.id_generacion==0 || this.video.id_generacion==undefined)){
+      this.MessagesService.showSuccessDialog("La generación es requerida.", 'error');
+      return;
+    }
+
     modal.close('Save click');
     this.MessagesService.showLoading();
     
@@ -221,6 +243,8 @@ export class VideosComponent implements OnInit {
   }
 
   getMaterias(modal, id_plan_estudio){
+    this.materias = null;
+    this.materias2 = null;
     if(id_plan_estudio > 0 ){
       this.MessagesService.showLoading();
 
@@ -237,10 +261,14 @@ export class VideosComponent implements OnInit {
         }
       });
     }else{
-      this.materias = null;
       this.getVideos();
     }
     this.video.id_materia = undefined;
+  }
+
+  getPlanEstudioChange(modal, id_plan_estudio){
+    this.getMaterias(modal, id_plan_estudio);
+    this.getGeneraciones(id_plan_estudio);
   }
 
   resetForm(id_video){
@@ -254,6 +282,7 @@ export class VideosComponent implements OnInit {
       tipo: 1,
       id_materia: undefined,
       id_categoria:undefined,
+      id_generacion:undefined,
       estatus:1,
       id:id_video,
       id_usuario: sessionStorage.getItem('id')

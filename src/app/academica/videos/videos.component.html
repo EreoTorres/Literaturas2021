@@ -31,7 +31,7 @@
             <div class="row">
                 <div class="col-4">
                     <span>Planes de estudio:</span>
-                    <select class="form-control" required id="id_plan_estudio" name="id_plan_estudio" (change)="getMaterias(1,$event.target.value)" [(ngModel)]="video.id_plan_estudio">
+                    <select class="form-control" required id="id_plan_estudio" name="id_plan_estudio" (change)="getPlanEstudioChange(1,$event.target.value)" [(ngModel)]="video.id_plan_estudio">
                         <option value="undefined" disabled selected>Selecciona un plan de estudio</option>
                         <option [value]="item.id" *ngFor="let item of programas">{{item.nombre_corto}}</option>
                     </select>
@@ -69,6 +69,16 @@
                     <span>Descripcion:</span>
                     <textarea class="form-control" required id="descripcion" name="descripcion" [(ngModel)]="video.descripcion" style="height: 100px !important;max-height: 100px !important;" placeholder="Descripción del {{video.servicio}}"></textarea>
                 </div>
+            </div>
+            <div class="row" *ngIf="video.id_plan_estudio == 50">
+                <div class="col-12">
+                    <br>
+                    <span>Generación Académica:</span>
+                    <select class="form-control" [required]="video.id_plan_estudio == 50" id="id_generacion" name="id_generacion" [(ngModel)]="video.id_generacion">
+                        <option value="undefined" disabled selected>Selecciona una generación</option>
+                        <option [value]="item.id" *ngFor="let item of generaciones">{{item.generacion}}</option>
+                    </select>
+               </div>
             </div>
             <br>
             <div class="row">
