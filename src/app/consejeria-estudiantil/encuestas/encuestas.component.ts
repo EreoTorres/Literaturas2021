@@ -84,7 +84,7 @@ export class EncuestasComponent implements OnInit {
   }
 
   getEncuestas(info: any) {
-    this.encuestasHTTP.getEncuestas(info).then(datas => {
+    this.encuestasHTTP.generico('getEncuestas', info).then(datas => {
       var res: any = datas
       this.encuestas = res.resultado
       
@@ -166,7 +166,7 @@ export class EncuestasComponent implements OnInit {
 
   getAlumno(alumno: any) {
     return new Promise(resolve => {
-      this.encuestasHTTP.getAlumno(alumno)
+      this.encuestasHTTP.generico('getAlumno', alumno)
       .then(data => {
         var res: any = data
         if(res.codigo == 200) {
@@ -305,7 +305,7 @@ export class EncuestasComponent implements OnInit {
 
   asignarEncuestaAlumno(info: any) {
     return new Promise(resolve => {
-      this.encuestasHTTP.asignarEncuestaAlumno(info)
+      this.encuestasHTTP.generico('asignarEncuestaAlumno', info)
       .then(data => {
         var res: any = data
         if(res.codigo == 200) resolve(true)

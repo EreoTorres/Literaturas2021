@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
 export class EncuestasService {
   public url = environment.urlProduccion;
   httpHeaders: any;
-  ruta: string = 'consejeria_estudiantil/encuestas/'
+  ruta: string = 'consejeria_estudiantil/encuestas/';
 
   constructor(public http:HttpClient) {
     this.httpHeaders = {
@@ -18,27 +18,9 @@ export class EncuestasService {
     };
   }
 
-  getEncuestas(info) {
+  generico(metodo: string, data: any = {}) {
     return new Promise((resolve, reject) => {
-      this.http.post(this.url + this.ruta + 'getEncuestas', info, this.httpHeaders)
-      .subscribe(data => {
-        resolve(data)
-      })
-    })
-  }
-
-  getAlumno(alumno) {
-    return new Promise((resolve, reject) => {
-      this.http.post(this.url + this.ruta + 'getAlumno', alumno, this.httpHeaders)
-      .subscribe(data => {
-        resolve(data)
-      })
-    })
-  }
-
-  asignarEncuestaAlumno(alumno) {
-    return new Promise((resolve, reject) => {
-      this.http.post(this.url + this.ruta + 'asignarEncuestaAlumno', alumno, this.httpHeaders)
+      this.http.post(this.url + this.ruta + metodo, data, this.httpHeaders)
       .subscribe(data => {
         resolve(data)
       })

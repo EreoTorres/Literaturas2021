@@ -156,7 +156,7 @@ textarea{
   color: white;
 }
 
-.col-12 {
+.col-12, .col-6 {
   margin-top: 10px;
 }
 
@@ -235,4 +235,17 @@ textarea{
 
 textarea {
   resize: none;
+}
+
+.active {
+  color: black !important;
+}
+
+.nav-link {
+  color: white;
+  background: #141E34;
+}
+
+.form-check-label {
+  color: black;
 }

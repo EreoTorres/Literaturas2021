@@ -42,6 +42,8 @@ import { InputprogramasAllComponent } from './components/inputprogramas-all/inpu
 import { ConsejeriaEstudiantilComponent } from './consejeria-estudiantil/consejeria-estudiantil.component';
 import { ConsejeriaEstudiantilService } from './services/http-service/consejeria-estudiantil/consejeria-estudiantil.service';
 import { VisualizadorComponent } from './visualizador/visualizador/visualizador.component';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { InputprogramasCeComponent } from './components/inputprogramas-ce/inputprogramas-ce.component';
 
 export class DefaultIntl extends OwlDateTimeIntl {
   /** A label for the cancel button */
@@ -71,7 +73,8 @@ export class DefaultIntl extends OwlDateTimeIntl {
     ControlEscolarComponent,
     InputprogramasAllComponent,
     ConsejeriaEstudiantilComponent,
-    VisualizadorComponent
+    VisualizadorComponent,
+    InputprogramasCeComponent
   ],
   imports: [
     BrowserModule,
@@ -96,7 +99,8 @@ export class DefaultIntl extends OwlDateTimeIntl {
     OwlDateTimeModule,
     OwlNativeDateTimeModule,
     CommonModule,
-    Ng2SmartTableModule
+    Ng2SmartTableModule,
+    CKEditorModule
   ],
   entryComponents: [
     SmartTableDatepickerComponent,

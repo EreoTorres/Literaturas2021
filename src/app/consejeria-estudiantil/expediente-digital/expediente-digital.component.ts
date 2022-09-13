@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { ExpedienteDigitalService } from 'src/app/services/http-service/consejeria-estudiantil/expediente-digital/expediente-digital.service';
-import { ConsejeriaEstudiantilComponent } from '../consejeria-estudiantil.component';
 import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 
@@ -40,14 +39,14 @@ export class ExpedienteDigitalComponent implements OnInit {
       usuario: {
         title: 'Usuario',
         type: 'string',
-        width: '20%'
+        width: '15%'
       },
       numero_empleado: {
         title: 'Número de empleado',
         type: 'string',
-        width: '20%'
+        width: '15%'
       },
-      nombre_alumno: {
+      nombre_completo: {
         title: 'Nombre completo',
         type: 'string',
         width: '30%'
@@ -60,7 +59,16 @@ export class ExpedienteDigitalComponent implements OnInit {
           type: 'list',
           config: {
             selectText: 'TODOS',
-            list: ''
+            list: [
+              {
+                value: 'ACTIVO',
+                title: 'ACTIVO'
+              },
+              {
+                value: 'SUSPENDIDOS POR INACTIVIDAD',
+                title: 'SUSPENDIDOS POR INACTIVIDAD'
+              }
+            ]
           }
         }
       }
@@ -68,7 +76,7 @@ export class ExpedienteDigitalComponent implements OnInit {
   }
 
   constructor(
-    private expedienteDigitalHTTP: ExpedienteDigitalService,
+    private ExpedienteDigitalHTTP: ExpedienteDigitalService,
     private messagesService: MessagesService,
     private formBuilder: FormBuilder
   ) {
@@ -78,11 +86,12 @@ export class ExpedienteDigitalComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getAlumnos()
   }
 
   getAlumnos() {
     this.messagesService.showLoading();
-    this.expedienteDigitalHTTP.getAlumnos({id_plan_estudio: 22}).then(datas => {
+    this.ExpedienteDigitalHTTP.generico('getAlumnos', {id_plan_estudio: 22}).then(datas => {
       var res: any = datas;
       this.registros = res.resultado
       this.messagesService.closeLoading();

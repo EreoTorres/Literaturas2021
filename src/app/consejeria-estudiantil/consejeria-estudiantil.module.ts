@@ -12,7 +12,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
-import {MatDialogModule} from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { CommonModule } from '@angular/common';
 import { CitasComponent } from './citas/citas.component';
@@ -20,12 +20,19 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { ConsejeriaEstudiantilRoutingModule } from './consejeria-estudiantil-routing.module';
 import { EncuestasComponent } from './encuestas/encuestas.component';
 import { ExpedienteDigitalComponent } from './expediente-digital/expediente-digital.component';
+import { EventosComponent } from './eventos/eventos.component';
+import { FormularioEventosComponent } from './eventos/formulario-eventos/formulario-eventos.component';
+import { AgendaComponent } from './eventos/agenda/agenda.component';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 
 @NgModule({
   declarations: [
     CitasComponent,
     EncuestasComponent,
     ExpedienteDigitalComponent,
+    EventosComponent,
+    FormularioEventosComponent,
+    AgendaComponent
   ],
   imports: [
     ConsejeriaEstudiantilRoutingModule,
@@ -45,7 +52,8 @@ import { ExpedienteDigitalComponent } from './expediente-digital/expediente-digi
     MatDialogModule,
     NgxDropzoneModule,
     NgxPaginationModule,
-    CommonModule
+    CommonModule,
+    CKEditorModule
   ],
 })
 export class ConsejeriaEstudiantilModule {

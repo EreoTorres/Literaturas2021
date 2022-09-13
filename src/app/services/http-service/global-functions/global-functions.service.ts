@@ -132,4 +132,22 @@ export class GlobalFunctionsService {
     return yyyy + '-' + mm + '-' + dd;
   }
 
+  newUYDate(pDate) {
+    let dd = pDate.split("/")[0].padStart(2, "0");
+    let mm = pDate.split("/")[1].padStart(2, "0");
+    let yyyy = pDate.split("/")[2].split(" ")[0];
+
+    if (mm.length == 1) {
+      mm = '0' + mm;
+    }
+
+    if (pDate.split(" ")[1]) {
+      let horas: any = pDate.split(" ")[1] + ':00';
+      horas = horas.split(":");
+      return yyyy + '-' + mm + '-' + dd + ' ' + horas[0] + ':' + horas[1] + ':' + horas[2];
+    } else {
+      return yyyy + '-' + mm + '-' + dd;
+    }
+  }
+
 }

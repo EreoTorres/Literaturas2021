@@ -10,5 +10,11 @@ export const MENU_ITEMS = [
     icon: 'sticky_note_2_outline',
     link: '/consejeria-estudiantil/encuestas',
     home: true,
-},
+  },
+  {
+    title: 'Eventos',
+    icon: 'sticky_note_2_outline',
+    link: '/consejeria-estudiantil/eventos',
+    home: true,
+  },
 ];

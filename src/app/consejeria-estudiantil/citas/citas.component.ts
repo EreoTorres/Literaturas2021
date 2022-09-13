@@ -207,33 +207,33 @@ export class CitasComponent implements OnInit {
   }
 
   getFormulario() {
-    this.citasHTTP.getMotivos().then(datas => {
+    this.citasHTTP.generico('getMotivos').then(datas => {
       var res: any = datas;
       this.motivos = res.resultado;
     });
 
-    this.citasHTTP.getHorarios().then(datas => {
+    this.citasHTTP.generico('getHorarios').then(datas => {
       var res: any = datas;
       this.horarios = res.resultado;
     });
 
-    this.citasHTTP.getEstatus({tipo : 1, select: 0}).then(datas => {
+    this.citasHTTP.generico('getEstatus', {tipo : 1, select: 0}).then(datas => {
       var res: any = datas;
       this.estatus = res.resultado;
     });
 
-    this.citasHTTP.getEstatus({tipo : 2, select: 0}).then(datas => {
+    this.citasHTTP.generico('getEstatus', {tipo : 2, select: 0}).then(datas => {
       var res: any = datas;
       this.estatus2 = res.resultado;
     });
 
-    this.citasHTTP.getEstatus({tipo : 2, select: 1}).then(datas => {
+    this.citasHTTP.generico('getEstatus', {tipo : 2, select: 1}).then(datas => {
       var res: any = datas;
       this.settings.columns.estatus.filter.config.list = res.resultado
       this.settings = Object.assign({}, this.settings)
     });
 
-    this.citasHTTP.getConsejeros().then(datas => {
+    this.citasHTTP.generico('getConsejeros').then(datas => {
       var res: any = datas;
       this.consejeros = res.resultado;
     });
@@ -251,7 +251,7 @@ export class CitasComponent implements OnInit {
 
   getCitas() {
     this.MessagesService.showLoading();
-    this.citasHTTP.getCitas().then(datas => {
+    this.citasHTTP.generico('getCitas').then(datas => {
       var res: any = datas;
       this.registros = res.resultado
       this.MessagesService.closeLoading();
@@ -267,7 +267,7 @@ export class CitasComponent implements OnInit {
         numero_empleado: this.formCita.value.numero_empleado,
         id_plan_estudio: this.formCita.value.plan_estudio
       }
-      this.citasHTTP.getAlumno(alumno).then(datas => {
+      this.citasHTTP.generico('getAlumno', alumno).then(datas => {
         var res: any = datas;
         if(res.codigo == 0) {
           this.formCita.controls['nombre_alumno'].setValue('');
@@ -280,7 +280,7 @@ export class CitasComponent implements OnInit {
         else {
           this.formCita.controls['idmoodle'].setValue(res.resultado[0].idmoodle);
           this.formCita.controls['nombre_alumno'].setValue(res.resultado[0].nombre_alumno);
-          this.citasHTTP.getAlumnoTelefonos({id_alumno: res.resultado[0].id_alumno}).then(datas => {
+          this.citasHTTP.generico('getAlumnoTelefonos', {id_alumno: res.resultado[0].id_alumno}).then(datas => {
             var res: any = datas;
             this.contactos = res.resultado;
             this.bandera.loading = false;
@@ -327,7 +327,7 @@ export class CitasComponent implements OnInit {
 
   actualizarCita() {
     this.MessagesService.showLoading();
-    this.citasHTTP.actualizarCita(this.formFinal.value).then(datas => {
+    this.citasHTTP.generico('actualizarCita', this.formFinal.value).then(datas => {
       var res: any = datas;
       if(res.codigo == 0) this.MessagesService.showSuccessDialog(res.mensaje, 'error');
       else {
@@ -380,7 +380,7 @@ export class CitasComponent implements OnInit {
         id_cita: ev.data.id_cita,
         responsable: sessionStorage.getItem('id')
       }
-      this.citasHTTP.getMovimientos(cita).then(datas => {
+      this.citasHTTP.generico('getMovimientos', cita).then(datas => {
         var res: any = datas;
         this.movimientos = res.resultado;
         this.openModal(this.historialMovimientos);

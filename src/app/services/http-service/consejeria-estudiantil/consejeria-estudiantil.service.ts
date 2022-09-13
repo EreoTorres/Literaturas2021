@@ -18,11 +18,9 @@ export class ConsejeriaEstudiantilService {
     };
   }
 
-
   canActivate(route: ActivatedRouteSnapshot): boolean {
-    if(sessionStorage.getItem('departamento') == '16' || sessionStorage.getItem('departamento') == '4'){
-      return true;
-    }else{
+    if(sessionStorage.getItem('departamento') == '16' || sessionStorage.getItem('departamento') == '4') return true;
+    else {
       this.router.navigate(['login']);
       return false;
     }

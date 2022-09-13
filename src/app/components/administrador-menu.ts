@@ -54,6 +54,12 @@ export const MENU_ITEMS_ADMIN = [
         home: true,
     },
     {
+        title: 'Eventos',
+        icon: 'sticky_note_2_outline',
+        link: '/consejeria-estudiantil/eventos',
+        home: true,
+    },
+    {
         title: 'Asistentes Campañas de Promoción',
         icon: 'sticky_note_2_outline',
         link: '/promociones/campanias-asistentes',

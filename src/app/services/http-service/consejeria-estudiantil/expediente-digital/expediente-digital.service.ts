@@ -18,9 +18,9 @@ export class ExpedienteDigitalService {
     };
   }
 
-  getAlumnos(filtro) {
+  generico(metodo: string, data: any = {}) {
     return new Promise((resolve, reject) => {
-      this.http.post(this.url + this.ruta + 'getAlumnos', filtro, this.httpHeaders)
+      this.http.post(this.url + this.ruta + metodo, data, this.httpHeaders)
       .subscribe(data => {
         resolve(data)
       })

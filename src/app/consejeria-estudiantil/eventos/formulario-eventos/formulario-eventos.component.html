@@ -1,0 +1,59 @@
+<div class="mr-3">
+    <button class="btn btn-success float-right" (click)="openModal(agregarEvento, true)">
+      <mat-icon class="mr-2">calendar_today</mat-icon><span>Agregar evento</span>
+    </button>
+</div>
+
+<br>
+<br>
+
+<ng2-smart-table [settings]="settings" [source]="registros" (custom)="onCustom($event)"></ng2-smart-table>
+
+<ng-template #agregarEvento let-modal [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Agregar evento</h4>
+      <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <form [formGroup]="formEvento" (ngSubmit)="guardarEvento()" novalidate>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-12">
+          <span>Título:</span>
+          <input class="form-control" type="text" formControlName="titulo">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <span>Programa:</span>
+          <select class="form-control" formControlName="plan_estudio">
+            <option value="">SELECCIONA UNA OPCIÓN</option>
+            <option value="TODOS" *ngIf="bandera">TODOS LOS PROGRAMAS</option>
+            <option [value]="programa.value" *ngFor="let programa of programas">{{programa.title}}</option>
+          </select>
+        </div>
+        <div class="col-6">
+          <span>Estatus:</span>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" formControlName="estatus">
+            <label class="form-check-label">
+              HABILITADO
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <span>Contenido:</span>
+          <ckeditor [editor]="editor_cotenido" formControlName="contenido"></ckeditor>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" [disabled]="formEvento.invalid" class="btn btn-success">
+        <mat-icon class="mr-2">save</mat-icon>Guardar
+      </button>
+    </div>
+  </form>
+</ng-template>

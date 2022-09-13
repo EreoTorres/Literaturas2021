@@ -1,10 +1,10 @@
-<!-- <div class="contentT m-5">
+<div class="contentT m-5">
     <div class="card border-secondary shadow ">
         <div class="card-header text-center" style="font-size: 1.3vw;">
             Módulo de Expediente Digital
         </div>
         <div class="card-body text-secondary">
-            <form [formGroup]="formAlumnos" novalidate>
+            <!-- <form [formGroup]="formAlumnos" novalidate>
                 <div class="row">
                     <div class="col-2">
                         <span>Plan de estudio:</span>
@@ -13,57 +13,45 @@
                             <option [value]="programa.id" *ngFor="let programa of programas">{{ programa.nombre_corto }}</option>
                         </select>
                     </div>
-                    <div class="col-2">
-                        <span>Plan de estudio:</span>
-                        <select class="form-control" formControlName="id_plan_estudio">
-                            <option value="" disabled selected>Selecciona una opción</option>
-                            <option [value]="programa.id" *ngFor="let programa of programas">{{ programa.nombre_corto }}</option>
-                        </select>
-                    </div>
-                    <div class="col-2">
-                        <span>Plan de estudio:</span>
-                        <select class="form-control" formControlName="id_plan_estudio">
-                            <option value="" disabled selected>Selecciona una opción</option>
-                            <option [value]="programa.id" *ngFor="let programa of programas">{{ programa.nombre_corto }}</option>
-                        </select>
-                    </div>
-                    <div class="col-2">
-                        <span>Plan de estudio:</span>
-                        <select class="form-control" formControlName="id_plan_estudio">
-                            <option value="" disabled selected>Selecciona una opción</option>
-                            <option [value]="programa.id" *ngFor="let programa of programas">{{ programa.nombre_corto }}</option>
-                        </select>
-                    </div>
-                    <div class="col-2">
-                        <span>Plan de estudio:</span>
-                        <select class="form-control" formControlName="id_plan_estudio">
-                            <option value="" disabled selected>Selecciona una opción</option>
-                            <option [value]="programa.id" *ngFor="let programa of programas">{{ programa.nombre_corto }}</option>
-                        </select>
-                    </div>
-                    <div class="col-2">
-                        <span>Plan de estudio:</span>
-                        <select class="form-control" formControlName="id_plan_estudio">
-                            <option value="" disabled selected>Selecciona una opción</option>
-                            <option [value]="programa.id" *ngFor="let programa of programas">{{ programa.nombre_corto }}</option>
-                        </select>
-                    </div>
                 </div>
-                <div class="row" style="margin-top: -60px;">
-                    <div class="col-2">
-                        <div class="float-left">
-                            <span>Realizar búsqueda por:</span>
-                            <select class="form-control" formControlName="tipo_busqueda">
-                                <option value="" disabled selected>Selecciona una opción</option>
-                                <option [value]="tipo.id" *ngFor="let tipo of tipos_busqueda">{{ tipo.nombre }}</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </form>
+            </form> -->
             <div style="margin-top: 5% !important; width: 100%;">
-                <ng2-smart-table [settings]="settings" [source]="registros" (custom)="onCustom($event)"></ng2-smart-table>
+                <ng2-smart-table [settings]="settings" [source]="registros"></ng2-smart-table>
+            </div>
+            <div>
+                <div class="accordion accordion-flush" id="accordionFlushExample">
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="flush-headingOne">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                          Accordion Item #1
+                        </button>
+                      </h2>
+                      <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                        <div class="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the first item's accordion body.</div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="flush-headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                          Accordion Item #2
+                        </button>
+                      </h2>
+                      <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+                        <div class="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the second item's accordion body. Let's imagine this being filled with some actual content.</div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="flush-headingThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+                          Accordion Item #3
+                        </button>
+                      </h2>
+                      <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
+                        <div class="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the third item's accordion body. Nothing more exciting happening here in terms of content, but just filling up the space to make it look, at least at first glance, a bit more representative of how this would look in a real-world application.</div>
+                      </div>
+                    </div>
+                  </div>
             </div>
         </div>
     </div>
-</div> -->
+</div>
