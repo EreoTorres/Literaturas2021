@@ -1,8 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { MENU_ITEMS } from '../consejeria-estudiantil/consejeria-estudiantil-menu';
-import { MENU_ITEMS_ADMIN } from '../components/administrador-menu';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { Router } from '@angular/router';
+import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-consejeria-estudiantil',
@@ -12,19 +11,22 @@ import { Router } from '@angular/router';
 export class ConsejeriaEstudiantilComponent implements OnInit {
   private _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
-  menus: any = MENU_ITEMS;
+  menus: any = [];
   programas: any = [];
 
-  constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher,public router: Router) {
+  constructor(
+    changeDetectorRef: ChangeDetectorRef,
+    media: MediaMatcher, 
+    public router: Router,
+    public app: AppComponent
+  ) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
   ngOnInit(): void {
-    if(sessionStorage.getItem('departamento') == '4'){
-      this.menus = MENU_ITEMS_ADMIN;
-    }
+    this.menus = this.app.getMenu()
   }
 
   logout(){

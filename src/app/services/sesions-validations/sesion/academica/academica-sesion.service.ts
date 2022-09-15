@@ -16,7 +16,11 @@ export class AcademicaSesionService {
         GlobalConstants.showMenu = false;
         return true;
       }
-      else if(sessionStorage.getItem('departamento') == '4' || sessionStorage.getItem('departamento') == '2') {
+      else if(
+        sessionStorage.getItem('departamento') == '4' || 
+        sessionStorage.getItem('departamento') == '2' ||
+        sessionStorage.getItem('departamento') == '16'
+      ) {
         return true;
       }
       else {

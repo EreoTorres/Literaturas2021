@@ -1,10 +1,8 @@
-import {ChangeDetectorRef, Component, OnDestroy,OnInit} from '@angular/core';
-import {MediaMatcher} from '@angular/cdk/layout';
-
-import { MENU_ITEMS } from './academica-menu';
-import { MENU_ITEMS_ADMIN } from '../components/administrador-menu';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { MediaMatcher } from '@angular/cdk/layout';
 import { Router } from '@angular/router';
 import { GlobalConstants } from './global-constants';
+import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-academica',
@@ -14,11 +12,16 @@ import { GlobalConstants } from './global-constants';
 export class AcademicaComponent implements OnInit {
   private _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
-  menus: any = MENU_ITEMS;
+  menus: any = [];
   programas: any = [];
   showMenu: boolean = true;
 
-  constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher,public router: Router) {
+  constructor(
+    changeDetectorRef: ChangeDetectorRef,
+    media: MediaMatcher,
+    public router: Router,
+    public app: AppComponent
+  ) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
@@ -27,9 +30,7 @@ export class AcademicaComponent implements OnInit {
   ngOnInit(): void {
     this.showMenu = GlobalConstants.showMenu;
 
-    if(sessionStorage.getItem('departamento') == '4'){
-      this.menus = MENU_ITEMS_ADMIN;
-    }
+    this.menus = this.app.getMenu()
   }
 
   logout(){
