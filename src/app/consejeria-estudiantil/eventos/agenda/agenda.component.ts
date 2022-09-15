@@ -130,7 +130,7 @@ export class AgendaComponent implements OnInit {
     });
   }
 
-  aguardar_actualizar(ev) {
+  aguardar_actualizar(ev: any) {
     if(!ev.newData.id) {
       ev.newData.id = 0
       ev.newData.estatus = 1
@@ -149,7 +149,10 @@ export class AgendaComponent implements OnInit {
       if(res.codigo == 200) {
         if(res.resultado[0][0]['success'] == 1) {
           this.messagesService.showSuccessDialog(res.resultado[0][0]['message']).then((result) => {
-            if(result.isConfirmed) this.getAgenda()
+            if(result.isConfirmed) {
+              ev.confirm.resolve(ev.newData)
+              this.getAgenda()
+            }
           });
         }
         else this.messagesService.showSuccessDialog(res.resultado[0][0]['message'], 'error')
