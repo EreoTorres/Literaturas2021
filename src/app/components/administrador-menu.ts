@@ -70,5 +70,11 @@ export const MENU_ITEMS_ADMIN = [
         icon: 'today',
         link: '/academica/certificaciones',
         home: true,
+    },
+    {
+        title: 'Cereporte',
+        icon: 'table_chart',
+        link: '/cereporte/reporte',
+        home: true,
     }
 ];

@@ -38,7 +38,13 @@ export const MENU_ITEMS = [
         icon: 'today',
         link: '/academica/certificaciones',
         home: true,
-      }
+      },
+      {
+        title: 'Cereporte',
+        icon: 'table_chart',
+        link: '/cereporte/reporte',
+        home: true,
+    }
     ]
   },
   {
@@ -50,7 +56,13 @@ export const MENU_ITEMS = [
         icon: 'today',
         link: '/control-escolar/relacion-materias',
         home: true,
-      }
+      },
+      {
+        title: 'Cereporte',
+        icon: 'table_chart',
+        link: '/cereporte/reporte',
+        home: true,
+    }
     ]
   },
   {
@@ -74,7 +86,13 @@ export const MENU_ITEMS = [
         icon: 'sticky_note_2_outline',
         link: '/promociones/campanias-asistentes',
         home: true,
-      }
+      },
+      {
+        title: 'Cereporte',
+        icon: 'table_chart',
+        link: '/cereporte/reporte',
+        home: true,
+    }
     ]
   },
   {
@@ -110,7 +128,13 @@ export const MENU_ITEMS = [
         icon: 'sticky_note_2_outline',
         link: '/consejeria-estudiantil/eventos',
         home: true,
-      }
+      },
+      {
+        title: 'Cereporte',
+        icon: 'table_chart',
+        link: '/cereporte/reporte',
+        home: true,
+    }
     ]
   }
 ];

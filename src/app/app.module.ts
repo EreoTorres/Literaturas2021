@@ -44,6 +44,7 @@ import { ConsejeriaEstudiantilService } from './services/http-service/consejeria
 import { VisualizadorComponent } from './visualizador/visualizador/visualizador.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { InputprogramasCeComponent } from './components/inputprogramas-ce/inputprogramas-ce.component';
+import { CereporteComponent } from './cereporte/cereporte.component';
 
 export class DefaultIntl extends OwlDateTimeIntl {
   /** A label for the cancel button */
@@ -74,7 +75,8 @@ export class DefaultIntl extends OwlDateTimeIntl {
     InputprogramasAllComponent,
     ConsejeriaEstudiantilComponent,
     VisualizadorComponent,
-    InputprogramasCeComponent
+    InputprogramasCeComponent,
+    CereporteComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,142 @@
+<div class="contentT m-5 row">
+
+    <div class="lista-columnas col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12" style="margin-bottom: 1em;">
+        <div class="card border-secondary shadow">
+            <div class="card-body text-secondary">
+                <div style="margin-top: 1em !important;width: 100%;">
+                    <div class="row justify-content-center">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <mat-form-field appearance="fill" class="col-12">
+                                <mat-label>Plan de estudios</mat-label>
+                                <mat-select [(value)]="plan_estudios" (selectionChange)="cambiarPlan($event.value)">
+                                    <mat-option *ngFor="let plan of planes" [value]="plan.id" required>
+                                        {{plan.nombre_corto}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <mat-form-field  class="col-12">
+                                    <mat-label>Buscar columna</mat-label>
+                                    <input  matInput [(ngModel)]="filtro">
+                                </mat-form-field>
+                        </div>
+                        <div class="seleccionar-todas col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <button class="todas-columnas btn btn-secondary btn-sm " (click)="seleccionarTodos()">Seleccionar todas</button>
+                    </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 text-center" class="columnas">                                
+                                <ul class="optionList" *ngIf="columnas.length > 0">
+                                    <li *ngFor="let columna of columnas |filter:filtro" (click)="agregar(columna)">
+                                      <span class="caption">{{columna.columna_nombre}}<mat-icon *ngIf="columna.filtro==1" style="margin-left: 1em;">filter_list</mat-icon></span>
+                                      <div class="activeBackground"></div>
+                                    </li>
+                                  </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="registros-reporte col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+        <div class="card border-secondary shadow ">
+            <div class="card-header text-center" style="font-size: 1.3vw;">
+                    Reporte
+            </div>
+            <div class="card-body text-secondary">
+                <div style="margin-top: 0.5em !important;width: 100%;">
+                    <div class="row justify-content-center">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 text-center" *ngIf="columnas_seleccionadas.length > 0">
+                            <p-panel header="Filtros" [toggleable]="true" [collapsed]="true">
+                                <div class="filtros row" *ngIf="columnas_filtros.length > 0">
+                                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12" *ngFor="let columna of columnas_filtros">
+                                        <mat-form-field appearance="fill" class="col-12">
+                                            <mat-label>{{columna.columna_nombre}}</mat-label>
+                                            <input matInput [(ngModel)]="filtros_val[columna.columna]"  *ngIf="columna.tipo == 'text'"
+                                            (change)="filtros_val[columna.columna]=filtros_val[columna.columna].trim()">
+                                            <input type="{{columna.tipo}}" matInput [(ngModel)]="filtros_val[columna.columna]"  *ngIf="columna.tipo !='text'"
+                                            (change)="filtros_val[columna.columna]=filtros_val[columna.columna].trim()">
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </p-panel>
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 text-center" style="margin-top: 0.5em" *ngIf="columnas_seleccionadas.length > 0" >
+                            <p-panel header="Columnas seleccionadas" [toggleable]="true" [collapsed]="true">
+                                <div class="content text-right" style="margin-bottom: 0.5em;">
+                                    <mat-form-field  class="col-xl-5 col-lg-5 col-md-12 col-sm-12 col-12" style="margin-right: 0.5em; margin-bottom: 0.5em">
+                                        <mat-label>Buscar columna</mat-label>
+                                        <input matInput [(ngModel)]="filtro_seleccionadas">
+                                    </mat-form-field>
+                                <button class="btn btn-secondary btn-sm " (click)="eliminarTodos()">Eliminar todos</button>
+                            </div>
+                                <ul class="selection" *ngIf="columnas_seleccionadas.length > 0">
+                                    <li *ngFor="let columna of columnas_seleccionadas |filter:filtro_seleccionadas" (click)="eliminar(columna)">
+                                        <span class="caption">{{columna.columna_nombre}}</span>
+                                        <div class="activeBackground"></div>
+                                    </li>
+                                </ul>
+                            </p-panel>
+                        
+                        </div>
+                        <div class="row" style="margin-top: 0.5em">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 text-center">
+                            <button class="btn btn-outline-secondary btn-lg" (click)="generarReporte()" [disabled]="columnas_seleccionadas.length==0">
+                                Generar reporte</button>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 text-center">
+                            <button class="btn btn-success btn-lg" (click)="excelRegistros()" [disabled]="columnas_seleccionadas.length==0">
+                                <div style="display: flex">Descargar excel<mat-icon style="margin-left: 1em;">cloud_download</mat-icon></div>
+                            </button>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="registros.length > 0">
+        <div class="table-responsive" style="margin-top: 1em">
+            <p-table #dt1 id="registros-cereporte" [value]="registros" dataKey="id"
+                responsiveLayout="scroll" [totalRecords]="totalRecords" [paginator]="true" [rows]="7"
+                [resizableColumns]="true" columnResizeMode="expand" [autoLayout]="true">
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th *ngFor="let columna of columnas_seleccionadas" pSortableColumn="columna.columna" class="flex justify-content-center align-items-center">
+                            {{columna.columna_nombre}}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-registros>
+                    <tr>
+                        <td *ngFor="let columna of columnas_seleccionadas">{{registros[columna.columna]}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+    </div>
+
+</div>
+
+<!-- MODAL QUERY -->
+<ng-template #docs let-modal [config]="{backdrop: 'static',  keyboard: false}">
+    <div class="modal-header" style="height: 4em; display: flex;">
+        <h3 class="modal-title" id="modal-basic-title">Query SQL Generada</h3>
+        <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+       
+            <textarea rows="10">{{query}}</textarea>
+     
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cross click');">
+        <mat-icon class="mr-2">close</mat-icon>Cerrar
+      </button>
+    </div>
+</ng-template>

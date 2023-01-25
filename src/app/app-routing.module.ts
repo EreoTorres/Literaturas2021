@@ -28,6 +28,11 @@ export const routes: Routes = [
       .then(m => m.ConsejeriaEstudiantilModule)
   },
   {
+    path: 'cereporte',
+    loadChildren: () => import('./cereporte/cereporte.module')
+      .then(m => m.CereporteModule)
+  },
+  {
     path: '',
     redirectTo: '/login',
     pathMatch: 'full'
