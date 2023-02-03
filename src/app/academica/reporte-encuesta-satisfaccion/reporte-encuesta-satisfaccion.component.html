@@ -181,9 +181,9 @@
     </div>
 </div>
 
-
-<div class="row justify-content-center" *ngIf="encuesta_inactiva==0">
-    <div class="nombre_encuesta card" *ngIf="registros_pregunta.length >0">
+<div class="contentT m-5">
+<div class="justify-content-center" *ngIf="encuesta_inactiva==0">
+    <div class="nombre_encuesta card" *ngIf="registros_pregunta.length >0" style="width:-webkit-fill-available;">
         <div class="card-header text-center" style=" background:#032440;color: white;">
             {{this.encuesta_info[0].titulo}} ({{this.encuesta_info[0].estatus}})
         </div>
@@ -204,10 +204,11 @@
             </div>
         </div>
     </div>
+    <div class="row">
     <div class="col-xl-6 col-g-6 col-md-12 col-sm-12 col-12" *ngFor="let pregunta of registros_pregunta">
-        <div class="contentT" style="margin-top: 1% !important; height: 32em;"
+        <div class="contentT" style="margin-top: 1% !important; height: 30em;"
             *ngIf="pregunta.tipo == 1 || pregunta.tipo ==3 || pregunta.tipo == 6">
-            <div class="card border-secondary shadow" style="height: 32em;">
+            <div class="card border-secondary shadow" style="height: 30em;">
                 <div class="card-body text-secondary">
                     <div style="margin-top: 1% !important;">
                         <div class="row justify-content-center table-responsive">
@@ -224,15 +225,15 @@
             </div>
         </div>
 
-        <div class="contentT" style="margin-top: 1% !important; height: 32em;" *ngIf="pregunta.tipo == 2">
-            <div class="card border-secondary shadow" style="height: 32em;">
+        <div class="contentT" style="margin-top: 1% !important; height: 30em;" *ngIf="pregunta.tipo == 2">
+            <div class="card border-secondary shadow" style="height: 30em;">
                 <div class="card-body text-secondary">
                     <div style="margin-top: 1% !important;">
 
                         <div class="row justify-content-center">
                             <div class="col-xl-12 col-g-12 col-md-12 col-sm-12 col-12 ">
                                 <h3 style="color:black;"><b>{{pregunta.id}}.-{{pregunta.pregunta}}</b></h3>
-                                <div class="table-responsive" style="height: 300px;">
+                                <div class="table-responsive" style="height: 315px;">
                                     <ng2-smart-table [settings]="settings" [source]="pregunta.datos" mode="external">
                                     </ng2-smart-table>
                                 </div>
@@ -244,8 +245,8 @@
             </div>
         </div>
 
-        <div class="contentT" style="margin-top: 1% !important; height: 32em;" *ngIf="pregunta.tipo == 4">
-            <div class="card border-secondary shadow" style="height: 32em;">
+        <div class="contentT" style="margin-top: 1% !important; height: 30em;" *ngIf="pregunta.tipo == 4">
+            <div class="card border-secondary shadow" style="height: 30em;">
                 <div class="card-body text-secondary">
                     <div style="margin-top: 1% !important;">
                         <div class="row justify-content-center table-responsive">
@@ -262,4 +263,6 @@
             </div>
         </div>
     </div>
+    </div>
+</div>
 </div>

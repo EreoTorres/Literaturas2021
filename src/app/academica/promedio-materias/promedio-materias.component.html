@@ -1,1 +1,32 @@
-<p>promedio-materias works!</p>
+<div class="contentT  m-5" style="margin-top: 1% !important;">
+    <div class="card border-secondary shadow">
+        <div class="card-header text-center" style=" background:#032440;color: white;">
+            Promedio de materias
+        </div>
+        <div class="card-body text-secondary">
+            <div style="margin-top: 1% !important;">
+                
+                <div class="row justify-content-center">
+                    <mat-form-field appearance="fill" class="col-6">
+                        <mat-label>Plan de estudios</mat-label>
+                        <mat-select [(value)]="plan"(selectionChange)="cambiarPlan($event.value)">
+                            <mat-option *ngFor="let plan of planes" [value]="plan.id" >
+                                {{plan.nombre_corto}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <div class="row justify-content-center" *ngIf="promedio != 0">
+                    <div class="col-xl-12 col-g-12 col-md-12 col-sm-12 col-12 ">
+                        <span class="p-float-label">
+                            <p-chart type="bar" [data]="data" [options]="options_grafica"
+                                [style]="{'width':'100%'}"></p-chart>
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -6,8 +6,6 @@ import * as fs from 'file-saver';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { Chart } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { ChangeDetectorRef } from '@angular/core';
-import { GlobalFunctionsService } from 'src/app/services/http-service/global-functions/global-functions.service';
 
 @Component({
   selector: 'app-reporte-encuesta-satisfaccion',
@@ -16,7 +14,6 @@ import { GlobalFunctionsService } from 'src/app/services/http-service/global-fun
 })
 export class ReporteEncuestaSatisfaccionComponent implements OnInit {
 
-  loading: boolean = false;
   formulario: UntypedFormGroup | any;
   encuesta_inactiva!: any;
   meses!: any[];
@@ -30,6 +27,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
   anio_select!: any;
   curso: number = 0;
   plan: number = 0;
+  ventana:number = 0;
   curso_info!: any;
   encuesta_info!: any;
   encuestas_completas: any = 0;
@@ -82,17 +80,12 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     }
   };
 
-
   chartJs = Chart;
   chartLabelPlugin = ChartDataLabels;
-
-
 
   options_respuestas = {
     responsive: true,
     plugins: {
-
-
       datalabels: {
         formatter: (value: any, ctx: any) => {
           let sum = 0;
@@ -109,7 +102,6 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
           size: '10em',
         },
         display: 'auto'
-
       },
     },
   }
@@ -117,8 +109,6 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
   options_respuestas_multi = {
     responsive: true,
     plugins: {
-
-
       datalabels: {
         formatter: (value: any, ctx: any) => {
           let sum = 0;
@@ -135,7 +125,6 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
           size: '10em',
         },
         display: 'auto'
-
       },
     },
   }
@@ -154,9 +143,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     private formBuilder: UntypedFormBuilder,
     private EncuestaService: EncuestaService,
     private MessagesService: MessagesService,
-    private globalFunctions: GlobalFunctionsService
   ) {
-
     this.meses = [
       { 'mes': 'Enero', 'value': 1 },
       { 'mes': 'Febrero', 'value': 2 },
@@ -171,7 +158,6 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
       { 'mes': 'Noviembre', 'value': 11 },
       { 'mes': 'Diciembre', 'value': 12 },
     ];
-
   }
 
   ngOnInit(): void {
@@ -189,10 +175,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
       anio: [null],
     });
   }
-
-  //   ngAfterContentChecked(): void {
-  //     this.cdr.detectChanges();
-  //  }  
+ 
 
   getPlanes() {
     this.MessagesService.showLoading();
@@ -202,7 +185,6 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
         this.planes = res.resultado;
         this.plan=this.planes[0].id;
         this.infoGral.id_plan_estudio = this.planes[0].id;
-        console.log(this.infoGral)
         await this.getMaterias();
       }
       this.MessagesService.closeLoading();
@@ -215,11 +197,11 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     this.curso = 0;
     this.periodo = 0;
     this.encuesta_seleccionada = 0;
-    this.getEncuestasInactivas({'index':1});
+    this.registros_pregunta= [];
+    this.formulario.reset();
     this.MessagesService.showLoading();
-    await this.getMaterias();
+    (this.ventana == 0)? await this.getMaterias(): await this.getEncuestasInactivas({'index':1});
     this.MessagesService.closeLoading();
-    
   }
 
   getMaterias() {
@@ -233,7 +215,6 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
         }else{
           this.MessagesService.showSuccessDialog('No existen materias', 'error');
         }
-      
       });
     })
  
@@ -264,24 +245,28 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
   getEncuestasInactivas(value: any) {
     this.formulario.reset();
     this.encuesta_inactiva = [];
-    console.log(value);
+    this.ventana = value.index;
     this.totalRecords = 0;
+    this.registros_pregunta= [];
     if (value.index == 1) {
       this.curso = 0;
       this.periodo = 0;
       this.encuesta_seleccionada = 0;
       this.MessagesService.showLoading();
-
+      return new Promise((resolve, reject) => {
       this.EncuestaService.getEncuestasMateriasInactivas(this.infoGral).then(datas => {
         var res: any = datas;
         if (res.codigo == 200) {
           this.encuestas_inactivas = res.resultado;
           this.totalRecords = this.encuestas_inactivas.length;
+          this.MessagesService.closeLoading();
+          resolve(true)    
         } else {
           this.MessagesService.showSuccessDialog('No existen encuestas', 'error');
         }
-        this.MessagesService.closeLoading();
+       
       });
+    })
     }
   }
 
@@ -322,7 +307,6 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
             mes_periodo.push(3);
             this.periodos.push({ 'periodo': 'Cuatrimestre 3 (Septiembre - Diciembre)', 'value': 3 });
           }
-
           this.listado_meses.push({
             'mes': this.meses[element - 1].mes,
             'value': this.meses[element - 1].value
@@ -360,7 +344,6 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
 
 
   getTotalEncuestasRealizadas() {
-
     return new Promise((resolve, reject) => {
       this.EncuestaService.getTotalEncuestasRealizadas(this.infoGral).then(datas => {
         var res: any = datas;
@@ -379,7 +362,6 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     this.encuesta_inactiva = 0;
     this.registros_pregunta = [];
     let datos: any[] = [];
-
 
     let res: any = await this.getRespuestasEncuestas();
     datos = res.resultado[0];
@@ -447,7 +429,6 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
   }
 
   generarGraficas(value: any) {
-
     this.infoGral.encuesta = value.encuesta;
     this.infoGral.periodo = value.periodo;
 
@@ -492,7 +473,6 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
         this.infoGral.anio = value.anio;
         break;
     }
-
 
     let res: any = await this.getRespuestasEncuestas();
     let datos = res.resultado[0];
