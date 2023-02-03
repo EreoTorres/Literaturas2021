@@ -1,0 +1,31 @@
+
+:host ::ng-deep .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link{
+    background: #ffffff!important;
+    border-color: #032440!important;
+    color: #032440!important;
+  }
+
+  .card{
+    border: none;
+    border-radius: 0px;
+}
+.card-header{
+    border-radius: 0px;
+}
+:host ::ng-deep .p-datatable .p-datatable-thead  tr  th{
+  background: white;
+}
+.nombre_encuesta {
+    --bs-card-bg: transparent;
+    margin-top: 1em;
+}
+:host ::ng-deep a.ng2-smart-page-link.page-link.page-link-prev{
+  font-size: 1rem;
+}
+:host ::ng-deep a.ng2-smart-page-link.page-link.page-link-next {
+  font-size: 1rem;
+}
+:host ::ng-deep .ng2-smart-pagination-nav.ng-star-inserted{
+  position: absolute;
+  bottom: -3.5em;
+}

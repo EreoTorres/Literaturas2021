@@ -22,6 +22,13 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { GacetaComponent } from '../academica/gaceta/gaceta.component';
 import { BibliotecaVirtualComponent } from './biblioteca-virtual/biblioteca-virtual.component';
 import { CertificacionesComponent } from './certificaciones/certificaciones.component';
+import { ReporteEncuestaSatisfaccionComponent } from './reporte-encuesta-satisfaccion/reporte-encuesta-satisfaccion.component';
+import { PromedioMateriasComponent } from './promedio-materias/promedio-materias.component';
+
+import {TableModule} from 'primeng/table'; 
+import {TabViewModule} from 'primeng/tabview';
+import {MatSelectModule} from '@angular/material/select';
+import {ChartModule} from 'primeng/chart'
 
 @NgModule({
   declarations: [
@@ -30,6 +37,8 @@ import { CertificacionesComponent } from './certificaciones/certificaciones.comp
     GacetaComponent,
     BibliotecaVirtualComponent,
     CertificacionesComponent,
+    ReporteEncuestaSatisfaccionComponent,
+    PromedioMateriasComponent,
   ],
   imports: [
     AcademicaRoutingModule,
@@ -49,7 +58,11 @@ import { CertificacionesComponent } from './certificaciones/certificaciones.comp
     MatDialogModule,
     NgxDropzoneModule,
     NgxPaginationModule,
-    CommonModule
+    CommonModule,
+    TableModule,
+    TabViewModule,
+    MatSelectModule,
+    ChartModule
   ],
 })
 export class AcademicaModule {

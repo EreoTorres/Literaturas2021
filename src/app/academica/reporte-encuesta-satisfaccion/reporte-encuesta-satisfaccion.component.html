@@ -1,0 +1,265 @@
+<div class="contentT m-5">
+    <div class="card border-secondary shadow">
+        <div class="card-header text-center" style=" background:#032440;color: white;">
+            Reporte de encuesta de satisfacción
+        </div>
+
+        <div class="card-body text-secondary" style="background: white;">
+           
+            <div class="row justify-content-center">
+                <mat-form-field appearance="fill" class="col-6">
+                    <mat-label>Plan de estudios</mat-label>
+                    <mat-select [(value)]="plan"(selectionChange)="cambiarPlan($event.value)">
+                        <mat-option *ngFor="let plan of planes" [value]="plan.id" >
+                            {{plan.nombre_corto}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <p-tabView (onChange)="getEncuestasInactivas($event)">
+                <p-tabPanel header="Encuesta activa" id="encuesta-activa">
+                    <div style="margin-top: 1% !important;width: 100%;">
+                        <div class="row">
+                            <form id="encuestas-form" class="form" #formul="ngForm" (ngSubmit)="generarGraficas(formul.value)"
+                                [formGroup]="formulario" style="width: -webkit-fill-available;">
+                                <div class="row justify-content-left">
+
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12" *ngIf="plan != 0 && materias.length>0">
+                                        <mat-form-field appearance="fill" class="col-12">
+                                            <mat-label>Curso (materia)</mat-label>
+                                            <mat-select formControlName="curso" [(value)]="curso"
+                                                (selectionChange)="getEncuestas($event.value)">
+                                                <mat-option *ngFor="let materia of materias" [value]="materia.id" >
+                                                    {{materia.nombre}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12" *ngIf="curso != 0">
+                                        <mat-form-field appearance="fill" class="col-12">
+                                            <mat-label>Encuesta</mat-label>
+                                            <mat-select formControlName="encuesta" [(value)]="encuesta_seleccionada"
+                                                (selectionChange)="getPeriodos($event.value)">
+                                                <mat-option *ngFor="let encuesta of encuestas" [value]="encuesta.id"
+                                                    required>
+                                                    {{encuesta.titulo}} ({{encuesta.estatus}})
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12"
+                                        *ngIf="encuesta_seleccionada != 0 && periodos.length > 0">
+                                        <mat-form-field appearance="fill" class="col-12">
+                                            <mat-label>Periodo</mat-label>
+                                            <mat-select formControlName="periodo" [(value)]="periodo" required>
+                                                <mat-option *ngFor="let periodo of periodos" [value]="periodo.value">
+                                                    {{periodo.periodo}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+
+
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12" *ngIf="periodo === 4">
+                                        <mat-form-field appearance="fill" class="col-12">
+                                            <mat-label>Mes</mat-label>
+                                            <mat-select formControlName="mes" [required]="periodo === 4" >
+                                                <mat-option *ngFor="let mes of listado_meses" [value]="mes.value">
+                                                    {{mes.mes}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12"
+                                        *ngIf="periodo != 6 && periodo != 0">
+                                        <mat-form-field appearance="fill" class="col-12">
+                                            <mat-label>Año</mat-label>
+                                            <mat-select formControlName="anio" [(ngModel)]="anio_select" [required]="periodo != 6 && periodo != 0">
+                                                <mat-option *ngFor="let anios of listado_anios" [value]="anios.value">
+                                                    {{anios.anio}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-12" *ngIf="formulario.valid||periodo == 6 || (periodo == 5 && anio_select)">
+                                        <button class="btn btn-outline-secondary btn-lg" type="submit" style="margin-top: 11px;">
+                                            Generar gráficos</button>
+                                    </div>
+                                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-12" *ngIf="formulario.valid||periodo == 6 || (periodo == 5 && anio_select)">
+                                        <button class="btn btn-success" (click)="getRegistrosExcel(formul.value)" style="margin-top: 21px;">
+                                            <div style="display: flex"><mat-icon
+                                                    style="margin-right: 10px;">cloud_download</mat-icon>Descargar reporte en
+                                                Excel</div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </p-tabPanel>
+                <p-tabPanel header="Encuestas inactivas" id="encuesta-inactiva">
+                    <div class="table-responsive" style="margin-top: 1%">
+                        <p-table #dt1 id="registros-sugerencias" [value]="encuestas_inactivas" dataKey="id"
+                            responsiveLayout="scroll" [totalRecords]="totalRecords" [paginator]="true" [rows]="6"
+                            [resizableColumns]="true" columnResizeMode="expand" [autoLayout]="true">
+
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th pSortableColumn="id" class="flex justify-content-center align-items-center">#ID
+                                    </th>
+                                    <th pSortableColumn="nombre_materia"
+                                        class="flex justify-content-center align-items-center">Materia
+                                    </th>
+                                    <th pSortableColumn="titulo" class="flex justify-content-center align-items-center">
+                                        Título
+                                    </th>
+                                    <th pSortableColumn="fecha_registro"
+                                        class="flex justify-content-center align-items-center">Fecha de registro
+                                    </th>
+                                    <th pSortableColumn="graficar"
+                                        class="flex justify-content-center align-items-center">
+                                        Graficar
+                                    </th>
+                                    <th pSortableColumn="descargar"
+                                        class="flex justify-content-center align-items-center">
+                                        Descargar
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <p-columnFilter field="id" [showMatchModes]="false" [showOperator]="false"
+                                            [showAddButton]="false" [showMenu]="false"></p-columnFilter>
+                                    </th>
+                                    <th>
+                                        <p-columnFilter field="nombre_materia" [showMatchModes]="false"
+                                            [showOperator]="false" [showAddButton]="false"
+                                            [showMenu]="false"></p-columnFilter>
+                                    </th>
+                                    <th>
+                                        <p-columnFilter field="titulo" [showMatchModes]="false" [showOperator]="false"
+                                            [showAddButton]="false" [showMenu]="false"></p-columnFilter>
+                                    </th>
+                                    <th>
+                                        <p-columnFilter field="fecha_registro" [showMatchModes]="false"
+                                            [showOperator]="false" [showAddButton]="false"
+                                            [showMenu]="false"></p-columnFilter>
+                                    </th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-registros>
+                                <tr>
+                                    <td>{{registros.id}}</td>
+                                    <td>{{registros.nombre_materia}}</td>
+                                    <td>{{registros.titulo}}</td>
+                                    <td>{{registros.fecha_registro}}</td>
+                                    <td>
+                                        <button class="btn btn-outline-secondary btn-sm"
+                                            (click)="generarGraficaInactivos(registros.id)">Generar gráficos</button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm"
+                                            (click)="getRegistrosExcelInactivos(registros.id)">
+                                            <div style="display: flex"><mat-icon
+                                                    style="margin-right: 10px;">cloud_download</mat-icon>Reporte</div>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </p-tabPanel>
+            </p-tabView>
+        </div>
+    </div>
+</div>
+
+
+<div class="row justify-content-center" *ngIf="encuesta_inactiva==0">
+    <div class="nombre_encuesta card" *ngIf="registros_pregunta.length >0">
+        <div class="card-header text-center" style=" background:#032440;color: white;">
+            {{this.encuesta_info[0].titulo}} ({{this.encuesta_info[0].estatus}})
+        </div>
+        <div class="card-body text-secondary" style="background: white;">
+            <div class="row">
+                <div class="col-6">
+                    <h4 style="color: black;">Materia: <b>{{this.curso_info}}</b></h4>
+                </div>
+                <div class="col-6">
+                    <h4 style="color: black;">Fecha de registro: <b>{{this.encuesta_info[0].fecha_registro}}</b></h4>
+                </div>
+                <div class="col-6">
+                    <h4 style="color: black;">Total de encuestas completas: <b>{{encuestas_completas}}</b></h4>
+                </div>
+                <div class="col-6">
+                    <h4 style="color: black;">Total de encuestas incompletas: <b>{{encuestas_incompletas}}</b></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6 col-g-6 col-md-12 col-sm-12 col-12" *ngFor="let pregunta of registros_pregunta">
+        <div class="contentT" style="margin-top: 1% !important; height: 32em;"
+            *ngIf="pregunta.tipo == 1 || pregunta.tipo ==3 || pregunta.tipo == 6">
+            <div class="card border-secondary shadow" style="height: 32em;">
+                <div class="card-body text-secondary">
+                    <div style="margin-top: 1% !important;">
+                        <div class="row justify-content-center table-responsive">
+                            <div class="col-xl-12 col-g-12 col-md-12 col-sm-12 col-12 ">
+                                <h3 style="color:black;"><b>{{pregunta.id}}.-{{pregunta.pregunta}}</b></h3>
+                                <span class="p-float-label">
+                                    <p-chart type="pie" [data]="pregunta.respuestas" [options]="options_respuestas"
+                                        width="270" height="270"></p-chart>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="contentT" style="margin-top: 1% !important; height: 32em;" *ngIf="pregunta.tipo == 2">
+            <div class="card border-secondary shadow" style="height: 32em;">
+                <div class="card-body text-secondary">
+                    <div style="margin-top: 1% !important;">
+
+                        <div class="row justify-content-center">
+                            <div class="col-xl-12 col-g-12 col-md-12 col-sm-12 col-12 ">
+                                <h3 style="color:black;"><b>{{pregunta.id}}.-{{pregunta.pregunta}}</b></h3>
+                                <div class="table-responsive" style="height: 300px;">
+                                    <ng2-smart-table [settings]="settings" [source]="pregunta.datos" mode="external">
+                                    </ng2-smart-table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="contentT" style="margin-top: 1% !important; height: 32em;" *ngIf="pregunta.tipo == 4">
+            <div class="card border-secondary shadow" style="height: 32em;">
+                <div class="card-body text-secondary">
+                    <div style="margin-top: 1% !important;">
+                        <div class="row justify-content-center table-responsive">
+                            <div class="col-xl-12 col-g-12 col-md-12 col-sm-12 col-12 ">
+                                <h3 style="color:black;"><b>{{pregunta.id}}.-{{pregunta.pregunta}}</b></h3>
+                                <span class="p-float-label">
+                                    <p-chart type="bar" [data]="pregunta.pregunta_orden"
+                                        [options]="options_respuestas_multi" width="270" height="270"></p-chart>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

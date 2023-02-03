@@ -38,7 +38,19 @@ export const MENU_ITEMS = [
         icon: 'today',
         link: '/academica/certificaciones',
         home: true,
-      }
+      },
+      {
+        title: 'Encuesta de satisfacción',
+        icon: 'rate_review',
+        link: '/academica/reporte-encuesta-satisfaccion',
+        home: true,
+    },
+    {
+        title: 'Promedio de materias',
+        icon: 'insert_chart',
+        link: '/academica/promedio-materias',
+        home: true,
+    }
     ]
   },
   {
