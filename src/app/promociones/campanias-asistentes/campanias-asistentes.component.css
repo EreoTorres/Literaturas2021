@@ -125,33 +125,33 @@ textarea{
 }
 
 /* Citas */
-:host /deep/ table td .estatus {
+:host ::ng-deep table td .estatus {
   padding: 5px;
   border-radius: 10px;
   font-weight: 400;
   color: black;
 }
 
-:host /deep/ table td .rojo {
+:host ::ng-deep table td .rojo {
   background-color: #f44336;
   color: white;
 }
 
-:host /deep/ table td .amarillo {
+:host ::ng-deep table td .amarillo {
   background-color: #ffeb3b;
 }
 
-:host /deep/ table td .azul {
+:host ::ng-deep table td .azul {
   background-color: #2196f3;
   color: white;
 }
 
-:host /deep/ table td .verde {
+:host ::ng-deep table td .verde {
   background-color: #4caf50;
   color: white;
 }
 
-:host /deep/ table td .naranja {
+:host ::ng-deep table td .naranja {
   background-color: #ff9800;
   color: white;
 }

@@ -4,13 +4,13 @@ import { NgModule } from '@angular/core';
 import { MatToolbarModule } from  '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { MatGridListModule } from '@angular/material/grid-list';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
+import { MatLegacyFormFieldModule as MatFormFieldModule } from "@angular/material/legacy-form-field";
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -55,70 +55,61 @@ export class DefaultIntl extends OwlDateTimeIntl {
 
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    LoginComponent,
-    PromocionesComponent,
-    AcademicaComponent,
-    SmartTableDatepickerComponent,
-    SmartTableDatepickerRenderComponent,
-    SmartTableDatepickerComponentTime,
-    SmartTableDatepickerRenderComponentTime,
-    NumberComponentDynamicComponent,
-    InputprogramasComponent,
-    EstatusSelectComponent,
-    InputImagenComponent,
-    OpcionesLiteraturasComponent,
-    SmatTablePickerDatetimeComponent,
-    ControlEscolarComponent,
-    InputprogramasAllComponent,
-    ConsejeriaEstudiantilComponent,
-    VisualizadorComponent,
-    InputprogramasCeComponent
-  ],
-  imports: [
-    BrowserModule,
-    MatToolbarModule,
-    MatSidenavModule,
-    MatListModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCardModule,
-    FlexLayoutModule,
-    MatGridListModule,
-    AppRoutingModule,
-    MatFormFieldModule,
-    MatInputModule,
-    NgxDropzoneModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    NgxPaginationModule,
-    NgbModule,
-    BrowserAnimationsModule,
-    OwlDateTimeModule,
-    OwlNativeDateTimeModule,
-    CommonModule,
-    Ng2SmartTableModule,
-    CKEditorModule
-  ],
-  entryComponents: [
-    SmartTableDatepickerComponent,
-    SmartTableDatepickerRenderComponent,
-    SmartTableDatepickerComponentTime,
-    SmartTableDatepickerRenderComponentTime,
-    NumberComponentDynamicComponent,
-    InputprogramasComponent,
-    EstatusSelectComponent
-  ],
-  providers: [
-    AcademicaSesionService,
-    PromocionesSesionService,
-    ControlEscolarService,
-    ConsejeriaEstudiantilService,
-    DatePipe,
-    { provide: OwlDateTimeIntl, useClass: DefaultIntl }
-  ],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        LoginComponent,
+        PromocionesComponent,
+        AcademicaComponent,
+        SmartTableDatepickerComponent,
+        SmartTableDatepickerRenderComponent,
+        SmartTableDatepickerComponentTime,
+        SmartTableDatepickerRenderComponentTime,
+        NumberComponentDynamicComponent,
+        InputprogramasComponent,
+        EstatusSelectComponent,
+        InputImagenComponent,
+        OpcionesLiteraturasComponent,
+        SmatTablePickerDatetimeComponent,
+        ControlEscolarComponent,
+        InputprogramasAllComponent,
+        ConsejeriaEstudiantilComponent,
+        VisualizadorComponent,
+        InputprogramasCeComponent
+    ],
+    imports: [
+        BrowserModule,
+        MatToolbarModule,
+        MatSidenavModule,
+        MatListModule,
+        MatButtonModule,
+        MatIconModule,
+        MatCardModule,
+        FlexLayoutModule,
+        MatGridListModule,
+        AppRoutingModule,
+        MatFormFieldModule,
+        MatInputModule,
+        NgxDropzoneModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        NgxPaginationModule,
+        NgbModule,
+        BrowserAnimationsModule,
+        OwlDateTimeModule,
+        OwlNativeDateTimeModule,
+        CommonModule,
+        Ng2SmartTableModule,
+        CKEditorModule
+    ],
+    providers: [
+        AcademicaSesionService,
+        PromocionesSesionService,
+        ControlEscolarService,
+        ConsejeriaEstudiantilService,
+        DatePipe,
+        { provide: OwlDateTimeIntl, useClass: DefaultIntl }
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }

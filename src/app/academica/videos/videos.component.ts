@@ -6,7 +6,7 @@ import { MessagesService } from 'src/app/services/messages/messages.service';
 import { environment } from 'src/environments/environment';
 import { DatePipe } from '@angular/common';
 import { VideosService } from 'src/app/services/http-service/academica/videos/videos.service';
-import { FormBuilder, FormGroup, Validators, FormArray ,NgForm} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators, FormArray ,NgForm} from '@angular/forms';
 import { ValidTipoTextService } from 'src/app/services/validaciones/valid-tipo-text.service';
 import { AcademicaComponent } from '../academica.component';
 import { SmartTableDatepickerComponent, SmartTableDatepickerRenderComponent } from 'src/app/components/smart-table-datepicker/smart-table-datepicker.component';
@@ -35,7 +35,7 @@ export class VideosComponent implements OnInit {
   materias: any;
   categorias: any;
   materias2: any;
-  formulario: FormGroup;
+  formulario: UntypedFormGroup;
   video: any = {
     servicio: 'video',
     titulo_video: '',
@@ -105,7 +105,7 @@ export class VideosComponent implements OnInit {
     private modalService: NgbModal,
     private MessagesService: MessagesService,
     private datePipe: DatePipe,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     public validText: ValidTipoTextService,
     private academica:AcademicaComponent,
     private literaturasHTTP:LiteraturasService

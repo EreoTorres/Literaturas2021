@@ -3,7 +3,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CertificacionesService } from 'src/app/services/http-service/academica/certificaciones/certificaciones.service';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { SmartTableDatepickerComponent } from 'src/app/components/smart-table-datepicker/smart-table-datepicker.component';
-import { FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import { GlobalFunctionsService } from 'src/app/services/http-service/global-functions/global-functions.service'; 
 
 @Component({
@@ -14,7 +14,7 @@ import { GlobalFunctionsService } from 'src/app/services/http-service/global-fun
 export class CertificacionesComponent implements OnInit {
   @Input() registros: any;
   programas: any = [];
-  formCertificacion: FormGroup;
+  formCertificacion: UntypedFormGroup;
   certificaciones: any = [];
   estadoVisible: any = [
     {
@@ -165,7 +165,7 @@ export class CertificacionesComponent implements OnInit {
     private certificacionesHTTP: CertificacionesService,
     private modalService: NgbModal,
     private messagesService: MessagesService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private globalFunctions: GlobalFunctionsService
   ) {
     this.formCertificacion = this.formBuilder.group({
