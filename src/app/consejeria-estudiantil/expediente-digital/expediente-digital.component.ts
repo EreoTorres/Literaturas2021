@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { ExpedienteDigitalService } from 'src/app/services/http-service/consejeria-estudiantil/expediente-digital/expediente-digital.service';
-import { FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
@@ -10,7 +10,7 @@ import { LocalDataSource } from 'ng2-smart-table';
   styleUrls: ['../citas/citas.component.css']
 })
 export class ExpedienteDigitalComponent implements OnInit {
-  formAlumnos: FormGroup
+  formAlumnos: UntypedFormGroup
   registros: LocalDataSource = new LocalDataSource()
   settings = {
     actions: {
@@ -78,7 +78,7 @@ export class ExpedienteDigitalComponent implements OnInit {
   constructor(
     private ExpedienteDigitalHTTP: ExpedienteDigitalService,
     private messagesService: MessagesService,
-    private formBuilder: FormBuilder
+    private formBuilder: UntypedFormBuilder
   ) {
     this.formAlumnos = this.formBuilder.group({
       id_plan_estudio: [null, [Validators.required]]

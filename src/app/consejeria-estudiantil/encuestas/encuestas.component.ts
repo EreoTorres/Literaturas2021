@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { EncuestasService } from 'src/app/services/http-service/consejeria-estudiantil/encuestas/encuestas.service';
 import { ConsejeriaEstudiantilComponent } from '../consejeria-estudiantil.component';
-import { FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
@@ -12,7 +12,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 })
 export class EncuestasComponent implements OnInit {
   programas: any = []
-  formBusqueda: FormGroup
+  formBusqueda: UntypedFormGroup
   encuestas: any = []
   tipos_busqueda: any = [
     {
@@ -62,7 +62,7 @@ export class EncuestasComponent implements OnInit {
     private encuestasHTTP: EncuestasService,
     private messagesService: MessagesService,
     private consejeria_estudiantil:ConsejeriaEstudiantilComponent,
-    private formBuilder: FormBuilder
+    private formBuilder: UntypedFormBuilder
   ) {
     this.formBusqueda = this.formBuilder.group({
       id_plan_estudio: [null, [Validators.required]],

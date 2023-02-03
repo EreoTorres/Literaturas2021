@@ -125,7 +125,6 @@
       }
     }
   },
-  "defaultProject": "literaturas",
   "cli": {
     "analytics": false
   }

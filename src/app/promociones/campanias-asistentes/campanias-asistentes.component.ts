@@ -3,7 +3,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { AsistentesService } from 'src/app/services/http-service/campanias-asistentes/campanias-asistentes.service';
 import { SmartTableDatepickerComponent, SmartTableDatepickerRenderComponent } from 'src/app/components/smart-table-datepicker/smart-table-datepicker.component';
-import { FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-campanias-asistentes',
@@ -14,9 +14,9 @@ export class AsistentesComponent implements OnInit {
   @Input() registros: any;
   @Input() movimientos: any;
   @ViewChild('agregarAsistentes') links: ElementRef;
-  formAsistentes: FormGroup;
+  formAsistentes: UntypedFormGroup;
   titulo: any = 'Registro de Asistentes';
-  formFinal: FormGroup;
+  formFinal: UntypedFormGroup;
   regiones: any = [];
   planes_estudio: any = [];
   campanias: any = [];
@@ -95,7 +95,7 @@ export class AsistentesComponent implements OnInit {
     private asistentesHTTP: AsistentesService,
     private modalService: NgbModal,
     private MessagesService: MessagesService,
-    private formBuilder: FormBuilder
+    private formBuilder: UntypedFormBuilder
   ) {
     this.formAsistentes = this.formBuilder.group({
       region: [0, [Validators.required]],

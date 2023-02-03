@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { EncuestaService } from 'src/app/services/http-service/academica/encuesta/encuesta.service';
 import { Workbook } from 'exceljs';
 import * as fs from 'file-saver';
@@ -17,7 +17,7 @@ import { GlobalFunctionsService } from 'src/app/services/http-service/global-fun
 export class ReporteEncuestaSatisfaccionComponent implements OnInit {
 
   loading: boolean = false;
-  formulario: FormGroup | any;
+  formulario: UntypedFormGroup | any;
   encuesta_inactiva!: any;
   meses!: any[];
   listado_meses: any[] = [];
@@ -151,7 +151,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     }
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private EncuestaService: EncuestaService,
     private MessagesService: MessagesService,
     private globalFunctions: GlobalFunctionsService
