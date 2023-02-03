@@ -86,12 +86,12 @@
                                         </mat-form-field>
                                     </div>
 
-                                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-12" *ngIf="formulario.valid||periodo == 6 || (periodo == 5 && anio_select)">
-                                        <button class="btn btn-outline-secondary btn-lg" type="submit" style="margin-top: 11px;">
+                                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12" *ngIf="formulario.valid||periodo == 6 || (periodo == 5 && anio_select)">
+                                        <button class="btn btn-outline-secondary btn-lg" type="submit" style="margin-top: 12px; height: 47px; margin-left: 15px;">
                                             Generar gráficos</button>
                                     </div>
-                                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-12" *ngIf="formulario.valid||periodo == 6 || (periodo == 5 && anio_select)">
-                                        <button class="btn btn-success" (click)="getRegistrosExcel(formul.value)" style="margin-top: 21px;">
+                                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12" *ngIf="formulario.valid||periodo == 6 || (periodo == 5 && anio_select)">
+                                        <button class="btn btn-success" (click)="getRegistrosExcel(formul.value)" style="margin-top: 12px; height: 47px; margin-left: 15px;">
                                             <div style="display: flex"><mat-icon
                                                     style="margin-right: 10px;">cloud_download</mat-icon>Descargar reporte en
                                                 Excel</div>
