@@ -17,6 +17,15 @@ export class EncuestaService {
     };
    }
 
+   getPlanesPromedio(registro: object) {
+    return new Promise((resolve, reject) => {
+      this.http.post(this.url+'academica/encuesta/getPlanesPromedio',{}, this.httpHeaders)
+      .subscribe(data => {
+          resolve(data)
+      })
+    })
+  }
+
    getPlanes(registro: object) {
     return new Promise((resolve, reject) => {
       this.http.post(this.url+'academica/encuesta/getPlanes',{}, this.httpHeaders)
