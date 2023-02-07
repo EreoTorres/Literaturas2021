@@ -256,13 +256,13 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
       return new Promise((resolve, reject) => {
       this.EncuestaService.getEncuestasMateriasInactivas(this.infoGral).then(datas => {
         var res: any = datas;
-        if (res.codigo == 200) {
+        if (res.codigo == 200 && res.resultado.length > 0 ){
           this.encuestas_inactivas = res.resultado;
           this.totalRecords = this.encuestas_inactivas.length;
           this.MessagesService.closeLoading();
           resolve(true)    
         } else {
-          this.MessagesService.showSuccessDialog('No existen encuestas', 'error');
+          this.MessagesService.showSuccessDialog('No existen encuestas inactivas', 'error');
         }
        
       });

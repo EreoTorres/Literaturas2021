@@ -61,7 +61,7 @@ export class PromedioMateriasComponent implements OnInit {
 
   getPlanes() {
     this.MessagesService.showLoading();
-    this.EncuestaService.getPlanes(this.infoGral).then(async datas => {
+    this.EncuestaService.getPlanesPromedio(this.infoGral).then(async datas => {
       var res: any = datas;
       if (res.codigo == 200) {
         this.planes = res.resultado;
