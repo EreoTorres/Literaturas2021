@@ -3,7 +3,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LocalDataSource } from 'ng2-smart-table';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { EventosService } from 'src/app/services/http-service/consejeria-estudiantil/eventos/eventos.service';
-import { FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import Editor from 'src/assets/ckeditor5-build-classic/build/ckeditor';
 
 @Component({
@@ -13,7 +13,7 @@ import Editor from 'src/assets/ckeditor5-build-classic/build/ckeditor';
 })
 export class FormularioEventosComponent implements OnInit {
 
-  formEvento: FormGroup
+  formEvento: UntypedFormGroup
   programas: any = []
   registros: LocalDataSource = new LocalDataSource()
   settings = {
@@ -83,7 +83,7 @@ export class FormularioEventosComponent implements OnInit {
     private eventosHTTP: EventosService,
     private modalService: NgbModal,
     private messagesService: MessagesService,
-    private formBuilder: FormBuilder
+    private formBuilder: UntypedFormBuilder
   ) {
     this.formEvento = this.formBuilder.group({
       id: [0, [Validators.required]],

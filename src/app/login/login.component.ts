@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormArray ,NgForm} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators, FormArray ,NgForm} from '@angular/forms';
 import { Router } from '@angular/router';
 import { MessagesService } from '../services/messages/messages.service';
 import { LoginService } from '../services/http-service/login/login.service';
@@ -10,9 +10,9 @@ import { LoginService } from '../services/http-service/login/login.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  formulario: FormGroup;
+  formulario: UntypedFormGroup;
 
-  constructor(private formBuilder: FormBuilder,
+  constructor(private formBuilder: UntypedFormBuilder,
     public loginService: LoginService,
     private MessagesService: MessagesService,
     private router: Router

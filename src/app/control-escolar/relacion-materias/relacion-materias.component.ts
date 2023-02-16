@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { ValidTipoTextService } from 'src/app/services/validaciones/valid-tipo-text.service';
@@ -27,7 +27,7 @@ export class RelacionMateriasComponent implements OnInit {
   filtrotxt: any = '';
   titulo_videos: any = 'Agregar Relacion';
   planestudio_f: any = 0;
-  formulario: FormGroup;
+  formulario: UntypedFormGroup;
   planes_autoridad: any;
   id_plan_estudio: any = 0;
   id_plan_autoridad: any = 0;

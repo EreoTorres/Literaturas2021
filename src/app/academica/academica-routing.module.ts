@@ -8,6 +8,8 @@ import { GacetaComponent } from './gaceta/gaceta.component';
 import { BibliotecaVirtualComponent } from './biblioteca-virtual/biblioteca-virtual.component';
 import { VisualizadorComponent } from '../visualizador/visualizador/visualizador.component';
 import { CertificacionesComponent } from './certificaciones/certificaciones.component';
+import { ReporteEncuestaSatisfaccionComponent } from './reporte-encuesta-satisfaccion/reporte-encuesta-satisfaccion.component';
+import { PromedioMateriasComponent } from './promedio-materias/promedio-materias.component';
 
 const routes: Routes = [{
   path: '',
@@ -36,6 +38,16 @@ const routes: Routes = [{
     {
       path: 'certificaciones',
       component: CertificacionesComponent,
+      canActivate:[AcademicaSesionService]
+    },
+    {
+      path: 'reporte-encuesta-satisfaccion',
+      component: ReporteEncuestaSatisfaccionComponent,
+      canActivate:[AcademicaSesionService]
+    },
+    {
+      path: 'promedio-materias',
+      component: PromedioMateriasComponent,
       canActivate:[AcademicaSesionService]
     },
     {

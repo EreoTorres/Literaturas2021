@@ -4,7 +4,7 @@ import { MessagesService } from 'src/app/services/messages/messages.service';
 import { CitasService } from 'src/app/services/http-service/consejeria-estudiantil/citas/citas.service';
 import { SmartTableDatepickerComponent, SmartTableDatepickerRenderComponent } from 'src/app/components/smart-table-datepicker/smart-table-datepicker.component';
 import { ConsejeriaEstudiantilComponent } from '../consejeria-estudiantil.component';
-import { FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-citas',
@@ -14,9 +14,9 @@ import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 export class CitasComponent implements OnInit {
   @Input() registros: any;
   @Input() movimientos: any;
-  formCita: FormGroup;
-  formAsignacion: FormGroup;
-  formFinal: FormGroup;
+  formCita: UntypedFormGroup;
+  formAsignacion: UntypedFormGroup;
+  formFinal: UntypedFormGroup;
   programas: any = [];
   motivos: any = [];
   contactos: any = [];
@@ -169,7 +169,7 @@ export class CitasComponent implements OnInit {
     private modalService: NgbModal,
     private MessagesService: MessagesService,
     private consejeria_estudiantil:ConsejeriaEstudiantilComponent,
-    private formBuilder: FormBuilder
+    private formBuilder: UntypedFormBuilder
   ) {
     this.formCita = this.formBuilder.group({
       id_cita: [0, [Validators.required]],
