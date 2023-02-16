@@ -72,9 +72,6 @@ export const MENU_ITEMS_ADMIN = [
         home: true,
     },
     {
-        title: 'Rutas de Cursamiento',
-        icon: 'sticky_note_2_outline',
-        link: '/servidorAWS/rutas-cursamiento',
         title: 'Encuesta de satisfacción',
         icon: 'rate_review',
         link: '/academica/reporte-encuesta-satisfaccion',
@@ -84,6 +81,12 @@ export const MENU_ITEMS_ADMIN = [
         title: 'Promedio de materias',
         icon: 'insert_chart',
         link: '/academica/promedio-materias',
+        home: true,
+    },
+    {
+        title: 'Rutas de Cursamiento',
+        icon: 'sticky_note_2_outline',
+        link: '/servidorAWS/rutas-cursamiento',
         home: true,
     }
 ];

@@ -76,7 +76,6 @@ export class DefaultIntl extends OwlDateTimeIntl {
     ControlEscolarComponent,
     InputprogramasAllComponent,
     ConsejeriaEstudiantilComponent,
-    //ServidorAWSComponent,
     VisualizadorComponent,
     InputprogramasCeComponent
   ],
@@ -125,61 +124,5 @@ export class DefaultIntl extends OwlDateTimeIntl {
     { provide: OwlDateTimeIntl, useClass: DefaultIntl }
   ],
   bootstrap: [AppComponent]
-    declarations: [
-        AppComponent,
-        LoginComponent,
-        PromocionesComponent,
-        AcademicaComponent,
-        SmartTableDatepickerComponent,
-        SmartTableDatepickerRenderComponent,
-        SmartTableDatepickerComponentTime,
-        SmartTableDatepickerRenderComponentTime,
-        NumberComponentDynamicComponent,
-        InputprogramasComponent,
-        EstatusSelectComponent,
-        InputImagenComponent,
-        OpcionesLiteraturasComponent,
-        SmatTablePickerDatetimeComponent,
-        ControlEscolarComponent,
-        InputprogramasAllComponent,
-        ConsejeriaEstudiantilComponent,
-        VisualizadorComponent,
-        InputprogramasCeComponent
-    ],
-    imports: [
-        BrowserModule,
-        MatToolbarModule,
-        MatSidenavModule,
-        MatListModule,
-        MatButtonModule,
-        MatIconModule,
-        MatCardModule,
-        FlexLayoutModule,
-        MatGridListModule,
-        AppRoutingModule,
-        MatFormFieldModule,
-        MatInputModule,
-        NgxDropzoneModule,
-        FormsModule,
-        ReactiveFormsModule,
-        HttpClientModule,
-        NgxPaginationModule,
-        NgbModule,
-        BrowserAnimationsModule,
-        OwlDateTimeModule,
-        OwlNativeDateTimeModule,
-        CommonModule,
-        Ng2SmartTableModule,
-        CKEditorModule
-    ],
-    providers: [
-        AcademicaSesionService,
-        PromocionesSesionService,
-        ControlEscolarService,
-        ConsejeriaEstudiantilService,
-        DatePipe,
-        { provide: OwlDateTimeIntl, useClass: DefaultIntl }
-    ],
-    bootstrap: [AppComponent]
 })
 export class AppModule { }
