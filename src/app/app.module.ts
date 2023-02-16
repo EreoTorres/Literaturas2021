@@ -41,9 +41,12 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { InputprogramasAllComponent } from './components/inputprogramas-all/inputprogramas-all.component';
 import { ConsejeriaEstudiantilComponent } from './consejeria-estudiantil/consejeria-estudiantil.component';
 import { ConsejeriaEstudiantilService } from './services/http-service/consejeria-estudiantil/consejeria-estudiantil.service';
+//import { ServidorAWSComponent } from './servidorAWS/servidorAWS.component';
+import { ServidorAWSService } from './services/http-service/servidorAWS/servidor-AWS.service';
 import { VisualizadorComponent } from './visualizador/visualizador/visualizador.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { InputprogramasCeComponent } from './components/inputprogramas-ce/inputprogramas-ce.component';
+
 
 export class DefaultIntl extends OwlDateTimeIntl {
   /** A label for the cancel button */
@@ -73,6 +76,7 @@ export class DefaultIntl extends OwlDateTimeIntl {
     ControlEscolarComponent,
     InputprogramasAllComponent,
     ConsejeriaEstudiantilComponent,
+    //ServidorAWSComponent,
     VisualizadorComponent,
     InputprogramasCeComponent
   ],
@@ -100,7 +104,7 @@ export class DefaultIntl extends OwlDateTimeIntl {
     OwlNativeDateTimeModule,
     CommonModule,
     Ng2SmartTableModule,
-    CKEditorModule
+    CKEditorModule,
   ],
   entryComponents: [
     SmartTableDatepickerComponent,
@@ -116,6 +120,7 @@ export class DefaultIntl extends OwlDateTimeIntl {
     PromocionesSesionService,
     ControlEscolarService,
     ConsejeriaEstudiantilService,
+    ServidorAWSService,
     DatePipe,
     { provide: OwlDateTimeIntl, useClass: DefaultIntl }
   ],

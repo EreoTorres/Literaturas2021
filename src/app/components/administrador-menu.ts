@@ -70,5 +70,11 @@ export const MENU_ITEMS_ADMIN = [
         icon: 'today',
         link: '/academica/certificaciones',
         home: true,
+    },
+    {
+        title: 'Rutas de Cursamiento',
+        icon: 'sticky_note_2_outline',
+        link: '/servidorAWS/rutas-cursamiento',
+        home: true,
     }
 ];

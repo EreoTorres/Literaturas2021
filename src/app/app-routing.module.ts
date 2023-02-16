@@ -28,6 +28,11 @@ export const routes: Routes = [
       .then(m => m.ConsejeriaEstudiantilModule)
   },
   {
+    path: 'servidorAWS',
+    loadChildren: () => import('./servidorAWS/servidorAWS.module')
+      .then(m => m.ServidorAWSModule)
+  },
+  {
     path: '',
     redirectTo: '/login',
     pathMatch: 'full'

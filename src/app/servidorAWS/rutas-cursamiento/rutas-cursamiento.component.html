@@ -1,0 +1,154 @@
+<div class="contentT m-5">
+  <div class="card border-secondary shadow ">
+      <div class="card-header text-center" style="font-size: 1.3vw;">
+          Módulo de Rutas Cursamiento
+      </div>
+      <div class="card-body text-secondary">
+          <div class="mr-3">
+            <a class="btn btn-secondary float-right" style="margin-left: 1% !important;" target="_blank" href="http://agcollege.edu.mx/literaturas/1/6/Registro_Rutas_Cursamiento.docx">
+              <mat-icon class="mr-2" style="color: white !important;">cloud_download</mat-icon><span>Descargar Manual</span>
+          </a>
+              <button class="btn btn-success float-right" (click)="openModal(agregarNuevaRuta)">
+                <mat-icon class="mr-2">add_box</mat-icon><span>Agregar nueva Ruta de Cursamiento</span>
+              </button>
+          </div>
+          <div style="margin-top: 5% !important;width: 100%;">
+              <ng2-smart-table [settings]="settings" [source]="registros" (custom)="onCustom($event)"></ng2-smart-table>
+          </div>
+      </div>
+  </div>
+</div>
+
+<ng-template #agregarNuevaRuta let-modal [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">{{titulo_add}}</h4>
+      <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <form [formGroup]="formRutas" (ngSubmit)="validarRuta(1)" novalidate>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-12">
+          <span>Plan de Estudio:</span>
+          <select class="form-control" formControlName="plan_estudio">
+            <option value="">Selecciona una opción</option>
+            <option [value]="programa.id" *ngFor="let programa of programas">{{programa.nombre_corto}}</option>
+          </select>
+        </div>
+        <div class="col-12">
+          <span>Nombre de la ruta de cursamiento:</span>
+          <input class="form-control" type="text" formControlName="nombre_ruta" >
+        </div>
+        
+      </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" [disabled]="formRutas.invalid" class="btn btn-success">
+        <mat-icon class="mr-2">save</mat-icon>{{nombre_boton_add}}
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #agregarMaterias let-modal [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Seleccionar materias</h4>
+      <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-5">
+          <h4>Materias disponibles</h4>
+        </div>
+        <div class="col-2"></div>
+        <div class="col-5">
+          <h4>Materias seleccionadas</h4>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-5">
+          <div class="row">
+            <div class="col-10 text-right"> <span>Seleccionar Todo</span> </div>
+            <div class="col-2">
+              <input class="form-check-input" #chbTodosLeft type="checkbox" id="chbTodosLeft" [checked]="matNoSeleccionadas.selectedOptions.selected.length==materiasNoSeleccionadas.length && materiasNoSeleccionadas.length>0" (click)="seleccionarTodo(chbTodosLeft, matNoSeleccionadas)"></div>
+          </div>
+        </div>
+        <div class="col-2"></div>
+        <div class="col-5">
+          <div class="row">
+            <div class="col-10 text-right"> <span>Seleccionar Todo</span> </div>
+            <div class="col-2">
+              <input class="form-check-input" #chbTodosRight type="checkbox" id="chbTodosRight" [checked]="matSeleccionadas.selectedOptions.selected.length==materiasSeleccionadas.length && materiasSeleccionadas.length>0" (click)="seleccionarTodo(chbTodosRight, matSeleccionadas)"></div>
+          </div>
+        </div>
+      </div>
+      <div class="row" style="padding: 15px;">
+        <div class="col-5 dual-select">
+        <mat-selection-list #matNoSeleccionadas>
+          <mat-list-option *ngFor="let mat of materiasNoSeleccionadas" [value]="mat.id">
+            {{mat.nombre_categoria}} - {{mat.materia}}
+          </mat-list-option>
+        </mat-selection-list>
+        </div>
+        <div class="col-2 text-center">
+          <button class="dual-select__control" [disabled]="matNoSeleccionadas.selectedOptions.selected.length==0" (click)="seleccionar(matNoSeleccionadas.selectedOptions.selected)"><mat-icon class="mr-2">skip_next</mat-icon></button><br><br>
+          <button class="dual-select__control" [disabled]="matSeleccionadas.selectedOptions.selected.length==0" (click)="seleccionarR(matSeleccionadas.selectedOptions.selected)"><mat-icon class="mr-2">skip_previous</mat-icon></button>
+        </div>
+        <div class="col-5 dual-select">
+          <mat-selection-list #matSeleccionadas>
+            <mat-list-option *ngFor="let mat of materiasSeleccionadas" [value]="mat.id">
+              {{mat.nombre_categoria}} - {{mat.materia}}
+            </mat-list-option>
+          </mat-selection-list>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-5">
+          <p>
+            Seleccionadas: {{matNoSeleccionadas.selectedOptions.selected.length}}
+          </p>
+        </div>
+        <div class="col-2"></div>
+        <div class="col-5">
+          <p>
+            Seleccionadas: {{matSeleccionadas.selectedOptions.selected.length}}
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button [disabled]="materiasSeleccionadas.length==0" class="btn btn-success" (click)="guardar(0)">
+        <mat-icon class="mr-2">save</mat-icon>Solo Guardar
+      </button>
+      <button [disabled]="materiasSeleccionadas.length==0" class="btn btn-primary" (click)="guardar(1)">
+        <mat-icon class="mr-2">save</mat-icon>Guardar y Registrar en Escolar
+      </button>
+    </div>
+</ng-template>
+
+<ng-template #ordenarMaterias let-modal [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{tipoOrd}} materias</h4>
+    <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-12">
+          <h2>Nombre de las materias</h2>
+         <div cdkDropList class="example-list" [cdkDropListData]="listaMaterias"  (cdkDropListDropped)="drop($event)">
+            <div class="example-box" *ngFor="let item of listaMaterias" cdkDrag>Periodo{{item.periodo}} - {{item.materia}}</div>
+          </div>          
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-success" (click)="guardarOrden()">
+      <mat-icon class="mr-2">save</mat-icon>Guardar {{tipoOrdB}}
+    </button>
+  </div>
+</ng-template>

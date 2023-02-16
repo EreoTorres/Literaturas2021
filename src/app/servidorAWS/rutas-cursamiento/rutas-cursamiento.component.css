@@ -1,0 +1,313 @@
+.card-header,.modal-header{
+  background: #172441;
+  color: #FFF;
+}
+
+.card-body{
+  background: #FFF;
+}
+
+.page-item.disabled .page-link {
+color: darkgray !important;
+}
+
+.page-item.active .page-link {
+background: black !important;
+color: white !important;
+border: 1px solid black !important;
+}
+
+.page-item {
+margin: 3px;
+}
+
+.page-link {
+color: black !important;
+padding: 8px;
+padding-left: 14px;
+padding-right: 14px;
+border-radius: 4px !important;
+}
+
+.page-link:hover {
+background-color: black !important;
+color: white !important;
+border: 1px solid black;
+}
+
+.ng2-smart-pagination .page-link-next,
+.ng2-smart-pagination .page-link-prev {
+font-size: 14px !important;
+}
+
+.ng2-smart-page-item a:hover {
+text-decoration: none !important;
+}
+
+.modal-body span{
+  font-weight: bold;
+}
+
+.titulo{
+  text-align: center;
+}
+
+th{
+  text-align: center;
+}
+
+.itemP{
+  cursor: pointer;
+}
+
+.table{
+  margin-top: 2% !important
+}
+
+.headerT{
+  background: #212529;
+  color: white;
+}
+
+.paginationp{
+  text-align: center;
+}
+
+input[type=text]{
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+  background: #e4e4e41a !important;
+  color: white;
+}
+
+textarea{
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+  background: #e4e4e409;
+  resize: vertical;
+  /* max-height: 50px; */
+  color: white;
+}
+
+label{
+  color: white;
+}
+
+video {
+  width: 100%;
+  height: auto;
+}
+
+.card{
+  transition: none !important;
+  box-shadow: none !important;
+  padding: 0px 0 0 0 !important;
+  background: none !important;
+  margin: 0px !important;
+  border: 0px;
+}
+input{
+  color: black !important;
+}
+
+textarea{
+  color: black  !important;
+}
+
+.mat-icon {
+  vertical-align: middle;
+}
+
+/* Citas */
+:host /deep/ table td .estatus {
+  padding: 5px;
+  border-radius: 10px;
+  font-weight: 400;
+  color: black;
+}
+
+:host /deep/ table td .rojo {
+  background-color: #f44336;
+  color: white;
+}
+
+:host /deep/ table td .amarillo {
+  background-color: #ffeb3b;
+}
+
+:host /deep/ table td .azul {
+  background-color: #2196f3;
+  color: white;
+}
+
+:host /deep/ table td .verde {
+  background-color: #4caf50;
+  color: white;
+}
+
+:host /deep/ table td .naranja {
+  background-color: #ff9800;
+  color: white;
+}
+
+.col-12, .col-6 {
+  margin-top: 10px;
+}
+
+.loading {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.lds-ellipsis {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.lds-ellipsis div {
+  position: absolute;
+  top: 33px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #172441;
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+}
+
+.lds-ellipsis div:nth-child(1) {
+  left: 8px;
+  animation: lds-ellipsis1 0.6s infinite;
+}
+
+.lds-ellipsis div:nth-child(2) {
+  left: 8px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+
+.lds-ellipsis div:nth-child(3) {
+  left: 32px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+
+.lds-ellipsis div:nth-child(4) {
+  left: 56px;
+  animation: lds-ellipsis3 0.6s infinite;
+}
+
+@keyframes lds-ellipsis1 {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes lds-ellipsis3 {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+
+@keyframes lds-ellipsis2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(24px, 0);
+  }
+}
+
+.alumno {
+  margin-top: 15px;
+}
+
+textarea {
+  resize: none;
+}
+
+.active {
+  color: black !important;
+}
+
+.nav-link {
+  color: white;
+  background: #141E34;
+}
+
+.form-check-label {
+  color: black;
+}
+
+div.dual-select {
+	overflow-x: hidden;
+	overflow-y: auto;
+	border: 1px solid #ddd;
+	border-radius:5px;
+	position: relative;
+	cursor: pointer;
+  height: 400px;
+}
+
+/*Drag&Drop */
+.example-list {
+  /*width: 500px;*/
+  max-width: 100%;
+  border: solid 1px #ccc;
+  min-height: 60px;
+  display: block;
+  background: white;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.example-box {
+  padding: 10px 10px;
+  border-bottom: solid 1px #ccc;
+  color: rgba(0, 0, 0, 0.87);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  cursor: move;
+  background: white;
+  font-size: 14px;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+              0 8px 10px 1px rgba(0, 0, 0, 0.14),
+              0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.example-box:last-child {
+  border: none;
+}
+
+.example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/*TERMINA Drag&Drop */
