@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges, ViewChild, ElementRef } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { LocalDataSource } from 'ng2-smart-table';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { CitasService } from 'src/app/services/http-service/consejeria-estudiantil/citas/citas.service';
 import { SmartTableDatepickerComponent, SmartTableDatepickerRenderComponent } from 'src/app/components/smart-table-datepicker/smart-table-datepicker.component';
@@ -12,8 +13,8 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms'
   styleUrls: ['citas.component.css']
 })
 export class CitasComponent implements OnInit {
-  @Input() registros: any;
-  @Input() movimientos: any;
+  registros: LocalDataSource = new LocalDataSource()
+  movimientos: LocalDataSource = new LocalDataSource()
   formCita: UntypedFormGroup;
   formAsignacion: UntypedFormGroup;
   formFinal: UntypedFormGroup;
@@ -69,8 +70,18 @@ export class CitasComponent implements OnInit {
       },
       nombre_plan_estudio: {
         title: 'Plan de estudio',
-        type: 'string',
-        width: '20%'
+        type: 'html',
+        width: '20%',
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'TODOS',
+            list: ''
+          },
+        },
+        filterFunction: (cell?: any, search?: string) => {
+          if (cell == search) return search
+        }
       },
       motivo: {
         title: 'Motivo',
@@ -141,25 +152,15 @@ export class CitasComponent implements OnInit {
       perPage: 5,
     },
     columns: {
-      movimiento: {
-        title: 'Movimiento',
-        type: 'string',
-        width: '15%'
-      },
-      responsable: {
-        title: 'Responsable',
+      nombre_alumno: {
+        title: 'Nombre alumno',
         type: 'string',
         width: '30%'
       },
-      fecha: {
-        title: 'Fecha',
+      movimiento: {
+        title: 'Movimiento',
         type: 'string',
-        filter: true,
-        width: '15%',
-        editor: {
-          type: 'custom',
-          component: SmartTableDatepickerComponent,
-        }
+        width: '70%'
       }
     }
   };
@@ -207,6 +208,12 @@ export class CitasComponent implements OnInit {
   }
 
   getFormulario() {
+    this.citasHTTP.generico('getPlanesEstudio').then(datas => {
+      var res: any = datas;
+      this.settings.columns.nombre_plan_estudio.filter.config.list = res.resultado
+      this.settings = Object.assign({}, this.settings)
+    });
+
     this.citasHTTP.generico('getMotivos').then(datas => {
       var res: any = datas;
       this.motivos = res.resultado;
@@ -227,7 +234,7 @@ export class CitasComponent implements OnInit {
       this.estatus2 = res.resultado;
     });
 
-    this.citasHTTP.generico('getEstatus', {tipo : 2, select: 1}).then(datas => {
+    this.citasHTTP.generico('getEstatus', {tipo : 1, select: 1}).then(datas => {
       var res: any = datas;
       this.settings.columns.estatus.filter.config.list = res.resultado
       this.settings = Object.assign({}, this.settings)
@@ -253,7 +260,7 @@ export class CitasComponent implements OnInit {
     this.MessagesService.showLoading();
     this.citasHTTP.generico('getCitas').then(datas => {
       var res: any = datas;
-      this.registros = res.resultado
+      this.registros.load(res.resultado)
       this.MessagesService.closeLoading();
     });
   }

@@ -52,7 +52,7 @@
         <div class="row">
           <div class="col-12">
             <span>Nombre del alumno:</span>
-            <input class="form-control" type="text" formControlName="nombre_alumno" disabled>
+            <input class="form-control" type="text" formControlName="nombre_alumno" [readonly]="true">
           </div>
         </div>
         <div class="row">
@@ -122,19 +122,19 @@
       <div class="row">
         <div class="col-12">
           <span>Nombre del alumno:</span>
-          <input class="form-control" type="text" formControlName="nombre_alumno" disabled>
+          <input class="form-control" type="text" formControlName="nombre_alumno" [readonly]="true">
         </div>
       </div>
       <div class="row">
         <div class="col-12">
           <span>Motivo de la llamada:</span>
-          <input class="form-control" type="text" formControlName="motivo" disabled>
+          <input class="form-control" type="text" formControlName="motivo" [readonly]="true">
         </div>
       </div>
       <div class="row">
         <div class="col-12">
           <span>Detalle:</span>
-          <textarea class="form-control" name="textarea" rows="3" cols="20" formControlName="detalle" disabled></textarea>
+          <textarea class="form-control" name="textarea" rows="3" cols="20" formControlName="detalle" [readonly]="true"></textarea>
         </div>
       </div>
       <div class="row">
@@ -158,7 +158,7 @@
       <div class="row">
         <div class="col-12">
           <span>Comentarios:</span>
-          <textarea class="form-control" name="textarea" rows="5" cols="20" formControlName="comentarios"></textarea>
+          <textarea class="form-control" name="textarea" rows="10" cols="20" formControlName="comentarios"></textarea>
         </div>
       </div>
     </div>
