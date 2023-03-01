@@ -22,6 +22,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { FormularioSesionesVirtualesComponent } from './programaciones/formulario-sesiones-virtuales/formulario-sesiones-virtuales.component';
 import { HorariosSesionesVirtualesComponent } from './programaciones/horarios-sesiones-virtuales/horarios-sesiones-virtuales.component';
 import { AsistentesComponent } from './campanias-asistentes/campanias-asistentes.component';
+import { BienvenidaComponent } from './bienvenida/bienvenida.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { AsistentesComponent } from './campanias-asistentes/campanias-asistentes
     FormularioSesionesVirtualesComponent,
     HorariosSesionesVirtualesComponent,
     AsistentesComponent,
+    BienvenidaComponent,
   ],
   imports: [
     PromocionesRoutingModule,

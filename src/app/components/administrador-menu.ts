@@ -88,5 +88,11 @@ export const MENU_ITEMS_ADMIN = [
         icon: 'sticky_note_2_outline',
         link: '/servidorAWS/rutas-cursamiento',
         home: true,
-    }
+    },
+    {
+        title: 'Bienvenida',
+        icon: 'sticky_note_2_outline',
+        link: '/promociones/bienvenida',
+        home: true,
+    },
 ];

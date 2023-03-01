@@ -86,6 +86,12 @@ export const MENU_ITEMS = [
         icon: 'sticky_note_2_outline',
         link: '/promociones/campanias-asistentes',
         home: true,
+      },
+      {
+        title: 'Bienvenida',
+        icon: 'sticky_note_2_outline',
+        link: '/promociones/bienvenida',
+        home: true,
       }
     ]
   },

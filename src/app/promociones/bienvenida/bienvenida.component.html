@@ -1,0 +1,17 @@
+<div class="contentT m-5">
+  <div class="card border-secondary shadow ">
+      <div class="card-header text-center" style="font-size: 1.3vw;">
+          Módulo de Registro de Bienvenida
+      </div>
+      <div class="card-body text-secondary">
+          <div class="mr-3">
+            <button class="btn btn-success float-right" (click)="getRegistrosExcel()">
+                <mat-icon class="mr-2">cloud_download</mat-icon><span>Descargar reporte en Excel</span>
+            </button>
+          </div>
+          <div style="margin-top: 5% !important;width: 100%;">
+              <ng2-smart-table [settings]="settings" [source]="registros"></ng2-smart-table>
+          </div>
+      </div>
+  </div>
+</div>
