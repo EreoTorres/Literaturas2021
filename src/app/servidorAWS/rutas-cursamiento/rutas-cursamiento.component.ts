@@ -6,6 +6,7 @@ import { SmartTableDatepickerComponent, SmartTableDatepickerRenderComponent } fr
 import { ServidorAWSComponent } from '../servidorAWS.component';
 import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import { InputImagenComponent } from 'src/app/components/input-imagen/input-imagen.component';
 
 
 @Component({
@@ -17,6 +18,8 @@ export class RutasCursamientoComponent implements OnInit {
   @Input() registros: any;
   //@Input() movimientos: any;
   @ViewChild('agregarNuevaRuta') agregarNuevaRuta: ElementRef;
+  imagen: File;
+  nombre_file: any = '';
   formRutas: FormGroup;
   formFinal: FormGroup;
   titulo_add: any = 'Agregar nueva Ruta de Cursamiento';
@@ -26,10 +29,19 @@ export class RutasCursamientoComponent implements OnInit {
   materiasSeleccionadas: any = [];
   materiasNoSeleccionadas: any = [];
   data_envia: any =[];
+  list_periodos = [{'title':'Periodo 1','value':'Periodo 1'},{'title':'Periodo 2','value':'Periodo 2'},{'title':'Periodo 3','value':'Periodo 3'},{'title':'Periodo 4','value':'Periodo 4'},
+              {'title':'Periodo 5','value':'Periodo 5'},{'title':'Periodo 6','value':'Periodo 6'},{'title':'Periodo 7','value':'Periodo 7'},{'title':'Periodo 8','value':'Periodo 8'},
+              {'title':'Periodo 9','value':'Periodo 9'},{'title':'Periodo 10','value':'Periodo 10'},{'title':'Periodo 11','value':'Periodo 11'},{'title':'Periodo 12','value':'Periodo 12'}];
+  list_filtro = [{'title':'Si','value':'Si'},{'title':'No','value':'No'}]; 
+  list_filtro2 = [{'title':'Solo un foro', 'value':'Solo un foro'}, {'title':'Todos los foros', 'value':'Todos los foros'}];
+  list_filtro3 = [{'title':'Solo una actividad', 'value':'Solo una actividad'}, {'title':'Todas las actividades', 'value':'Todas las actividades'}];
+  messageArchivos: string = '';
+  message: string = 'Para agregar una imagen suéltelo aquí o haga clic en el navegador';
   tipoOrd : any = "";
   tipoOrdB : any = "";
   @ViewChild('agregarMaterias') agregarMaterias: ElementRef;
   @ViewChild('ordenarMaterias') ordenarMateriasV: ElementRef;
+  @ViewChild('configurarMaterias') ordenarMateriasC: ElementRef;
   asignacion: any = {
     nombre: '',
     motivo: '',
@@ -43,12 +55,13 @@ export class RutasCursamientoComponent implements OnInit {
       edit: false,
       delete: false,
       custom: [
-        { name: 'editar', title: '<i class="material-icons-outlined">edit</i>&nbsp;'},
-        { name: 'registrar_en_escolar', title: '<i class="material-icons-outlined">playlist_add</i>&nbsp;'},
-        { name: 'ordenar', title: '<i class="material-icons-outlined">sort</i>&nbsp;'},
-        { name: 'serializar', title: '<i class="material-icons-outlined">low_priority</i>&nbsp;'},
-        { name: 'activar_escolar', title: '<i class="material-icons-outlined">check_circle</i>&nbsp;'},
-        { name: 'regresar', title: '<i class="material-icons-outlined">backspace</i>&nbsp;'}
+        { name: 'editar', title: '<i class="material-icons-outlined" title="Editar Ruta">edit</i>&nbsp;'},
+        { name: 'registrar_en_escolar', title: '<i class="material-icons-outlined" title="Registrar En Escolar">playlist_add</i>&nbsp;'},
+        { name: 'ordenar', title: '<i class="material-icons-outlined" title="Ordenar Materias Escolar">sort</i>&nbsp;'},
+        { name: 'serializar', title: '<i class="material-icons-outlined" title="Serializar Materias Escolar">low_priority</i>&nbsp;'},
+        { name: 'configurar', title: '<i class="material-icons-outlined" title="Configurar Materias Escolar">settings</i>&nbsp;'},
+        { name: 'activar_escolar', title: '<i class="material-icons-outlined" title="Activar Ruta Escolar">check_circle</i>&nbsp;'},
+        { name: 'regresar', title: '<i class="material-icons-outlined" title="Regresar Ruta a Edición">backspace</i>&nbsp;'}
       ],
       position: 'right'
     },
@@ -67,13 +80,25 @@ export class RutasCursamientoComponent implements OnInit {
       nombre_ruta: {
         title: 'Nombre Ruta de Cursamiento',
         type: 'string',
-        width: '20%'
+        width: '15%'
+      },
+      requiere_vigencias_t: {
+        title: 'Requiere Vigencias',
+        type: 'string',
+        width: '8%',
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'TODOS',
+            list: this.list_filtro
+          },
+        }
       },
       fecha_registro: {
         title: 'Fecha de creación',
         type: 'string',
         filter: true,
-        width: '12%',
+        width: '10%',
         editor: {
           type: 'custom',
           component: SmartTableDatepickerComponent,
@@ -83,7 +108,7 @@ export class RutasCursamientoComponent implements OnInit {
         title: 'Fecha de publicacion',
         type: 'string',
         filter: true,
-        width: '12%',
+        width: '10%',
         editor: {
           type: 'custom',
           component: SmartTableDatepickerComponent,
@@ -92,7 +117,7 @@ export class RutasCursamientoComponent implements OnInit {
       estatus:{
         title: 'Estatus',
         type: 'html',
-        width: '10%',
+        width: '8%',
         filter: {
           type: 'list',
           config: {
@@ -104,7 +129,7 @@ export class RutasCursamientoComponent implements OnInit {
       estatus_escolar:{
         title: 'Estatus Escolar',
         type: 'html',
-        width: '10%',
+        width: '8%',
         filter: {
           type: 'list',
           config: {
@@ -114,6 +139,126 @@ export class RutasCursamientoComponent implements OnInit {
         }
       }
 
+    }
+  };
+
+  settings_configurar = {
+    actions: {
+      columnTitle: '',
+      add: false,
+      edit: true,
+      delete: false,
+      position: 'right'
+    },
+    edit: {
+      editButtonContent: '<i class="material-icons-outlined">edit</i>',
+      saveButtonContent: '<i class="material-icons-outlined">save</i>',
+      cancelButtonContent: '<i class="material-icons-outlined">close</i>',
+      confirmSave: true
+    },
+    attr: {
+      class: 'table table-bordered responsive'
+    },
+    pager: {
+      perPage: 10,
+    },
+    columns: {
+      nombre_periodo: {
+        title: 'Periodo',
+        type: 'string',
+        width: '15%',
+        editor: {
+          type: 'list',
+          config: {
+            list: this.list_periodos
+          },
+        },
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'TODOS',
+            list: this.list_periodos
+          },
+        }
+      },
+      materia: {
+        title: 'Nombre de la materia',
+        type: 'string',
+        width: '30%',
+        editable: false
+      },
+      foros_obligatorio:{
+        title: 'Foros Obligatorio',
+        type: 'html',
+        width: '10%',
+        editor: {
+          type: 'list',
+          config: {
+            list: this.list_filtro
+          },
+        },
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'TODOS',
+            list: this.list_filtro
+          },
+        }
+      },
+      solo_un_foro:{
+        title: 'Cuantos Foros',
+        type: 'html',
+        width: '10%',
+        editor: {
+          type: 'list',
+          config: {
+            list: this.list_filtro2
+          },
+        },
+        filter: {
+          type: 'list',
+          config: {
+            selectText: ' ',
+            list: this.list_filtro2
+          },
+        }
+      },
+        actividades_obligatorio:{
+          title: 'Actividades Obligatorio',
+          type: 'html',
+          width: '10%',
+          editor: {
+            type: 'list',
+            config: {
+              list: this.list_filtro
+            },
+          },
+          filter: {
+            type: 'list',
+            config: {
+              selectText: 'TODOS',
+              list: this.list_filtro
+            },
+          }
+      },
+      solo_una_actividad:{
+        title: 'Cuantos Actividades',
+        type: 'html',
+        width: '10%',
+        editor: {
+          type: 'list',
+          config: {
+            list: this.list_filtro3
+          },
+        },
+        filter: {
+          type: 'list',
+          config: {
+            selectText: ' ',
+            list: this.list_filtro3
+          },
+        }
+      }
     }
   };
   constructor(
@@ -127,6 +272,9 @@ export class RutasCursamientoComponent implements OnInit {
       id: [0, [Validators.required]],
       plan_estudio: [null, [Validators.required]],
       nombre_ruta: ['', [Validators.required]],
+      requiere_vigencias: [0, [Validators.required]],
+      imagen: [''],
+      url_informacion: ['', [Validators.required]],
       responsable: [null]
     });
 
@@ -147,6 +295,9 @@ export class RutasCursamientoComponent implements OnInit {
     this.formRutas.controls['id'].setValue(0);
     this.formRutas.controls['plan_estudio'].setValue('');
     this.formRutas.controls['nombre_ruta'].setValue('');
+    this.formRutas.controls['requiere_vigencias'].setValue(0);
+    this.formRutas.controls['imagen'].setValue('');
+    this.formRutas.controls['url_informacion'].setValue('');
   }
 
   getRegistros() {
@@ -170,18 +321,10 @@ export class RutasCursamientoComponent implements OnInit {
 
   validarRuta(tipo: any) {
     this.formFinal = this.formRutas;
-    //(tipo == 1 ? this.formFinal = this.formRutas : this.formFinal = this.formMaterias);
     this.formFinal.controls['responsable'].setValue(sessionStorage.getItem('id'));
+    //this.formFinal.controls['imagen'].setValue(this.nombre_file);
+    this.formFinal.controls['imagen'].setValue('AQUI VA LA IMAGEN');
     if (this.formFinal.valid) {
-     /* let estatus = this.formFinal.value.estatus
-      let consejero = this.formFinal.value.consejero
-      if((estatus == 2 || estatus == 5) && !consejero) this.MessagesService.showSuccessDialog('Lo siento, para aplicar el estatus "' + (estatus = 2 ? 'Asignado' : 'Atendido') + '" se necesita seleccionar un consejero.', 'warning')
-      else if(estatus == 7) {
-        this.MessagesService.showConfirmDialog('¿Está seguro de que desea eliminar este registro?', '').then((result) => {
-          if(result.isConfirmed) this.actualizarCita();
-        });
-      }
-      else*/
        this.actualizarRuta();
     }
     else this.MessagesService.showSuccessDialog('Todos los campos son obligatorios.', 'error');
@@ -332,11 +475,11 @@ export class RutasCursamientoComponent implements OnInit {
     });  
   }
 
-  getListaMateriasOrd(enviar){
-    this.rutasHTTP.generico('getMateriasOrd', enviar).then(datas => {
+  getListaMateriasOrd(_enviar, _modal){
+    this.rutasHTTP.generico('getMateriasOrd', _enviar).then(datas => {
       var res: any = datas;
       this.listaMaterias = res.resultado;
-      this.openModal(this.ordenarMateriasV);
+      this.openModal(_modal);
       this.MessagesService.closeLoading();
     });
   }
@@ -351,6 +494,8 @@ export class RutasCursamientoComponent implements OnInit {
         this.formRutas.controls['id'].setValue(ev.data.id);
         this.formRutas.controls['plan_estudio'].setValue(ev.data.id_plan_estudio);
         this.formRutas.controls['nombre_ruta'].setValue(ev.data.nombre_ruta);
+        this.formRutas.controls['requiere_vigencias'].setValue(ev.data.requiere_vigencias);
+        this.formRutas.controls['url_informacion'].setValue(ev.data.url_informacion);
       } else {
         this.MessagesService.showSuccessDialog("La ruta de cursamiento ya se encuentra registrada en escolar, no puede ser editada !!", 'error');
       }
@@ -388,7 +533,7 @@ export class RutasCursamientoComponent implements OnInit {
           lista:[],
           responsable:sessionStorage.getItem('id')
         }
-        this.getListaMateriasOrd(this.data_envia);
+        this.getListaMateriasOrd(this.data_envia, this.ordenarMateriasV);
       } else {
         this.MessagesService.showSuccessDialog("La ruta de cursamiento requiere estar registrada en escolar para cambiar orden / seriación !!", 'error');
       }
@@ -405,11 +550,26 @@ export class RutasCursamientoComponent implements OnInit {
           lista:[],
           responsable:sessionStorage.getItem('id')
         }
-        this.getListaMateriasOrd(this.data_envia);
+        this.getListaMateriasOrd(this.data_envia, this.ordenarMateriasV);
       } else {
         this.MessagesService.showSuccessDialog("La ruta de cursamiento requiere estar registrada en escolar para cambiar orden / seriación !!", 'error');
       }
-    } else if (ev.action == 'activar_escolar')
+    } else if (ev.action == 'configurar')
+    {
+      if(ev.data.registro_escolar == 1){
+        this.MessagesService.showLoading();
+        this.data_envia = {
+          id: ev.data.id,
+          tipo: 3,
+          lista:[],
+          responsable:sessionStorage.getItem('id')
+        }
+        this.getListaMateriasOrd(this.data_envia, this.ordenarMateriasC);
+      } else {
+        this.MessagesService.showSuccessDialog("La ruta de cursamiento requiere estar registrada en escolar para cambiar la configuración !!", 'error');
+      }
+    }
+     else if (ev.action == 'activar_escolar')
     {
       if(ev.data.activo_escolar == 0 && ev.data.registro_escolar == 1){
         this.MessagesService.showConfirmDialog('¿Está seguro de activar la ruta de cursamiento en escolar?', '').then((result) => {
@@ -474,6 +634,60 @@ export class RutasCursamientoComponent implements OnInit {
         this.MessagesService.showSuccessDialog("La ruta de cursamiento no se puede regresar a selección de materias !!", 'error');
       }
     }
+  }
+
+  actualizar_materia(ev) {
+    this.MessagesService.showLoading();
+    let enviar = {
+      id_materia_escolar : ev.newData.id,
+      periodo : ev.newData.nombre_periodo.replace("Periodo ",""),
+      foros_obligatorio : (ev.newData.foros_obligatorio == "Si")? 1:0,
+      solo_un_foro : (ev.newData.solo_un_foro == "Solo un foro")? 1:0,
+      actividades_obligatorio : (ev.newData.actividades_obligatorio == "Si")? 1:0,
+      solo_una_actividad : (ev.newData.solo_una_actividad == "Solo una actividad")? 1:0
+    }
+    this.rutasHTTP.generico('actualizaMateria', enviar).then(datas => {
+      var res: any = datas;
+      
+      res = res.resultado[0][0];
+      this.MessagesService.closeLoading();
+      if (res.success == 1) {
+        ev.newData.periodo = enviar.periodo;
+        ev.confirm.resolve(ev.newData);
+
+        this.MessagesService.showSuccessDialog(
+          res.message,
+          'success'
+        );
+      } else {
+        this.MessagesService.showSuccessDialog(
+          res.message,
+          'error'
+        );
+      }
+    });
+
+  }
+
+  onFileChange(ev){
+    if(ev[0].size > 5242880){
+      this.MessagesService.showSuccessDialog('El tamaño maximo de imagen es de 5MB.','error');
+      return;
+    }
+
+    if(ev[0].type.indexOf('image/') == -1){
+      this.MessagesService.showSuccessDialog('Solo se permiten formatos de imagen','error');
+      return;
+    }
+
+    const file = ev[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      localStorage.setItem('base',reader.result+"");
+    };
+
+    this.nombre_file = ev[0].name;
   }
 
 }

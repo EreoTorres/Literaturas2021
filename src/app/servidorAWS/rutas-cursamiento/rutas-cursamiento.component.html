@@ -40,7 +40,21 @@
           <span>Nombre de la ruta de cursamiento:</span>
           <input class="form-control" type="text" formControlName="nombre_ruta" >
         </div>
-        
+        <div class="col-12">
+          <span>URL PDF de Información:</span>
+          <input class="form-control" type="text" formControlName="url_informacion" >
+        </div>
+        <div class="col-6">
+          <span>Requiere Vigencias:</span>
+          <select class="form-control" formControlName="requiere_vigencias">
+            <option value="0">No</option>
+            <option value="1">Si</option>
+          </select>
+        </div>
+        <div class="col-6">
+          <span>Imagen:</span><br>
+          <input type="file" id="archivo" accept="image/*"  (change)="onFileChange($event.target.files)" />
+        </div>
       </div>
     </div>
     <div class="modal-footer">
@@ -89,7 +103,7 @@
         <div class="col-5 dual-select">
         <mat-selection-list #matNoSeleccionadas>
           <mat-list-option *ngFor="let mat of materiasNoSeleccionadas" [value]="mat.id">
-            {{mat.nombre_categoria}} - {{mat.materia}}
+            {{mat.materia}}
           </mat-list-option>
         </mat-selection-list>
         </div>
@@ -100,7 +114,7 @@
         <div class="col-5 dual-select">
           <mat-selection-list #matSeleccionadas>
             <mat-list-option *ngFor="let mat of materiasSeleccionadas" [value]="mat.id">
-              {{mat.nombre_categoria}} - {{mat.materia}}
+              {{mat.materia}}
             </mat-list-option>
           </mat-selection-list>
         </div>
@@ -141,7 +155,9 @@
       <div class="col-12">
           <h2>Nombre de las materias</h2>
          <div cdkDropList class="example-list" [cdkDropListData]="listaMaterias"  (cdkDropListDropped)="drop($event)">
-            <div class="example-box" *ngFor="let item of listaMaterias" cdkDrag>Periodo{{item.periodo}} - {{item.materia}}</div>
+            <div class="example-box" *ngFor="let item of listaMaterias" cdkDrag> 
+              Periodo {{item.periodo}} - {{item.materia}}
+            </div>
           </div>          
       </div>
     </div>
@@ -150,5 +166,16 @@
     <button class="btn btn-success" (click)="guardarOrden()">
       <mat-icon class="mr-2">save</mat-icon>Guardar {{tipoOrdB}}
     </button>
+  </div>
+</ng-template>
+<ng-template #configurarMaterias let-modal [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Configurar materias</h4>
+      <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div style="padding: 35px; width: 100%;">
+    <ng2-smart-table [settings]="settings_configurar" [source]="listaMaterias" (editConfirm)="actualizar_materia($event)"></ng2-smart-table>
   </div>
 </ng-template>

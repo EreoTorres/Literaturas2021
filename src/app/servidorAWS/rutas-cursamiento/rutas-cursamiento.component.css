@@ -279,7 +279,7 @@ div.dual-select {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: normal;
   box-sizing: border-box;
   cursor: move;
   background: white;
