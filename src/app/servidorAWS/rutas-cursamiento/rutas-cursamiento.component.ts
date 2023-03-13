@@ -18,8 +18,6 @@ export class RutasCursamientoComponent implements OnInit {
   @Input() registros: any;
   //@Input() movimientos: any;
   @ViewChild('agregarNuevaRuta') agregarNuevaRuta: ElementRef;
-  imagen: File;
-  nombre_file: any = '';
   formRutas: FormGroup;
   formFinal: FormGroup;
   titulo_add: any = 'Agregar nueva Ruta de Cursamiento';
@@ -84,6 +82,18 @@ export class RutasCursamientoComponent implements OnInit {
       },
       requiere_vigencias_t: {
         title: 'Requiere Vigencias',
+        type: 'string',
+        width: '8%',
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'TODOS',
+            list: this.list_filtro
+          },
+        }
+      },
+      prueba_t: {
+        title: 'Es de Prueba',
         type: 'string',
         width: '8%',
         filter: {
@@ -273,8 +283,9 @@ export class RutasCursamientoComponent implements OnInit {
       plan_estudio: [null, [Validators.required]],
       nombre_ruta: ['', [Validators.required]],
       requiere_vigencias: [0, [Validators.required]],
-      imagen: [''],
-      url_informacion: ['', [Validators.required]],
+      prueba: [0, [Validators.required]],
+      imagen: ['', [Validators.required, Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')]],
+      url_informacion: ['', [Validators.required, Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')]],
       responsable: [null]
     });
 
@@ -290,12 +301,16 @@ export class RutasCursamientoComponent implements OnInit {
     this.getRegistros();
   }
 
+  get m(){
+    return this.formRutas.controls;
+  }
 
   defaultFormRuta() {
     this.formRutas.controls['id'].setValue(0);
     this.formRutas.controls['plan_estudio'].setValue('');
     this.formRutas.controls['nombre_ruta'].setValue('');
     this.formRutas.controls['requiere_vigencias'].setValue(0);
+    this.formRutas.controls['prueba'].setValue(0);
     this.formRutas.controls['imagen'].setValue('');
     this.formRutas.controls['url_informacion'].setValue('');
   }
@@ -322,8 +337,6 @@ export class RutasCursamientoComponent implements OnInit {
   validarRuta(tipo: any) {
     this.formFinal = this.formRutas;
     this.formFinal.controls['responsable'].setValue(sessionStorage.getItem('id'));
-    //this.formFinal.controls['imagen'].setValue(this.nombre_file);
-    this.formFinal.controls['imagen'].setValue('AQUI VA LA IMAGEN');
     if (this.formFinal.valid) {
        this.actualizarRuta();
     }
@@ -495,7 +508,9 @@ export class RutasCursamientoComponent implements OnInit {
         this.formRutas.controls['plan_estudio'].setValue(ev.data.id_plan_estudio);
         this.formRutas.controls['nombre_ruta'].setValue(ev.data.nombre_ruta);
         this.formRutas.controls['requiere_vigencias'].setValue(ev.data.requiere_vigencias);
+        this.formRutas.controls['prueba'].setValue(ev.data.prueba);
         this.formRutas.controls['url_informacion'].setValue(ev.data.url_informacion);
+        this.formRutas.controls['imagen'].setValue(ev.data.imagen);
       } else {
         this.MessagesService.showSuccessDialog("La ruta de cursamiento ya se encuentra registrada en escolar, no puede ser editada !!", 'error');
       }
@@ -667,27 +682,6 @@ export class RutasCursamientoComponent implements OnInit {
       }
     });
 
-  }
-
-  onFileChange(ev){
-    if(ev[0].size > 5242880){
-      this.MessagesService.showSuccessDialog('El tamaño maximo de imagen es de 5MB.','error');
-      return;
-    }
-
-    if(ev[0].type.indexOf('image/') == -1){
-      this.MessagesService.showSuccessDialog('Solo se permiten formatos de imagen','error');
-      return;
-    }
-
-    const file = ev[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      localStorage.setItem('base',reader.result+"");
-    };
-
-    this.nombre_file = ev[0].name;
   }
 
 }

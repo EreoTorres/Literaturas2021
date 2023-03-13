@@ -41,8 +41,20 @@
           <input class="form-control" type="text" formControlName="nombre_ruta" >
         </div>
         <div class="col-12">
-          <span>URL PDF de Información:</span>
-          <input class="form-control" type="text" formControlName="url_informacion" >
+          <span>URL del PDF de Información:</span>
+          <input class="form-control" type="url" formControlName="url_informacion" >
+          <div *ngIf="m['url_informacion'].touched && m['url_informacion'].invalid" class="alert alert-danger">
+            <div *ngIf="m['url_informacion'].errors && m['url_informacion'].errors['required']">Se requiere que escriba la URL del PDF de Información</div>
+            <div *ngIf="m['url_informacion'].errors && m['url_informacion'].errors['pattern']">Se requiere una URL valida</div>
+          </div>
+        </div>
+        <div class="col-12">
+          <span>URL de la Imagén:</span><br>
+          <input class="form-control" type="url" formControlName="imagen" >
+          <div *ngIf="m['imagen'].touched && m['imagen'].invalid" class="alert alert-danger">
+            <div *ngIf="m['imagen'].errors && m['imagen'].errors['required']">Se requiere que escriba la URL de la imagén</div>
+            <div *ngIf="m['imagen'].errors && m['imagen'].errors['pattern']">Se requiere una URL valida</div>
+          </div>
         </div>
         <div class="col-6">
           <span>Requiere Vigencias:</span>
@@ -52,8 +64,11 @@
           </select>
         </div>
         <div class="col-6">
-          <span>Imagen:</span><br>
-          <input type="file" id="archivo" accept="image/*"  (change)="onFileChange($event.target.files)" />
+          <span>Es Ruta de Prueba:</span>
+          <select class="form-control" formControlName="prueba">
+            <option value="0">No</option>
+            <option value="1">Si</option>
+          </select>
         </div>
       </div>
     </div>
