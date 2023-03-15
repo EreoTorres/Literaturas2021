@@ -284,8 +284,8 @@ export class RutasCursamientoComponent implements OnInit {
       nombre_ruta: ['', [Validators.required]],
       requiere_vigencias: [0, [Validators.required]],
       prueba: [0, [Validators.required]],
-      imagen: ['', [Validators.required, Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')]],
-      url_informacion: ['', [Validators.required, Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')]],
+      imagen: ['', [Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')]],
+      url_informacion: ['', [Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')]],
       responsable: [null]
     });
 
