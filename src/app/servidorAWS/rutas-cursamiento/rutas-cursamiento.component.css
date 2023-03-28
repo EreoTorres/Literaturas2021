@@ -309,5 +309,8 @@ div.dual-select {
 .example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
+::ng-deep .modal-xl {
+  max-width: 1330px !important;
+}
 
 /*TERMINA Drag&Drop */
