@@ -541,17 +541,7 @@ export class RutasCursamientoComponent implements OnInit {
 
   getListaMateriasOrd(_enviar, _modal){
     this.rutasHTTP.generico('getMateriasOrd', _enviar).then(datas => {
-      var res: any = datas;
-      // let grupo: any = [];
-      //  if(_enviar.tipo == 3){
-      //    res.resultado.forEach((element: any )=> {
-      //     if(element.grupo_certificacion && element.grupo_certificacion != 'Ninguno'){
-      //       grupo = this.grupos.filter((obj: any )=> obj.value == element.grupo_certificacion);
-      //       element.grupo_certificacion = grupo[0].title;
-      //     }
-      //    });
-      //  }
-      
+      var res: any = datas;      
       this.listaMaterias = res.resultado;
       this.openModal(_modal);
       this.MessagesService.closeLoading();
