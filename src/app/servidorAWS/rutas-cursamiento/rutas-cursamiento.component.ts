@@ -734,14 +734,6 @@ export class RutasCursamientoComponent implements OnInit {
         ev.newData.periodo = enviar.periodo;
         ev.confirm.resolve(ev.newData);
 
-        // this.data_envia = {
-        //   id: ev.data.id,
-        //   tipo: 3,
-        //   lista:[],
-        //   responsable:sessionStorage.getItem('id')
-        // }
-        // this.getListaMateriasOrd(this.data_envia, this.ordenarMateriasC);
-
         this.MessagesService.showSuccessDialog(
           res.message,
           'success'
