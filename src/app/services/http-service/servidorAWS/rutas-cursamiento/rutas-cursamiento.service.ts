@@ -26,4 +26,20 @@ export class RutasCursamientoService {
       })
     })
   }
+
+  grupos() {
+    let header ={
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Token token=53ebe9bb9f7bdf2d0d75f9f199981405'
+      })
+    };
+
+    return new Promise((resolve, reject) => {
+      this.http.get('https://api.accredible.com/v1/issuer/all_groups', header)
+      .subscribe(data => {
+          resolve(data)
+      })
+    })
+  }
 }

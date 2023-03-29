@@ -23,6 +23,7 @@ export class RutasCursamientoComponent implements OnInit {
   titulo_add: any = 'Agregar nueva Ruta de Cursamiento';
   nombre_boton_add: any = 'Guardar';
   programas: any = [];
+  grupos: any = [];
   listaMaterias: any = [];
   materiasSeleccionadas: any = [];
   materiasNoSeleccionadas: any = [];
@@ -268,7 +269,46 @@ export class RutasCursamientoComponent implements OnInit {
             list: this.list_filtro3
           },
         }
+      },
+      certificacion:{
+        title: '¿Es certificación?',
+        type: 'html',
+        width: '10%',
+        editor: {
+          type: 'list',
+          config: {
+            list: this.list_filtro
+          },
+        },
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'TODOS',
+            list: this.list_filtro
+          },
+        }
+    },
+    grupo_certificacion:{
+      title: 'Grupo de la certificación',
+      type: 'html',
+      width: '10%',
+      editor: {
+        type: 'list',
+        config: {
+          list: this.grupos
+        },
+      },
+      valuePrepareFunction: (cell) => {
+        return this.nombre_grupo(cell);
+      },
+      filter: {
+        type: 'list',
+        config: {
+          selectText: 'TODOS',
+          list: this.grupos 
+        },
       }
+  },
     }
   };
   constructor(
@@ -320,6 +360,17 @@ export class RutasCursamientoComponent implements OnInit {
     this.rutasHTTP.generico('getRutasCursamiento').then(datas => {
       var res: any = datas;
       this.registros = res.resultado
+      this.MessagesService.closeLoading();
+    });
+  }
+
+  getGrupos() {
+    this.MessagesService.showLoading();
+    this.rutasHTTP.grupos().then(datas => {
+      var res: any = datas;
+      res.groups.forEach(element => {
+        this.grupos.push({'title':element.name,'value':element.id});
+      });
       this.MessagesService.closeLoading();
     });
   }
@@ -490,11 +541,21 @@ export class RutasCursamientoComponent implements OnInit {
 
   getListaMateriasOrd(_enviar, _modal){
     this.rutasHTTP.generico('getMateriasOrd', _enviar).then(datas => {
-      var res: any = datas;
+      var res: any = datas;      
       this.listaMaterias = res.resultado;
       this.openModal(_modal);
       this.MessagesService.closeLoading();
     });
+  }
+
+  nombre_grupo(grupo :any ){
+    if(grupo && grupo != 'Ninguno'){
+    let nombre_grupo = this.grupos.filter((obj: any )=> obj.value == grupo);
+    return nombre_grupo[0].title;
+    }
+    else{
+      return grupo;
+    }
   }
 
   onCustom(ev) {
@@ -579,6 +640,7 @@ export class RutasCursamientoComponent implements OnInit {
           lista:[],
           responsable:sessionStorage.getItem('id')
         }
+        this.getGrupos();
         this.getListaMateriasOrd(this.data_envia, this.ordenarMateriasC);
       } else {
         this.MessagesService.showSuccessDialog("La ruta de cursamiento requiere estar registrada en escolar para cambiar la configuración !!", 'error');
@@ -659,7 +721,9 @@ export class RutasCursamientoComponent implements OnInit {
       foros_obligatorio : (ev.newData.foros_obligatorio == "Si")? 1:0,
       solo_un_foro : (ev.newData.solo_un_foro == "Solo un foro")? 1:0,
       actividades_obligatorio : (ev.newData.actividades_obligatorio == "Si")? 1:0,
-      solo_una_actividad : (ev.newData.solo_una_actividad == "Solo una actividad")? 1:0
+      solo_una_actividad : (ev.newData.solo_una_actividad == "Solo una actividad")? 1:0,
+      certificacion : (ev.newData.certificacion == "Si")? 1:0,
+      grupo_certificacion : (ev.newData.grupo_certificacion)? ev.newData.grupo_certificacion:0
     }
     this.rutasHTTP.generico('actualizaMateria', enviar).then(datas => {
       var res: any = datas;
