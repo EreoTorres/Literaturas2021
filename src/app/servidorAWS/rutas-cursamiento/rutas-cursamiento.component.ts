@@ -24,6 +24,7 @@ export class RutasCursamientoComponent implements OnInit {
   nombre_boton_add: any = 'Guardar';
   programas: any = [];
   grupos: any = [];
+  tipoMaterias: any = [];
   listaMaterias: any = [];
   materiasSeleccionadas: any = [];
   materiasNoSeleccionadas: any = [];
@@ -270,6 +271,27 @@ export class RutasCursamientoComponent implements OnInit {
           },
         }
       },
+      tipo:{
+        title: 'Tipo',
+        type: 'html',
+        width: '10%',
+        editor: {
+          type: 'list',
+          config: {
+            list: this.tipoMaterias
+          },
+        },
+        valuePrepareFunction: (cell) => {
+          return this.nombre_tipo_materia(cell);
+        },
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'TODOS',
+            list: this.tipoMaterias 
+          },
+        }
+    },
       certificacion:{
         title: '¿Es certificación?',
         type: 'html',
@@ -365,14 +387,38 @@ export class RutasCursamientoComponent implements OnInit {
   }
 
   getGrupos() {
-    this.MessagesService.showLoading();
-    this.rutasHTTP.grupos().then(datas => {
-      var res: any = datas;
-      res.groups.forEach(element => {
-        this.grupos.push({'title':element.name,'value':element.id});
+    return new Promise((resolve, reject) => {
+      this.grupos.splice(0, this.grupos.length);
+      // this.MessagesService.showLoading();
+      this.rutasHTTP.grupos().then(datas => {
+        var res: any = datas;
+        if(res.groups.length > 0){
+          res.groups.forEach(element => {
+            this.grupos.push({'title':element.name,'value':element.id});
+          });
+        }
+        resolve(this.grupos);
+        
+        // this.MessagesService.closeLoading();
+        
       });
-      this.MessagesService.closeLoading();
     });
+  }
+
+  getTipoMateria() {
+    return new Promise((resolve, reject) => {
+      this.tipoMaterias.splice(0, this.tipoMaterias.length);
+      this.rutasHTTP.generico('getTipoMateria').then(datas => {
+        var res: any = datas;
+        if(res.resultado.length > 0){
+          this.tipoMaterias.push({'title':'Ninguno','value':'Ninguno'});
+          res.resultado.forEach(element => {
+            this.tipoMaterias.push({'title':element.nombre,'value':element.id});
+          });
+        }
+        resolve(this.tipoMaterias);
+      });
+   });
   }
 
   /*validarEstatus(tipo: any) {
@@ -558,7 +604,17 @@ export class RutasCursamientoComponent implements OnInit {
     }
   }
 
-  onCustom(ev) {
+  nombre_tipo_materia(tipo :any ){
+    if(tipo && tipo != 'Ninguno'){
+    let nombre_tipo_materia = this.tipoMaterias.filter((obj: any )=> obj.value == tipo);
+    return nombre_tipo_materia[0].title;
+    }
+    else{
+      return tipo;
+    }
+  }
+
+  async onCustom(ev) {
     if(ev.action == 'editar') {
     
       if(ev.data.registro_escolar == 0){
@@ -640,7 +696,8 @@ export class RutasCursamientoComponent implements OnInit {
           lista:[],
           responsable:sessionStorage.getItem('id')
         }
-        this.getGrupos();
+        await this.getGrupos();
+        await this.getTipoMateria();
         this.getListaMateriasOrd(this.data_envia, this.ordenarMateriasC);
       } else {
         this.MessagesService.showSuccessDialog("La ruta de cursamiento requiere estar registrada en escolar para cambiar la configuración !!", 'error');
@@ -713,38 +770,44 @@ export class RutasCursamientoComponent implements OnInit {
     }
   }
 
-  actualizar_materia(ev) {
-    this.MessagesService.showLoading();
-    let enviar = {
-      id_materia_escolar : ev.newData.id,
-      periodo : ev.newData.nombre_periodo.replace("Periodo ",""),
-      foros_obligatorio : (ev.newData.foros_obligatorio == "Si")? 1:0,
-      solo_un_foro : (ev.newData.solo_un_foro == "Solo un foro")? 1:0,
-      actividades_obligatorio : (ev.newData.actividades_obligatorio == "Si")? 1:0,
-      solo_una_actividad : (ev.newData.solo_una_actividad == "Solo una actividad")? 1:0,
-      certificacion : (ev.newData.certificacion == "Si")? 1:0,
-      grupo_certificacion : (ev.newData.grupo_certificacion)? ev.newData.grupo_certificacion:0
+  actualizar_materia(ev) {  
+    if(ev.newData.certificacion == "Si" && ev.newData.grupo_certificacion == 'Ninguno'){
+      this.MessagesService.showSuccessDialog('Selecciona un grupo para la materia marcada como certificación.','error');
     }
-    this.rutasHTTP.generico('actualizaMateria', enviar).then(datas => {
-      var res: any = datas;
-      
-      res = res.resultado[0][0];
-      this.MessagesService.closeLoading();
-      if (res.success == 1) {
-        ev.newData.periodo = enviar.periodo;
-        ev.confirm.resolve(ev.newData);
+    else{
+      this.MessagesService.showLoading();
+        let enviar = {
+          id_materia_escolar : ev.newData.id,
+          periodo : ev.newData.nombre_periodo.replace("Periodo ",""),
+          foros_obligatorio : (ev.newData.foros_obligatorio == "Si")? 1:0,
+          solo_un_foro : (ev.newData.solo_un_foro == "Solo un foro")? 1:0,
+          actividades_obligatorio : (ev.newData.actividades_obligatorio == "Si")? 1:0,
+          solo_una_actividad : (ev.newData.solo_una_actividad == "Solo una actividad")? 1:0,
+          certificacion : (ev.newData.certificacion == "Si")? 1:0,
+          grupo_certificacion : (ev.newData.grupo_certificacion == 'Ninguno')?0: ev.newData.grupo_certificacion,
+          tipo : (ev.newData.tipo == 'Ninguno')? 0:ev.newData.tipo
+        }
+        this.rutasHTTP.generico('actualizaMateria', enviar).then(datas => {
+          var res: any = datas;
+          
+          res = res.resultado[0][0];
+          this.MessagesService.closeLoading();
+          if (res.success == 1) {
+            ev.newData.periodo = enviar.periodo;
+            ev.confirm.resolve(ev.newData);
 
-        this.MessagesService.showSuccessDialog(
-          res.message,
-          'success'
-        );
-      } else {
-        this.MessagesService.showSuccessDialog(
-          res.message,
-          'error'
-        );
-      }
-    });
+            this.MessagesService.showSuccessDialog(
+              res.message,
+              'success'
+            );
+          } else {
+            this.MessagesService.showSuccessDialog(
+              res.message,
+              'error'
+            );
+          }
+        });
+    }
 
   }
 
