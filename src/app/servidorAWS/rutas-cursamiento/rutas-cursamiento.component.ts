@@ -387,26 +387,38 @@ export class RutasCursamientoComponent implements OnInit {
   }
 
   getGrupos() {
-    this.grupos.splice(0, this.grupos.length);
-    this.MessagesService.showLoading();
-    this.rutasHTTP.grupos().then(datas => {
-      var res: any = datas;
-      res.groups.forEach(element => {
-        this.grupos.push({'title':element.name,'value':element.id});
+    return new Promise((resolve, reject) => {
+      this.grupos.splice(0, this.grupos.length);
+      // this.MessagesService.showLoading();
+      this.rutasHTTP.grupos().then(datas => {
+        var res: any = datas;
+        if(res.groups.length > 0){
+          res.groups.forEach(element => {
+            this.grupos.push({'title':element.name,'value':element.id});
+          });
+        }
+        resolve(this.grupos);
+        
+        // this.MessagesService.closeLoading();
+        
       });
-      this.MessagesService.closeLoading();
     });
   }
 
   getTipoMateria() {
-    this.tipoMaterias.splice(0, this.tipoMaterias.length);
-    this.rutasHTTP.generico('getTipoMateria').then(datas => {
-      var res: any = datas;
-      this.tipoMaterias.push({'title':'Ninguno','value':'Ninguno'});
-      res.resultado.forEach(element => {
-        this.tipoMaterias.push({'title':element.nombre,'value':element.id});
+    return new Promise((resolve, reject) => {
+      this.tipoMaterias.splice(0, this.tipoMaterias.length);
+      this.rutasHTTP.generico('getTipoMateria').then(datas => {
+        var res: any = datas;
+        if(res.resultado.length > 0){
+          this.tipoMaterias.push({'title':'Ninguno','value':'Ninguno'});
+          res.resultado.forEach(element => {
+            this.tipoMaterias.push({'title':element.nombre,'value':element.id});
+          });
+        }
+        resolve(this.tipoMaterias);
       });
-    });
+   });
   }
 
   /*validarEstatus(tipo: any) {
@@ -602,7 +614,7 @@ export class RutasCursamientoComponent implements OnInit {
     }
   }
 
-  onCustom(ev) {
+  async onCustom(ev) {
     if(ev.action == 'editar') {
     
       if(ev.data.registro_escolar == 0){
@@ -684,8 +696,8 @@ export class RutasCursamientoComponent implements OnInit {
           lista:[],
           responsable:sessionStorage.getItem('id')
         }
-        this.getGrupos();
-        this.getTipoMateria();
+        await this.getGrupos();
+        await this.getTipoMateria();
         this.getListaMateriasOrd(this.data_envia, this.ordenarMateriasC);
       } else {
         this.MessagesService.showSuccessDialog("La ruta de cursamiento requiere estar registrada en escolar para cambiar la configuración !!", 'error');
