@@ -21,7 +21,7 @@
                 <p-tabPanel header="Encuesta activa" id="encuesta-activa">
                     <div style="margin-top: 1% !important;width: 100%;">
                         <div class="row">
-                            <form id="encuestas-form" class="form" #formul="ngForm" (ngSubmit)="generarGraficas(formul.value)"
+                            <form id="encuestas-form" class="form" #formul="ngForm" 
                                 [formGroup]="formulario" style="width: -webkit-fill-available;">
                                 <div class="row justify-content-left">
 
@@ -87,7 +87,7 @@
                                     </div>
 
                                     <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12" *ngIf="formulario.valid||periodo == 6 || (periodo == 5 && anio_select)">
-                                        <button class="btn btn-outline-secondary btn-lg" type="submit" style="margin-top: 12px; height: 47px; margin-left: 15px;">
+                                        <button class="btn btn-outline-secondary btn-lg" (click)="generarGraficas(formul.value)" style="margin-top: 12px; height: 47px; margin-left: 15px;">
                                             Generar gráficos</button>
                                     </div>
                                     <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12" *ngIf="formulario.valid||periodo == 6 || (periodo == 5 && anio_select)">
@@ -205,7 +205,7 @@
         </div>
     </div>
     <div class="row">
-    <div class="col-xl-6 col-g-6 col-md-12 col-sm-12 col-12" *ngFor="let pregunta of registros_pregunta">
+    <div class="col-xl-6 col-g-6 col-md-12 col-sm-12 col-12" *ngFor="let pregunta of registros_pregunta; let i = index">
         <div class="contentT" style="margin-top: 1% !important; height: 30em;"
             *ngIf="pregunta.tipo == 1 || pregunta.tipo ==3 || pregunta.tipo == 6">
             <div class="card border-secondary shadow" style="height: 30em;">
@@ -215,7 +215,7 @@
                             <div class="col-xl-12 col-g-12 col-md-12 col-sm-12 col-12 ">
                                 <h3 style="color:black;"><b>{{pregunta.id}}.-{{pregunta.pregunta}}</b></h3>
                                 <span class="p-float-label">
-                                    <p-chart type="pie" [data]="pregunta.respuestas" [options]="options_respuestas"
+                                    <p-chart type="pie" #chart [data]="pregunta.respuestas" [options]="options_respuestas"
                                         width="270" height="270"></p-chart>
                                 </span>
                             </div>

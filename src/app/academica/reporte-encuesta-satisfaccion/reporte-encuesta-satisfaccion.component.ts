@@ -6,6 +6,7 @@ import * as fs from 'file-saver';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { Chart } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { Console } from 'console';
 
 @Component({
   selector: 'app-reporte-encuesta-satisfaccion',
@@ -15,6 +16,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 export class ReporteEncuestaSatisfaccionComponent implements OnInit {
 
   formulario: UntypedFormGroup | any;
+  chartImg: any[] = [];
   encuesta_inactiva!: any;
   meses!: any[];
   listado_meses: any[] = [];
@@ -198,6 +200,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     this.periodo = 0;
     this.encuesta_seleccionada = 0;
     this.registros_pregunta= [];
+    this.encuestas_inactivas = [];
     this.formulario.reset();
     this.MessagesService.showLoading();
     (this.ventana == 0)? await this.getMaterias(): await this.getEncuestasInactivas({'index':1});
@@ -242,7 +245,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     });
   }
 
-  getEncuestasInactivas(value: any) {
+  async getEncuestasInactivas(value: any) {
     this.formulario.reset();
     this.encuesta_inactiva = [];
     this.ventana = value.index;
@@ -267,6 +270,11 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
        
       });
     })
+    }else{
+      this.MessagesService.showLoading();
+      await this.getMaterias();
+      this.MessagesService.closeLoading();
+      
     }
   }
 
@@ -455,6 +463,23 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     this.getRespuestasEncuesta();
   }
 
+  getRespuestasAlumnosEncuestas() {
+    this.MessagesService.showLoading();
+
+    return new Promise((resolve, reject) => {
+      this.EncuestaService.getRespuestasAlumnosEncuestas(this.infoGral).then(datas => {
+        var res: any = datas;
+        this.MessagesService.closeLoading();
+        if (res.codigo == 200 && res.resultado[0].length > 0) {
+          resolve(res)
+        } else {
+          this.MessagesService.showSuccessDialog('No existen registros', 'error');
+        }
+      });
+    })
+  }
+
+
   async getRegistrosExcel(value: any) {
     this.infoGral.encuesta = value.encuesta;
     this.infoGral.periodo = value.periodo;
@@ -474,9 +499,9 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
         break;
     }
 
-    let res: any = await this.getRespuestasEncuestas();
+    let res: any = await this.getRespuestasAlumnosEncuestas();
     let datos = res.resultado[0];
-    this.exportToExcel(datos);
+    this.exportToExcel(datos,1);
   }
 
   generarGraficaInactivos(value: any) {
@@ -491,42 +516,42 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
   async getRegistrosExcelInactivos(value: any) {
     this.infoGral.periodo = '6';
     this.infoGral.encuesta = value;
-    let res: any = await this.getRespuestasEncuestas();
+    let res: any = await this.getRespuestasAlumnosEncuestas();
     let datos = res.resultado[0];
-    this.exportToExcel(datos);
+    this.exportToExcel(datos,0);
   }
 
-  exportToExcel(datos: any): void {
 
+  exportToExcel(datos: any, tipo: any): void {
+
+    let registros = datos;
     const columnas: { name: any; filterButton: boolean; }[] = [];
     const registrosExcel: any[] = [];
-    let nombre_columnas = [
-      'Id', 'Número de empleado', 'Alumno', 'Plan de estudios', 'Número de pregunta', 'Pregunta', 'Respuesta', 'Total'
-    ];
-    nombre_columnas.forEach(colum => {
+    let nombre_columnas = Object.keys(registros[0]);
+
+    nombre_columnas.forEach((colum :any) => {
       columnas.push(
         {
-          name: colum,
+          name: (colum.replaceAll('_',' ')).toUpperCase(),
           filterButton: true
         }
       );
     });
 
-
-    datos.forEach((registro: any) => {
-      registro.pregunta = registro.pregunta.replace('<br>', ' ')
-      let numero_empleado = (registro.tipo == 2) ? registro.numero_empleado : null;
-      let respuesta = {
-        'id': registro.id,
-        'numero_empleado': numero_empleado,
-        'alumno': registro.alumno,
-        'plan_estudios': registro.nombre_plan,
-        'numero_pregunta': registro.orden,
-        'pregunta': registro.pregunta,
-        'respuesta': registro.respuesta,
-        'total': registro.total,
+    columnas.push(
+      {
+        name: 'ACUMULADO TOTAL',
+        filterButton: false
       }
-      registrosExcel.push(Object.values(respuesta));
+    );
+
+
+    registros.forEach((registro: any) => {
+      registro.fecha_asignacion =(registro.fecha_asignacion)?new Date(registro.fecha_asignacion).toLocaleString():"";
+      registro.fecha_realizacion =(registro.fecha_realizacion)?new Date(registro.fecha_realizacion).toLocaleString():"";
+      registro.fecha_inicio_curso =(registro.fecha_inicio_curso)?new Date(registro.fecha_inicio_curso).toLocaleDateString():"";
+      registro.fecha_inscripcion =(registro.fecha_inscripcion)?new Date(registro.fecha_inscripcion).toLocaleDateString():"";
+      registrosExcel.push(Object.values(registro));
     });
 
     let workbook = new Workbook();
@@ -543,6 +568,46 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
       columns: columnas,
       rows: registrosExcel,
     });
+
+    const endRow = worksheet.lastRow.number + 1;
+    
+      worksheet.getCell(`A${endRow}`).value = 'ACUMULADO POR PREGUNTA';
+    
+      worksheet.getCell(`Q${endRow}`).value = { formula: `ROUND(AVERAGE(Q2:Q${endRow-1}),1)`, date1904: false };
+      worksheet.getCell(`S${endRow}`).value = { formula: `ROUND(AVERAGE(S2:S${endRow-1}),1)`, date1904: false };
+      worksheet.getCell(`U${endRow}`).value = { formula: `ROUND(AVERAGE(U2:U${endRow-1}),1)`, date1904: false };
+      worksheet.getCell(`W${endRow}`).value = { formula: `ROUND(AVERAGE(W2:W${endRow-1}),1)`, date1904: false };
+      worksheet.getCell(`Y${endRow}`).value = { formula: `ROUND(AVERAGE(Y2:Y${endRow-1}),1)`, date1904: false };
+      worksheet.getCell(`AA${endRow}`).value = { formula: `ROUND(AVERAGE(AA2:AA${endRow-1}),1)`, date1904: false };
+      worksheet.getCell(`AC${endRow}`).value = { formula: `ROUND(AVERAGE(AC2:AC${endRow-1}),1)`, date1904: false };
+
+      if(tipo == 1){
+        worksheet.getCell(`AF${endRow}`).value = { formula: `ROUND(AVERAGE(Q${endRow-1},S${endRow-1},U${endRow-1},W${endRow-1},
+          Y${endRow-1},AA${endRow-1},AC${endRow-1}),1)`, date1904: false };
+      }
+      if(tipo == 0){
+        worksheet.getCell(`AE${endRow}`).value = { formula: `ROUND(AVERAGE(AE2:AE${endRow-1}),1)`, date1904: false };
+        worksheet.getCell(`AG${endRow}`).value = { formula: `ROUND(AVERAGE(AG2:AG${endRow-1}),1)`, date1904: false };
+        worksheet.getCell(`AI${endRow}`).value = { formula: `ROUND(AVERAGE(AI2:AI${endRow-1}),1)`, date1904: false };
+        worksheet.getCell(`AK${endRow}`).value = { formula: `ROUND(AVERAGE(AK2:AK${endRow-1}),1)`, date1904: false };
+        worksheet.getCell(`AM${endRow}`).value = { formula: `ROUND(AVERAGE(AM2:AM${endRow-1}),1)`, date1904: false };
+        worksheet.getCell(`AO${endRow}`).value = { formula: `ROUND(AVERAGE(AO2:AO${endRow-1}),1)`, date1904: false };
+        worksheet.getCell(`AQ${endRow}`).value = { formula: `ROUND(AVERAGE(AQ2:AQ${endRow-1}),1)`, date1904: false };
+        worksheet.getCell(`AS${endRow}`).value = { formula: `ROUND(AVERAGE(AS2:AS${endRow-1}),1)`, date1904: false };
+        worksheet.getCell(`AU${endRow}`).value = { formula: `ROUND(AVERAGE(AU2:AU${endRow-1}),1)`, date1904: false };
+        worksheet.getCell(`AW${endRow}`).value = { formula: `ROUND(AVERAGE(AW2:AW${endRow-1}),1)`, date1904: false };
+        worksheet.getCell(`AY${endRow}`).value = { formula: `ROUND(AVERAGE(AY2:AY${endRow-1}),1)`, date1904: false };
+        worksheet.getCell(`BA${endRow}`).value = { formula: `ROUND(AVERAGE(BA2:BA${endRow-1}),1)`, date1904: false };
+        worksheet.getCell(`BC${endRow}`).value = { formula: `ROUND(AVERAGE(BC2:BC${endRow-1}),1)`, date1904: false };
+        worksheet.getCell(`BE${endRow}`).value = { formula: `ROUND(AVERAGE(BE2:BE${endRow-1}),1)`, date1904: false };
+        worksheet.getCell(`BG${endRow}`).value = { formula: `ROUND(AVERAGE(BG2:BG${endRow-1}),1)`, date1904: false };
+        worksheet.getCell(`BH${endRow}`).value = { formula: `ROUND(AVERAGE(Q${endRow-1},S${endRow-1},U${endRow-1},W${endRow-1},
+          Y${endRow-1},AA${endRow-1},AC${endRow-1},AE${endRow-1},AG${endRow-1},AI${endRow-1},AK${endRow-1}
+          ,AM${endRow-1},AO${endRow-1},AQ${endRow-1},AS${endRow-1},AU${endRow-1},AW${endRow-1}
+          ,AY${endRow-1},BA${endRow-1},BC${endRow-1},BE${endRow-1},BG${endRow-1}),1)`, date1904: false };
+
+      }
+
 
     worksheet.columns.forEach(function (column, i) {
       worksheet.getColumn(i + 1).alignment = { wrapText: true };
