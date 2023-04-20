@@ -98,4 +98,13 @@ export class EncuestaService {
     })
   }
 
+  getRespuestasAlumnosEncuestas(registro: object) {
+    return new Promise((resolve, reject) => {
+      this.http.post(this.url+'academica/encuesta/getRespuestasAlumnosEncuestas', registro, this.httpHeaders)
+      .subscribe(data => {
+          resolve(data)
+      })
+    })
+  }
+
 }
