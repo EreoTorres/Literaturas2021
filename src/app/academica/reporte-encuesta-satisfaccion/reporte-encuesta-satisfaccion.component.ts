@@ -582,8 +582,8 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
       worksheet.getCell(`AC${endRow}`).value = { formula: `ROUND(AVERAGE(AC2:AC${endRow-1}),1)`, date1904: false };
 
       if(tipo == 1){
-        worksheet.getCell(`AF${endRow}`).value = { formula: `ROUND(AVERAGE(Q${endRow-1},S${endRow-1},U${endRow-1},W${endRow-1},
-          Y${endRow-1},AA${endRow-1},AC${endRow-1}),1)`, date1904: false };
+        worksheet.getCell(`AF${endRow}`).value = { formula: `ROUND(AVERAGE(Q${endRow},S${endRow},U${endRow},W${endRow},
+          Y${endRow},AA${endRow},AC${endRow}),1)`, date1904: false };
       }
       if(tipo == 0){
         worksheet.getCell(`AE${endRow}`).value = { formula: `ROUND(AVERAGE(AE2:AE${endRow-1}),1)`, date1904: false };
@@ -601,10 +601,10 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
         worksheet.getCell(`BC${endRow}`).value = { formula: `ROUND(AVERAGE(BC2:BC${endRow-1}),1)`, date1904: false };
         worksheet.getCell(`BE${endRow}`).value = { formula: `ROUND(AVERAGE(BE2:BE${endRow-1}),1)`, date1904: false };
         worksheet.getCell(`BG${endRow}`).value = { formula: `ROUND(AVERAGE(BG2:BG${endRow-1}),1)`, date1904: false };
-        worksheet.getCell(`BH${endRow}`).value = { formula: `ROUND(AVERAGE(Q${endRow-1},S${endRow-1},U${endRow-1},W${endRow-1},
-          Y${endRow-1},AA${endRow-1},AC${endRow-1},AE${endRow-1},AG${endRow-1},AI${endRow-1},AK${endRow-1}
-          ,AM${endRow-1},AO${endRow-1},AQ${endRow-1},AS${endRow-1},AU${endRow-1},AW${endRow-1}
-          ,AY${endRow-1},BA${endRow-1},BC${endRow-1},BE${endRow-1},BG${endRow-1}),1)`, date1904: false };
+        worksheet.getCell(`BH${endRow}`).value = { formula: `ROUND(AVERAGE(Q${endRow},S${endRow},U${endRow},W${endRow},
+          Y${endRow},AA${endRow},AC${endRow},AE${endRow},AG${endRow},AI${endRow},AK${endRow}
+          ,AM${endRow},AO${endRow},AQ${endRow},AS${endRow},AU${endRow},AW${endRow}
+          ,AY${endRow},BA${endRow},BC${endRow},BE${endRow},BG${endRow}),1)`, date1904: false };
 
       }
 
