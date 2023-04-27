@@ -24,6 +24,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
   periodos: any[] = [];
   materias!: any[];
   planes!: any[];
+  promedio_general :any = 0;
   encuestas!: any[];
   selectedData: any;
   anio_select!: any;
@@ -370,6 +371,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     this.encuesta_inactiva = 0;
     this.registros_pregunta = [];
     let datos: any[] = [];
+    let promedio_preguntas = [];
 
     let res: any = await this.getRespuestasEncuestas();
     datos = res.resultado[0];
@@ -382,6 +384,19 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
         let totales_respuestas = result.map((a: any) => a.total);
         let respuesta_orden = {};
         preguntas.push(dato.orden);
+
+        if(dato.tipo == 5 || dato.tipo == 6){
+          let sum = 0;
+          let prom : number = 0;
+         for (let i = 0; i < respuestas.length; i++) {
+          sum+= (respuestas[i]*totales_respuestas[i]);
+         }
+         let total=0;
+         totales_respuestas.forEach(function(a){total += a;});
+         prom = parseFloat((sum/total).toFixed(1));
+         promedio_preguntas.push(prom);
+        }
+
         if (dato.tipo == 4) {
           let respuestas_tipo_4: any[] = [];
           respuestas.forEach((element: any) => {
@@ -433,6 +448,10 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
         });
       }
     });
+
+    let total_preguntas: number=0;
+    for(let i of  promedio_preguntas) total_preguntas+=i;
+    this.promedio_general=(total_preguntas/promedio_preguntas.length).toFixed(1)
 
   }
 
