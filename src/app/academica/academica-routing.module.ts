@@ -10,6 +10,7 @@ import { VisualizadorComponent } from '../visualizador/visualizador/visualizador
 import { CertificacionesComponent } from './certificaciones/certificaciones.component';
 import { ReporteEncuestaSatisfaccionComponent } from './reporte-encuesta-satisfaccion/reporte-encuesta-satisfaccion.component';
 import { PromedioMateriasComponent } from './promedio-materias/promedio-materias.component';
+import { PromedioEncuestaSatisfaccionComponent } from './promedio-encuesta-satisfaccion/promedio-encuesta-satisfaccion.component';
 
 const routes: Routes = [{
   path: '',
@@ -48,6 +49,11 @@ const routes: Routes = [{
     {
       path: 'promedio-materias',
       component: PromedioMateriasComponent,
+      canActivate:[AcademicaSesionService]
+    },
+    {
+      path: 'promedio-encuestas',
+      component: PromedioEncuestaSatisfaccionComponent,
       canActivate:[AcademicaSesionService]
     },
     {

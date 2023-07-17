@@ -28,7 +28,8 @@ import { PromedioMateriasComponent } from './promedio-materias/promedio-materias
 import {TableModule} from 'primeng/table'; 
 import {TabViewModule} from 'primeng/tabview';
 import {MatLegacySelectModule as MatSelectModule} from '@angular/material/legacy-select';
-import {ChartModule} from 'primeng/chart'
+import {ChartModule} from 'primeng/chart';
+import { PromedioEncuestaSatisfaccionComponent } from './promedio-encuesta-satisfaccion/promedio-encuesta-satisfaccion.component'
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import {ChartModule} from 'primeng/chart'
     CertificacionesComponent,
     ReporteEncuestaSatisfaccionComponent,
     PromedioMateriasComponent,
+    PromedioEncuestaSatisfaccionComponent,
   ],
   imports: [
     AcademicaRoutingModule,

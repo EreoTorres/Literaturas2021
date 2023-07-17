@@ -50,7 +50,13 @@ export const MENU_ITEMS = [
         icon: 'insert_chart',
         link: '/academica/promedio-materias',
         home: true,
-    }
+    },
+     {
+      title: 'Promedio de encuestas',
+      icon: 'insert_chart',
+      link: '/academica/promedio-encuestas',
+      home: true,
+    },
     ]
   },
   {
