@@ -84,6 +84,12 @@ export const MENU_ITEMS_ADMIN = [
         home: true,
     },
     {
+        title: 'Promedio de encuestas',
+        icon: 'insert_chart',
+        link: '/academica/promedio-encuestas',
+        home: true,
+    },
+    {
         title: 'Rutas de Cursamiento',
         icon: 'sticky_note_2_outline',
         link: '/servidorAWS/rutas-cursamiento',
