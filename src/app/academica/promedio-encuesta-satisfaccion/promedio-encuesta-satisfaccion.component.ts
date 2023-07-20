@@ -63,7 +63,7 @@ export class PromedioEncuestaSatisfaccionComponent implements OnInit {
 
   getPlanes() {
     this.MessagesService.showLoading();
-    this.EncuestaService.getPlanes(this.infoGral).then(async datas => {
+    this.EncuestaService.getPlanesPromedioEncuesta(this.infoGral).then(async datas => {
       var res: any = datas;
       if (res.codigo == 200) {
         this.planes = res.resultado.dataDO.concat(res.resultado.dataAWS);

@@ -195,7 +195,7 @@
                 <div class="col-4">
                     <h4 style="color: black;">Fecha de registro: <b>{{this.encuesta_info[0].fecha_registro}}</b></h4>
                 </div>
-                <div class="col-4">
+                <div class="col-4" *ngIf="!planes_sinPromedio.includes(infoGral.id_plan_estudio)">
                     <h4 style="color: black;">Promedio general: <b>{{promedio_general}}</b></h4>
                 </div>
                 <div class="col-4">

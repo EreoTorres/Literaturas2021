@@ -143,6 +143,8 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
       'connection': 0
     }
 
+    planes_sinPromedio: any = [18,59,50,39,12];
+
   constructor(
     private formBuilder: UntypedFormBuilder,
     private EncuestaService: EncuestaService,
@@ -396,7 +398,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
          }
          let total=0;
          totales_respuestas.forEach(function(a){total += a;});
-         prom = parseFloat((sum/total).toFixed(1));
+         prom = (sum/total);
          promedio_preguntas.push(prom);
         }
 
@@ -595,34 +597,34 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     
       worksheet.getCell(`A${endRow}`).value = 'ACUMULADO POR PREGUNTA';
     
-      worksheet.getCell(`Q${endRow}`).value = { formula: `ROUND(AVERAGE(Q2:Q${endRow-1}),1)`, date1904: false };
-      worksheet.getCell(`S${endRow}`).value = { formula: `ROUND(AVERAGE(S2:S${endRow-1}),1)`, date1904: false };
-      worksheet.getCell(`U${endRow}`).value = { formula: `ROUND(AVERAGE(U2:U${endRow-1}),1)`, date1904: false };
-      worksheet.getCell(`W${endRow}`).value = { formula: `ROUND(AVERAGE(W2:W${endRow-1}),1)`, date1904: false };
-      worksheet.getCell(`Y${endRow}`).value = { formula: `ROUND(AVERAGE(Y2:Y${endRow-1}),1)`, date1904: false };
-      worksheet.getCell(`AA${endRow}`).value = { formula: `ROUND(AVERAGE(AA2:AA${endRow-1}),1)`, date1904: false };
-      worksheet.getCell(`AC${endRow}`).value = { formula: `ROUND(AVERAGE(AC2:AC${endRow-1}),1)`, date1904: false };
+      worksheet.getCell(`Q${endRow}`).value = { formula: `ROUND(AVERAGE(Q2:Q${endRow-1}),2)`, date1904: false };
+      worksheet.getCell(`S${endRow}`).value = { formula: `ROUND(AVERAGE(S2:S${endRow-1}),2)`, date1904: false };
+      worksheet.getCell(`U${endRow}`).value = { formula: `ROUND(AVERAGE(U2:U${endRow-1}),2)`, date1904: false };
+      worksheet.getCell(`W${endRow}`).value = { formula: `ROUND(AVERAGE(W2:W${endRow-1}),2)`, date1904: false };
+      worksheet.getCell(`Y${endRow}`).value = { formula: `ROUND(AVERAGE(Y2:Y${endRow-1}),2)`, date1904: false };
+      worksheet.getCell(`AA${endRow}`).value = { formula: `ROUND(AVERAGE(AA2:AA${endRow-1}),2)`, date1904: false };
+      worksheet.getCell(`AC${endRow}`).value = { formula: `ROUND(AVERAGE(AC2:AC${endRow-1}),2)`, date1904: false };
 
       if(tipo == 1){
         worksheet.getCell(`AF${endRow}`).value = { formula: `ROUND(AVERAGE(Q${endRow},S${endRow},U${endRow},W${endRow},
           Y${endRow},AA${endRow},AC${endRow}),1)`, date1904: false };
       }
       if(tipo == 0){
-        worksheet.getCell(`AE${endRow}`).value = { formula: `ROUND(AVERAGE(AE2:AE${endRow-1}),1)`, date1904: false };
-        worksheet.getCell(`AG${endRow}`).value = { formula: `ROUND(AVERAGE(AG2:AG${endRow-1}),1)`, date1904: false };
-        worksheet.getCell(`AI${endRow}`).value = { formula: `ROUND(AVERAGE(AI2:AI${endRow-1}),1)`, date1904: false };
-        worksheet.getCell(`AK${endRow}`).value = { formula: `ROUND(AVERAGE(AK2:AK${endRow-1}),1)`, date1904: false };
-        worksheet.getCell(`AM${endRow}`).value = { formula: `ROUND(AVERAGE(AM2:AM${endRow-1}),1)`, date1904: false };
-        worksheet.getCell(`AO${endRow}`).value = { formula: `ROUND(AVERAGE(AO2:AO${endRow-1}),1)`, date1904: false };
-        worksheet.getCell(`AQ${endRow}`).value = { formula: `ROUND(AVERAGE(AQ2:AQ${endRow-1}),1)`, date1904: false };
-        worksheet.getCell(`AS${endRow}`).value = { formula: `ROUND(AVERAGE(AS2:AS${endRow-1}),1)`, date1904: false };
-        worksheet.getCell(`AU${endRow}`).value = { formula: `ROUND(AVERAGE(AU2:AU${endRow-1}),1)`, date1904: false };
-        worksheet.getCell(`AW${endRow}`).value = { formula: `ROUND(AVERAGE(AW2:AW${endRow-1}),1)`, date1904: false };
-        worksheet.getCell(`AY${endRow}`).value = { formula: `ROUND(AVERAGE(AY2:AY${endRow-1}),1)`, date1904: false };
-        worksheet.getCell(`BA${endRow}`).value = { formula: `ROUND(AVERAGE(BA2:BA${endRow-1}),1)`, date1904: false };
-        worksheet.getCell(`BC${endRow}`).value = { formula: `ROUND(AVERAGE(BC2:BC${endRow-1}),1)`, date1904: false };
-        worksheet.getCell(`BE${endRow}`).value = { formula: `ROUND(AVERAGE(BE2:BE${endRow-1}),1)`, date1904: false };
-        worksheet.getCell(`BG${endRow}`).value = { formula: `ROUND(AVERAGE(BG2:BG${endRow-1}),1)`, date1904: false };
+        worksheet.getCell(`AE${endRow}`).value = { formula: `ROUND(AVERAGE(AE2:AE${endRow-1}),2)`, date1904: false };
+        worksheet.getCell(`AG${endRow}`).value = { formula: `ROUND(AVERAGE(AG2:AG${endRow-1}),2)`, date1904: false };
+        worksheet.getCell(`AI${endRow}`).value = { formula: `ROUND(AVERAGE(AI2:AI${endRow-1}),2)`, date1904: false };
+        worksheet.getCell(`AK${endRow}`).value = { formula: `ROUND(AVERAGE(AK2:AK${endRow-1}),2)`, date1904: false };
+        worksheet.getCell(`AM${endRow}`).value = { formula: `ROUND(AVERAGE(AM2:AM${endRow-1}),2)`, date1904: false };
+        worksheet.getCell(`AO${endRow}`).value = { formula: `ROUND(AVERAGE(AO2:AO${endRow-1}),2)`, date1904: false };
+        worksheet.getCell(`AQ${endRow}`).value = { formula: `ROUND(AVERAGE(AQ2:AQ${endRow-1}),2)`, date1904: false };
+        worksheet.getCell(`AS${endRow}`).value = { formula: `ROUND(AVERAGE(AS2:AS${endRow-1}),2)`, date1904: false };
+        worksheet.getCell(`AU${endRow}`).value = { formula: `ROUND(AVERAGE(AU2:AU${endRow-1}),2)`, date1904: false };
+        worksheet.getCell(`AW${endRow}`).value = { formula: `ROUND(AVERAGE(AW2:AW${endRow-1}),2)`, date1904: false };
+        worksheet.getCell(`AY${endRow}`).value = { formula: `ROUND(AVERAGE(AY2:AY${endRow-1}),2)`, date1904: false };
+        worksheet.getCell(`BA${endRow}`).value = { formula: `ROUND(AVERAGE(BA2:BA${endRow-1}),2)`, date1904: false };
+        worksheet.getCell(`BC${endRow}`).value = { formula: `ROUND(AVERAGE(BC2:BC${endRow-1}),2)`, date1904: false };
+        worksheet.getCell(`BE${endRow}`).value = { formula: `ROUND(AVERAGE(BE2:BE${endRow-1}),2)`, date1904: false };
+        worksheet.getCell(`BG${endRow}`).value = { formula: `ROUND(AVERAGE(BG2:BG${endRow-1}),2)`, date1904: false };
         worksheet.getCell(`BH${endRow}`).value = { formula: `ROUND(AVERAGE(Q${endRow},S${endRow},U${endRow},W${endRow},
           Y${endRow},AA${endRow},AC${endRow},AE${endRow},AG${endRow},AI${endRow},AK${endRow}
           ,AM${endRow},AO${endRow},AQ${endRow},AS${endRow},AU${endRow},AW${endRow}
