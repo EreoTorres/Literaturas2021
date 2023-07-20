@@ -28,14 +28,14 @@
         <div class="row">
             <div class="col-6">
                 <span>Certificacion:</span>
-                <select class="form-control" formControlName="id_certificacion">
+                <select class="form-control" formControlName="id_certificacion" (change)="getCertificacionPlanesEstudio($event.target.value)">
                     <option value="">Selecciona una opción</option>
                     <option [value]="certificacion.id" *ngFor="let certificacion of certificaciones">{{certificacion.nombre}}</option>
                 </select>
             </div>
             <div class="col-6">
                 <span>Plan de estudios:</span>
-                <select class="form-control" formControlName="plan_estudio">
+                <select class="form-control" formControlName="id_plan_estudio">
                     <option value="">Selecciona una opción</option>
                     <option [value]="plan_estudio.id" *ngFor="let plan_estudio of planes_estudio">{{plan_estudio.nombre}}</option>
                 </select>

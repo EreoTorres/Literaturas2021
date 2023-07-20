@@ -139,7 +139,8 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
       'encuesta': '',
       'anio': 0,
       'mes': 0,
-      'periodo': ''
+      'periodo': '',
+      'connection': 0
     }
 
   constructor(
@@ -177,16 +178,15 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
       mes: [null],
       anio: [null],
     });
-  }
- 
+  } 
 
   getPlanes() {
     this.MessagesService.showLoading();
     this.EncuestaService.getPlanes(this.infoGral).then(async datas => {
       var res: any = datas;
       if (res.codigo == 200) {
-        this.planes = res.resultado;
-        this.plan=this.planes[0].id;
+        this.planes = res.resultado.dataDO.concat(res.resultado.dataAWS);
+        this.plan = this.planes[0].id;
         this.infoGral.id_plan_estudio = this.planes[0].id;
         await this.getMaterias();
       }
@@ -195,12 +195,12 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
 
   }
   async cambiarPlan(value: any){
-    this.plan=value;
+    this.plan = value;
     this.infoGral.id_plan_estudio = value;
     this.curso = 0;
     this.periodo = 0;
     this.encuesta_seleccionada = 0;
-    this.registros_pregunta= [];
+    this.registros_pregunta = [];
     this.encuestas_inactivas = [];
     this.formulario.reset();
     this.MessagesService.showLoading();
@@ -211,6 +211,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
   getMaterias() {
     this.materias = [];
     return new Promise((resolve, reject) => {
+      this.infoGral.connection = this.obtenerConnection(this.infoGral.id_plan_estudio);
       this.EncuestaService.getMaterias(this.infoGral).then(datas => {
         var res: any = datas;
         if (res.codigo == 200 && res.resultado.length > 0) {
@@ -221,15 +222,14 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
         }
       });
     })
- 
   }
-
 
   getEncuestas(value: any) {
     this.curso = 0;
     this.periodo = 0;
     this.encuesta_seleccionada = 0;
     this.infoGral.materia = value;
+    this.infoGral.connection = this.obtenerConnection(this.infoGral.id_plan_estudio);
     this.MessagesService.showLoading();
     this.registros_pregunta = [];
     this.formulario.reset();
@@ -289,6 +289,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     this.listado_meses = [];
     this.periodos = [];
     this.infoGral.encuesta = value;
+    this.infoGral.connection = this.obtenerConnection(this.infoGral.id_plan_estudio);
     this.MessagesService.showLoading();
 
     this.EncuestaService.getEncuestasPeriodos(this.infoGral).then(datas => {
@@ -339,6 +340,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     this.MessagesService.showLoading();
 
     return new Promise((resolve, reject) => {
+      this.infoGral.connection = this.obtenerConnection(this.infoGral.id_plan_estudio);
       this.EncuestaService.getRespuestasEncuestas(this.infoGral).then(datas => {
         var res: any = datas;
         this.MessagesService.closeLoading();
@@ -354,6 +356,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
 
   getTotalEncuestasRealizadas() {
     return new Promise((resolve, reject) => {
+      this.infoGral.connection = this.obtenerConnection(this.infoGral.id_plan_estudio);
       this.EncuestaService.getTotalEncuestasRealizadas(this.infoGral).then(datas => {
         var res: any = datas;
         if (res.codigo == 200) {
@@ -646,6 +649,10 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     });
 
 
+  }
+
+  obtenerConnection(id_plan_estudio) {
+    return this.planes.find(plan => plan.id == id_plan_estudio).connection;
   }
 
 }

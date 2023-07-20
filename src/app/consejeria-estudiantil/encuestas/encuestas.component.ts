@@ -10,6 +10,7 @@ import { LocalDataSource } from 'ng2-smart-table';
   templateUrl: './encuestas.component.html',
   styleUrls: ['../citas/citas.component.css']
 })
+
 export class EncuestasComponent implements OnInit {
   programas: any = []
   formBusqueda: UntypedFormGroup
@@ -69,18 +70,10 @@ export class EncuestasComponent implements OnInit {
       tipo_busqueda: [null, [Validators.required]],
       datos: ['', [Validators.required]]
     });
-
-    this.defaultFormBusqueda()
   }
 
   ngOnInit(): void {
     this.programas = this.consejeria_estudiantil.getProgramasAcademicos()
-  }
-
-  defaultFormBusqueda() {
-    this.formBusqueda.controls['id_plan_estudio'].setValue('')
-    this.formBusqueda.controls['tipo_busqueda'].setValue('')
-    this.formBusqueda.controls['datos'].setValue('')
   }
 
   getEncuestas(info: any) {
@@ -141,44 +134,37 @@ export class EncuestasComponent implements OnInit {
     return resultado
   }
 
-  async getAlumnos() {
-    this.getEncuestas({id_plan_estudio: this.formBusqueda.value.id_plan_estudio})
+  getAlumnos() {
+    let data = {
+      id_plan_estudio: this.formBusqueda.value.id_plan_estudio,
+      connection : this.obtenerConnection(this.formBusqueda.value.id_plan_estudio)
+    }
+
+    this.getEncuestas(data)
     this.datosFinal = []
     if(this.banderaBusqueda == 0) this.datos.datos_origen = this.datos.alumnos.length
-    for (let x = 0; x < this.datos.alumnos.length; x++) {
-      let alumno = {
-        id_plan_estudio: this.formBusqueda.value.id_plan_estudio,
-        tipo_busqueda: this.formBusqueda.value.tipo_busqueda,
-        alumno: this.datos.alumnos[x],
-        id_alumno: 0
+    let alumnos = this.datos.alumnos.toString()
+
+    let info = {
+      id_plan_estudio: this.formBusqueda.value.id_plan_estudio,
+      tipo_busqueda: this.formBusqueda.value.tipo_busqueda,
+      alumnos: alumnos,
+      id_alumno: 0,
+      connection: this.obtenerConnection(this.formBusqueda.value.id_plan_estudio)
+    }
+
+    this.encuestasHTTP.generico('getAlumnos', info).then(data => {
+      var res: any = data
+      if(res.codigo == 200) {
+        this.datosFinal = data['resultado'][0]
+        let length = this.datosFinal.length
+        this.datos.datos_encontrados = (this.banderaBusqueda == 0 ? length : 0)
+        this.datos.datos_faltantes = this.datos.datos_origen - length
+        this.banderaBusqueda++
+        this.registros.load(this.datosFinal)
+        this.defaultBusqueda()
       }
-
-      await this.getAlumno(alumno)
-    }
-    
-    if(this.datosFinal.length > 0) {
-      this.banderaBusqueda++
-      this.registros.load(this.datosFinal)
-      this.defaultBusqueda()
-    }
-    else this.messagesService.showSuccessDialog('Lo siento no se encontraron coincidencias, intenta de nuevo.', 'error')
-  }
-
-  getAlumno(alumno: any) {
-    return new Promise(resolve => {
-      this.encuestasHTTP.generico('getAlumno', alumno)
-      .then(data => {
-        var res: any = data
-        if(res.codigo == 200) {
-          (this.banderaBusqueda == 0 ? this.datos.datos_encontrados++ : '')
-          this.datosFinal.push(data['resultado'][0][0])
-          resolve(true)
-        }
-        else {
-          this.datos.datos_faltantes++
-          resolve(true)
-        }
-      })
+      else this.messagesService.showSuccessDialog(res.mensaje, 'error')
     })
   }
 
@@ -191,10 +177,6 @@ export class EncuestasComponent implements OnInit {
     this.datos.datos_faltantes = 0
     
     this.inicializarBusqueda2()
-
-    this.formBusqueda.controls['id_plan_estudio'].enable()
-    this.formBusqueda.controls['tipo_busqueda'].enable()
-    this.formBusqueda.controls['datos'].enable()
 
     this.banderaBusqueda = 0
 
@@ -239,9 +221,6 @@ export class EncuestasComponent implements OnInit {
   }
 
   defaultBusqueda() {
-    this.formBusqueda.controls['id_plan_estudio'].disable()
-    this.formBusqueda.controls['tipo_busqueda'].disable()
-    this.formBusqueda.controls['datos'].disable()
     this.messagesService.closeLoading()
     this.datos.mostrar = true
   }
@@ -278,22 +257,26 @@ export class EncuestasComponent implements OnInit {
   }
 
   async guardarCambios() {
-    if(!this.encuesta.asignadas.length) this.messagesService.showSuccessDialog('No se encontraron encuestas para asignar.', 'error')
+    let length = this.encuesta.asignadas.length
+    if(!length) this.messagesService.showSuccessDialog('No se encontraron encuestas para asignar.', 'error')
     else if(!this.registros['data'].length) this.messagesService.showSuccessDialog('La lista de alumnos está vacía, realiza otra búsqueda.', 'info')
     else {
       this.messagesService.showLoading()
-      for (let x = 0; x < this.encuesta.asignadas.length; x++) {
-        for (let i = 0; i < this.registros['data'].length; i++) {
-          let info = {
-            id_encuesta: this.encuesta.asignadas[x],
-            id_alumno: this.registros['data'][i].id_alumno
-          }
+      for (let x = 0; x < length; x++) {
+        let alumnos = ''
+        let length2 = this.registros['data'].length
+        for (let i = 0; i < this.registros['data'].length; i++) alumnos += this.registros['data'][i].id_alumno + (i < (length2 - 1) ? ', ' : '')
 
-          await this.asignarEncuestaAlumno(info)
+        let info = {
+          id_encuesta: this.encuesta.asignadas[x],
+          alumnos: alumnos,
+          connection: this.registros['data'][0].connection
         }
+
+        await this.asignarEncuestaAlumnos(info)
       }
 
-      this.messagesService.showSuccessDialog('Proceso de asignación de encuestas terminado.', 'success').then((result) => {
+      this.messagesService.showSuccessDialog('Proceso de asignación de encuestas terminado exitosamente.', 'success').then((result) => {
         if(result.isConfirmed) {
           this.inicializarBusqueda2()
           this.messagesService.showLoading()
@@ -303,12 +286,13 @@ export class EncuestasComponent implements OnInit {
     }
   }
 
-  asignarEncuestaAlumno(info: any) {
+  asignarEncuestaAlumnos(info: any) {
     return new Promise(resolve => {
-      this.encuestasHTTP.generico('asignarEncuestaAlumno', info)
+      this.encuestasHTTP.generico('asignarEncuestaAlumnos', info)
       .then(data => {
         var res: any = data
         if(res.codigo == 200) resolve(true)
+        else this.messagesService.showSuccessDialog(res.mensaje, 'error')
       })
     })
   }
@@ -341,10 +325,13 @@ export class EncuestasComponent implements OnInit {
       ), 'info')
       .then((result) => {
       if(result.isConfirmed) {
-        this.defaultFormBusqueda()
         this.inicializarBusqueda()
       }
     })
+  }
+
+  obtenerConnection(id_plan_estudio) {
+    return this.programas.find(programa => programa.id == id_plan_estudio).connection;
   }
 
 }

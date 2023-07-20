@@ -12,6 +12,7 @@ import { SmartTableDatepickerComponent, SmartTableDatepickerRenderComponent } fr
   templateUrl: './literaturas.component.html',
   styleUrls: ['./literaturas.component.css']
 })
+
 export class LiteraturasComponent implements OnInit {
   @Input() registros: any;
 
@@ -84,21 +85,39 @@ export class LiteraturasComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getLiteraturas();
     this.getProgramasAcademicos();
+    this.getLiteraturas();
   }
 
   getProgramasAcademicos(){
     for(let datos of JSON.parse(localStorage.getItem('programas'))){
-      this.programas.push({id: datos.id, nombre_corto: datos.nombre_corto})
+      this.programas.push({id: datos.id, nombre_corto: datos.nombre_corto, connection: datos.connection})
     }
   }
 
-  getMaterias(modal,id_planestudio){
-    if(id_planestudio > 0 ){
+  getLiteraturas(){
+    this.MessagesService.showLoading();
+    this.literaturasHTTP.getListados().then(datas => {
+      var res: any = datas;
+      this.registros = res.resultado.dataDO.concat(res.resultado.dataAWS).sort((a, b) => {
+        let fechaA: any = new Date(a.fecha_modificacion);
+        let fechaB: any = new Date(b.fecha_modificacion);
+        return fechaB - fechaA;
+      });
+      this.MessagesService.closeLoading();
+    });
+  }
+
+  getMaterias(modal, id_plan_estudio){
+    if(id_plan_estudio > 0 ){
       this.MessagesService.showLoading();
 
-      this.literaturasHTTP.getMaterias(id_planestudio).then(datas => {
+      let data = {
+        id_plan_estudio: id_plan_estudio,
+        connection: this.programas.find(programa => programa.id == id_plan_estudio).connection
+      };
+
+      this.literaturasHTTP.getMaterias(data).then(datas => {
         var res: any = datas;
         this.MessagesService.closeLoading();
   
@@ -114,15 +133,6 @@ export class LiteraturasComponent implements OnInit {
       this.materias = null;
       this.getLiteraturas();
     }
-  }
-
-  getLiteraturas(){
-    this.MessagesService.showLoading();
-    this.literaturasHTTP.getListados().then(datas => {
-      var res: any = datas;
-      this.registros = res.resultado
-      this.MessagesService.closeLoading();
-    });
   }
 
   openModal(docs){
@@ -229,8 +239,6 @@ export class LiteraturasComponent implements OnInit {
         ).then(() => {
           this.openModal(links);
         });
-
-        //this.getLiteraturas();
       }else{
         this.MessagesService.showSuccessDialog(
           "Problemas al guardar los archivos",

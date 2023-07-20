@@ -11,7 +11,6 @@ import { ValidTipoTextService } from 'src/app/services/validaciones/valid-tipo-t
 import { AcademicaComponent } from '../academica.component';
 import { SmartTableDatepickerComponent, SmartTableDatepickerRenderComponent } from 'src/app/components/smart-table-datepicker/smart-table-datepicker.component';
 
-
 @Component({
   selector: 'app-videos',
   templateUrl: './videos.component.html',
@@ -49,7 +48,8 @@ export class VideosComponent implements OnInit {
     id_categoria: undefined,
     estatus:1,
     id:0,
-    id_usuario: sessionStorage.getItem('id')
+    id_usuario: sessionStorage.getItem('id'),
+    connection: 0
   }
 
   settings = {
@@ -119,10 +119,30 @@ export class VideosComponent implements OnInit {
     this.getCategorias();
   }
 
+  getVideos() {
+    this.MessagesService.showLoading();
+    this.videosHTTP.getVideos().then(datas => {
+      var res: any = datas;
+      this.registros = res.resultado.dataDO.concat(res.resultado.dataAWS).sort((a, b) => {
+        let fechaA: any = new Date(a.fecha_modificacion);
+        let fechaB: any = new Date(b.fecha_modificacion);
+        return fechaB - fechaA;
+      });
+      this.MessagesService.closeLoading();
+    });
+  }
+
+  getCategorias() {
+    this.MessagesService.showLoading();
+    this.videosHTTP.getCategorias().then(datas => {
+      var res: any = datas;
+      this.categorias = res.resultado
+      this.MessagesService.closeLoading();
+    });
+  }
+
   onCustom(ev) {
-    if(ev.action == 'editar'){
-      this.openModal(ev.data.id);
-    }
+    if(ev.action == 'editar') this.openModal(ev.data.id, ev.data.id_plan_estudio);
     else if(ev.action == 'eliminar') {
       this.video.id = ev.data.id;
       this.video.estatus = 0;
@@ -144,18 +164,13 @@ export class VideosComponent implements OnInit {
     }
   }
 
-  getVideos(){
+  getVideoUno(video, id_plan_estudio) {
     this.MessagesService.showLoading();
-    this.videosHTTP.getVideos().then(datas => {
-      var res: any = datas;
-      this.registros = res.resultado
-      this.MessagesService.closeLoading();
-    });
-  }
-
-  getVideoUno(video){
-    this.MessagesService.showLoading();
-    this.videosHTTP.getVideoUno(video).then(datas => {
+    let data = {
+      id: this.video.id,
+      connection: this.obtenerConnection(id_plan_estudio)
+    }
+    this.videosHTTP.getVideoUno(data).then(datas => {
       var res: any = datas;
       this.getPlanEstudioChange(1, res.resultado[0].id_plan_estudio);
       this.video = res.resultado[0];
@@ -163,16 +178,7 @@ export class VideosComponent implements OnInit {
     });
   }
 
-  getCategorias(){
-    this.MessagesService.showLoading();
-    this.videosHTTP.getCategorias().then(datas => {
-      var res: any = datas;
-      this.categorias = res.resultado
-      this.MessagesService.closeLoading();
-    });
-  }
-
-  getGeneraciones(id_plan_estudio){
+  getGeneraciones(id_plan_estudio) {
     this.generaciones = null;
     if(id_plan_estudio > 0 ){
       this.MessagesService.showLoading();
@@ -187,7 +193,7 @@ export class VideosComponent implements OnInit {
     this.video.id_generacion = undefined;
   }
 
-  openModal(id_video){
+  openModal(id_video, id_plan_estudio = 0) {
     this.modalService.open(this.links, {
       backdrop: 'static',
       keyboard: false,  // to prevent closing with Esc button (if you want this too)
@@ -195,10 +201,9 @@ export class VideosComponent implements OnInit {
     }); 
     this.resetForm(id_video);
     this.titulo_videos = "Agregar Video";
-    if(id_video > 0)
-    {
+    if(id_video > 0) {
       this.titulo_videos = "Editar Video";
-      this.getVideoUno(this.video);
+      this.getVideoUno(this.video, id_plan_estudio);
     }
   }
 
@@ -223,6 +228,8 @@ export class VideosComponent implements OnInit {
 
     modal.close('Save click');
     this.MessagesService.showLoading();
+
+    this.video.connection = this.obtenerConnection(this.video.id_plan_estudio);
     
     this.videosHTTP.updateVideos(this.video)
     .then(data => {
@@ -242,13 +249,18 @@ export class VideosComponent implements OnInit {
     .catch(err => this.MessagesService.showSuccessDialog(err, 'error'))
   }
 
-  getMaterias(modal, id_plan_estudio){
+  getMaterias(modal, id_plan_estudio) {
     this.materias = null;
     this.materias2 = null;
     if(id_plan_estudio > 0 ){
       this.MessagesService.showLoading();
 
-      this.literaturasHTTP.getMaterias(id_plan_estudio).then(datas => {
+      let data = {
+        id_plan_estudio: id_plan_estudio,
+        connection: this.obtenerConnection(id_plan_estudio)
+      }
+
+      this.literaturasHTTP.getMaterias(data).then(datas => {
         var res: any = datas;
         this.MessagesService.closeLoading();
   
@@ -266,12 +278,12 @@ export class VideosComponent implements OnInit {
     this.video.id_materia = undefined;
   }
 
-  getPlanEstudioChange(modal, id_plan_estudio){
+  getPlanEstudioChange(modal, id_plan_estudio) {
     this.getMaterias(modal, id_plan_estudio);
     this.getGeneraciones(id_plan_estudio);
   }
 
-  resetForm(id_video){
+  resetForm(id_video) {
     this.video= {
       servicio: 'video',
       titulo_video: '',
@@ -285,7 +297,12 @@ export class VideosComponent implements OnInit {
       id_generacion:undefined,
       estatus:1,
       id:id_video,
-      id_usuario: sessionStorage.getItem('id')
+      id_usuario: sessionStorage.getItem('id'),
+      connection: 0
     }
+  }
+
+  obtenerConnection(id_plan_estudio) {
+    return this.programas.find(programa => programa.id == id_plan_estudio).connection;
   }
 }

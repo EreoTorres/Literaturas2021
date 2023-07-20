@@ -33,12 +33,6 @@ export class CitasComponent implements OnInit {
   }
   @ViewChild('asignarEstatusConsejero') asignarEstatusConsejero: ElementRef;
   @ViewChild('historialMovimientos') historialMovimientos: ElementRef;
-  asignacion: any = {
-    nombre: '',
-    motivo: '',
-    estatus: '',
-    consejero: ''
-  }
   settings = {
     actions: {
       columnTitle: '',
@@ -77,13 +71,13 @@ export class CitasComponent implements OnInit {
           config: {
             selectText: 'TODOS',
             list: ''
-          },
+          }
         },
         filterFunction: (cell?: any, search?: string) => {
           if (cell == search) return search
         }
       },
-      motivo: {
+      motivo_descripcion: {
         title: 'Motivo',
         type: 'string',
         width: '15%'
@@ -112,7 +106,7 @@ export class CitasComponent implements OnInit {
           config: {
             selectText: 'TODOS',
             list: ''
-          },
+          }
         }
       },
       fecha_registro: {
@@ -169,35 +163,42 @@ export class CitasComponent implements OnInit {
     private citasHTTP: CitasService,
     private modalService: NgbModal,
     private MessagesService: MessagesService,
-    private consejeria_estudiantil:ConsejeriaEstudiantilComponent,
+    private consejeria_estudiantil: ConsejeriaEstudiantilComponent,
     private formBuilder: UntypedFormBuilder
   ) {
     this.formCita = this.formBuilder.group({
       id_cita: [0, [Validators.required]],
-      idmoodle: [null, [Validators.required]],
+      idmoodle: [0, [Validators.required]],
       numero_empleado: ['', [Validators.required]],
-      plan_estudio: [null, [Validators.required]],
       nombre_alumno: ['', [Validators.required]],
+      plan_estudio: [null, [Validators.required]],
       motivo: [null, [Validators.required]],
       contacto: [null, [Validators.required]],
       horario: [null, [Validators.required]],
       estatus: [null, [Validators.required]],
       consejero: [null],
-      responsable: [null]
+      comentarios: [''],
+      responsable: [null],
+      connection: [null]
     });
 
     this.defaultFormCita();
 
     this.formAsignacion = this.formBuilder.group({
-      id_cita: [null, [Validators.required]],
-      plan_estudio: [null, [Validators.required]],
+      id_cita: [0, [Validators.required]],
+      idmoodle: [0],
       nombre_alumno: ['', [Validators.required]],
-      motivo: ['', [Validators.required]],
+      plan_estudio: [null, [Validators.required]],
+      motivo: [null, [Validators.required]],
+      motivo_descripcion: ['', [Validators.required]],
+      contacto: [null],
+      horario: [null],
       detalle: [null],
       estatus: [null, [Validators.required]],
       consejero: [null],
-      comentarios: [null],
-      responsable: [null]
+      comentarios: [''],
+      responsable: [null],
+      connection: [null]
     });
   }
 
@@ -210,8 +211,8 @@ export class CitasComponent implements OnInit {
   getFormulario() {
     this.citasHTTP.generico('getPlanesEstudio').then(datas => {
       var res: any = datas;
-      this.settings.columns.nombre_plan_estudio.filter.config.list = res.resultado
-      this.settings = Object.assign({}, this.settings)
+      this.settings.columns.nombre_plan_estudio.filter.config.list = res.resultado.dataDO.concat(res.resultado.dataAWS);
+      this.settings = Object.assign({}, this.settings);
     });
 
     this.citasHTTP.generico('getMotivos').then(datas => {
@@ -248,19 +249,24 @@ export class CitasComponent implements OnInit {
 
   defaultFormCita() {
     this.formCita.controls['id_cita'].setValue(0);
-    this.formCita.controls['plan_estudio'].setValue('');
-    this.formCita.controls['motivo'].setValue('');
+    this.formCita.controls['plan_estudio'].setValue(0);
+    this.formCita.controls['motivo'].setValue(0);
     this.formCita.controls['contacto'].setValue('');
-    this.formCita.controls['horario'].setValue('');
-    this.formCita.controls['estatus'].setValue('');
-    this.formCita.controls['consejero'].setValue('');
+    this.formCita.controls['horario'].setValue(0);
+    this.formCita.controls['estatus'].setValue(0);
+    this.formCita.controls['consejero'].setValue(0);
+    this.formCita.controls['connection'].setValue(0);
   }
 
   getCitas() {
     this.MessagesService.showLoading();
     this.citasHTTP.generico('getCitas').then(datas => {
       var res: any = datas;
-      this.registros.load(res.resultado)
+      this.registros = res.resultado.dataDO.concat(res.resultado.dataAWS).sort((a, b) => {
+        let fechaA: any = new Date(a.orden);
+        let fechaB: any = new Date(b.orden);
+        return fechaB - fechaA;
+      });
       this.MessagesService.closeLoading();
     });
   }
@@ -272,7 +278,8 @@ export class CitasComponent implements OnInit {
       this.bandera.loading = true;
       let alumno: any = {
         numero_empleado: this.formCita.value.numero_empleado,
-        id_plan_estudio: this.formCita.value.plan_estudio
+        id_plan_estudio: this.formCita.value.plan_estudio,
+        connection: this.obtenerConnection(this.formCita.value.plan_estudio)
       }
       this.citasHTTP.generico('getAlumno', alumno).then(datas => {
         var res: any = datas;
@@ -287,7 +294,11 @@ export class CitasComponent implements OnInit {
         else {
           this.formCita.controls['idmoodle'].setValue(res.resultado[0].idmoodle);
           this.formCita.controls['nombre_alumno'].setValue(res.resultado[0].nombre_alumno);
-          this.citasHTTP.generico('getAlumnoTelefonos', {id_alumno: res.resultado[0].id_alumno}).then(datas => {
+          let data = {
+            id_alumno: res.resultado[0].id_alumno,
+            connection: this.obtenerConnection(this.formCita.value.plan_estudio)
+          };
+          this.citasHTTP.generico('getAlumnoTelefonos', data).then(datas => {
             var res: any = datas;
             this.contactos = res.resultado;
             this.bandera.loading = false;
@@ -302,14 +313,14 @@ export class CitasComponent implements OnInit {
     if(tipo == 1) {
       if(this.formCita.value.estatus == 3) {
         this.formCita.controls['consejero'].disable()
-        this.formCita.controls['consejero'].setValue('')
+        this.formCita.controls['consejero'].setValue(0)
       }
       else this.formCita.controls['consejero'].enable()
     }
     else {
       if(this.formAsignacion.value.estatus == 3) {
         this.formAsignacion.controls['consejero'].disable()
-        this.formAsignacion.controls['consejero'].setValue('')
+        this.formAsignacion.controls['consejero'].setValue(0)
       }
       else this.formAsignacion.controls['consejero'].enable()
     }
@@ -318,10 +329,12 @@ export class CitasComponent implements OnInit {
   validarCita(tipo: any) {
     (tipo == 1 ? this.formFinal = this.formCita : this.formFinal = this.formAsignacion);
     this.formFinal.controls['responsable'].setValue(sessionStorage.getItem('id'));
+    this.formFinal.controls['connection'].setValue(this.obtenerConnection(this.formFinal.value.plan_estudio));
+    this.formFinal.value.consejero = (this.formFinal.value.consejero == undefined ? 0 : this.formFinal.value.consejero);
+    this.formFinal.value.comentarios = (this.formFinal.value.comentarios == null ? '' : this.formFinal.value.comentarios);
     if (this.formFinal.valid) {
       let estatus = this.formFinal.value.estatus
-      let consejero = this.formFinal.value.consejero
-      if((estatus == 2 || estatus == 5) && !consejero) this.MessagesService.showSuccessDialog('Lo siento, para aplicar el estatus "' + (estatus = 2 ? 'Asignado' : 'Atendido') + '" se necesita seleccionar un consejero.', 'warning')
+      if((estatus == 2 || estatus == 5) && !this.formFinal.value.consejero) this.MessagesService.showSuccessDialog('Lo siento, para aplicar el estatus "' + (estatus = 2 ? 'Asignado' : 'Atendido') + '" se necesita seleccionar un consejero.', 'warning')
       else if(estatus == 7) {
         this.MessagesService.showConfirmDialog('¿Está seguro de que desea eliminar este registro?', '').then((result) => {
           if(result.isConfirmed) this.actualizarCita();
@@ -371,13 +384,16 @@ export class CitasComponent implements OnInit {
     if(ev.action == 'asignar') {
       this.openModal(this.asignarEstatusConsejero);
       this.formAsignacion.controls['id_cita'].setValue(ev.data.id_cita);
+      this.formAsignacion.controls['idmoodle'].setValue(0);
       this.formAsignacion.controls['plan_estudio'].setValue(ev.data.id_plan_estudio);
       this.formAsignacion.controls['nombre_alumno'].setValue(ev.data.nombre_alumno);
       this.formAsignacion.controls['motivo'].setValue(ev.data.motivo);
+      this.formAsignacion.controls['motivo_descripcion'].setValue(ev.data.motivo_descripcion);
+      this.formAsignacion.controls['contacto'].setValue('');
+      this.formAsignacion.controls['horario'].setValue(0);
       this.formAsignacion.controls['detalle'].setValue(ev.data.detalle);
       this.formAsignacion.controls['estatus'].setValue(ev.data.id_estatus);
-      let c = '';
-      (ev.data.id_consejero == 0 ? c = '' : c = ev.data.id_consejero);
+      let c = (ev.data.id_consejero == 0 ? '' : ev.data.id_consejero);
       this.formAsignacion.controls['consejero'].setValue(c);
       this.formAsignacion.controls['comentarios'].setValue(ev.data.comentarios);
     }
@@ -385,7 +401,8 @@ export class CitasComponent implements OnInit {
       this.MessagesService.showLoading();
       let cita = {
         id_cita: ev.data.id_cita,
-        responsable: sessionStorage.getItem('id')
+        responsable: sessionStorage.getItem('id'),
+        connection: this.obtenerConnection(ev.data.id_plan_estudio)
       }
       this.citasHTTP.generico('getMovimientos', cita).then(datas => {
         var res: any = datas;
@@ -394,6 +411,10 @@ export class CitasComponent implements OnInit {
         this.MessagesService.closeLoading();
       });
     }
+  }
+
+  obtenerConnection(id_plan_estudio) {
+    return this.programas.find(programa => programa.id == id_plan_estudio).connection;
   }
 
 }

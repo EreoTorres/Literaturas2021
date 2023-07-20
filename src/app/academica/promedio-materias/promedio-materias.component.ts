@@ -46,7 +46,8 @@ export class PromedioMateriasComponent implements OnInit {
     'encuesta': '',
     'anio': 0,
     'mes': 0,
-    'periodo': ''
+    'periodo': '',
+    'connection': 0
   }
 
   constructor(
@@ -65,7 +66,7 @@ export class PromedioMateriasComponent implements OnInit {
       var res: any = datas;
       if (res.codigo == 200) {
         this.planes = res.resultado;
-        this.plan=this.planes[0].id;
+        this.plan = this.planes[0].id;
         this.infoGral.id_plan_estudio = this.planes[0].id;
         await this.getPromedioMaterias();
       }
@@ -80,48 +81,51 @@ export class PromedioMateriasComponent implements OnInit {
     this.data = [];
     this.MessagesService.showLoading();
     await this.getPromedioMaterias();
-    this.MessagesService.closeLoading();
-    
+    this.MessagesService.closeLoading();    
   }
 
 
   getPromedioMaterias() {
     return new Promise((resolve, reject) => {
-    this.EncuestaService.getPromedioMaterias(this.infoGral).then(datas => {
-      var res: any = datas;
-      if (res.codigo == 200 && res.resultado[0].length > 0 ) {
+      this.infoGral.connection = this.obtenerConnection(this.infoGral.id_plan_estudio);
+      this.EncuestaService.getPromedioMaterias(this.infoGral).then(datas => {
+        var res: any = datas;
+        if (res.codigo == 200 && res.resultado[0].length > 0 ) {
 
-        let materias = res.resultado[0];
-        var labels = new Array();
-        var datos = new Array();
-        materias.forEach((element: any) => {
-          labels.push(element.name)
-          datos.push(element.value)
-        });
+          let materias = res.resultado[0];
+          var labels = new Array();
+          var datos = new Array();
+          materias.forEach((element: any) => {
+            labels.push(element.name)
+            datos.push(element.value)
+          });
 
-        this.data = {
-          labels: labels,
-          datasets: [
-            {
-              label: 'Promedio',
-              data: datos,
-              backgroundColor: [
-                '#205db0', '#f7464a', '#f4d03f', '#cccccc', '#5eba7df7', '#689be3'
-              ],
-              hoverBackgroundColor: [
-                '#205db0', '#f7464a', '#f4d03f', '#cccccc', '#5eba7df7', '#689be3'
-              ]
-            }
-          ]
-        };
-        this.promedio = 1;
-        resolve(true);
-      }else{
-        this.MessagesService.showSuccessDialog('No existen registros', 'error');
-      }
-    });
-  })
+          this.data = {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Promedio',
+                data: datos,
+                backgroundColor: [
+                  '#205db0', '#f7464a', '#f4d03f', '#cccccc', '#5eba7df7', '#689be3'
+                ],
+                hoverBackgroundColor: [
+                  '#205db0', '#f7464a', '#f4d03f', '#cccccc', '#5eba7df7', '#689be3'
+                ]
+              }
+            ]
+          };
+          this.promedio = 1;
+          resolve(true);
+        }else{
+          this.MessagesService.showSuccessDialog('No existen registros', 'error');
+        }
+      });
+    })
+  }
 
+  obtenerConnection(id_plan_estudio) {
+    return this.planes.find(plan => plan.id == id_plan_estudio).connection;
   }
 
 }

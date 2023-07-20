@@ -4,7 +4,7 @@ import { CertificacionesService } from 'src/app/services/http-service/academica/
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { SmartTableDatepickerComponent } from 'src/app/components/smart-table-datepicker/smart-table-datepicker.component';
 import { UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
-import { GlobalFunctionsService } from 'src/app/services/http-service/global-functions/global-functions.service'; 
+import { GlobalFunctionsService } from 'src/app/services/http-service/global-functions/global-functions.service';
 
 @Component({
   selector: 'app-certificaciones',
@@ -18,28 +18,15 @@ export class CertificacionesComponent implements OnInit {
   certificaciones: any = [];
   estadoVisible: any = [
     {
-      id: 'Si',
-      nombre: 'Si'
+      id: 'SI',
+      nombre: 'SI'
     },
     {
-      id: 'No',
-      nombre: 'No'
+      id: 'NO',
+      nombre: 'NO'
     }
   ]
-  planes_estudio: any = [
-    {
-      id: 'TODOS',
-      nombre: 'TODOS'
-    },
-    {
-      id: 'COPPEL',
-      nombre: 'COPPEL'
-    },
-    {
-      id: 'UMI',
-      nombre: 'UMI'
-    }
-  ];
+  planes_estudio: any = [];
   settings = {
     actions: {
       columnTitle: 'Opciones',
@@ -69,12 +56,16 @@ export class CertificacionesComponent implements OnInit {
             selectText: 'TODOS',
             list: [
               {
-                value: 'COPPEL',
-                title: 'COPPEL'
+                value: 'IDS COPPEL',
+                title: 'IDS COPPEL'
               },
               {
-                value: 'UMI',
-                title: 'UMI'
+                value: 'IDS UMI',
+                title: 'IDS UMI'
+              },
+              {
+                value: 'IDS INDEX',
+                title: 'IDS INDEX'
               }
             ],
           },
@@ -128,12 +119,12 @@ export class CertificacionesComponent implements OnInit {
           config: {
             list: [
               {
-                value: 'Si',
-                title: 'Si'
+                value: 'SI',
+                title: 'SI'
               },
               {
-                value: 'No',
-                title: 'No'
+                value: 'NO',
+                title: 'NO'
               }
             ],
           },
@@ -142,15 +133,15 @@ export class CertificacionesComponent implements OnInit {
         filter: {
           type: 'list',
           config: {
-            selectText: 'Todos',
+            selectText: 'TODOS',
             list: [
               {
-                value: 'Si',
-                title: 'Si'
+                value: 'SI',
+                title: 'SI'
               },
               {
-                value: 'No',
-                title: 'No'
+                value: 'NO',
+                title: 'NO'
               }
             ],
           },
@@ -172,7 +163,7 @@ export class CertificacionesComponent implements OnInit {
       id_certificacion: [null, [Validators.required]],
       fecha_inicio: [null, [Validators.required]],
       fecha_fin: [null, [Validators.required]],
-      plan_estudio: [null, [Validators.required]],
+      id_plan_estudio: [null, [Validators.required]],
       url: ['', [Validators.required]]
     });
   }
@@ -180,25 +171,43 @@ export class CertificacionesComponent implements OnInit {
   ngOnInit(): void {
     this.fecha_actual = this.fecha_actual.toISOString().split('T')[0];
     this.getCertificaciones();
-    this.getListaCertificaciones();
   }
 
   getCertificaciones() {
     this.messagesService.showLoading();
-    this.certificacionesHTTP.getCertificaciones()
-    .then(datas => {
+
+    this.certificacionesHTTP.generico('getCertificaciones').then(datas => {
       var res: any = datas;
-      this.registros = res.resultado[0]
+      this.registros = res.resultado.dataDO[0].concat(res.resultado.dataAWS[0]).sort(function(a, b){
+        if(a.nombre < b.nombre) return -1;
+        if(a.nombre > b.nombre) return 1;
+        return 0;
+      });
+    });
+
+    // this.certificacionesHTTP.generico('getCertificacionesPlanesEstudio', {tipo: 1}).then(datas => {
+    //   var res: any = datas;
+    //   this.settings.columns.plan_estudio.filter.config.list = res.resultado;
+    //   this.settings = Object.assign({}, this.settings)
+    // });
+
+    this.certificacionesHTTP.generico('getListaCertificaciones').then(datas => {
+      var res: any = datas;
+      this.certificaciones = res.resultado;
       this.messagesService.closeLoading();
     });
   }
 
-  getListaCertificaciones() {
+  getCertificacionPlanesEstudio(id_certificacion) {
     this.messagesService.showLoading();
-    this.certificacionesHTTP.getListaCertificaciones()
-    .then(datas => {
+    let data = {
+      tipo: 2,
+      id_certificacion: id_certificacion
+    };
+    this.certificacionesHTTP.generico('getCertificacionesPlanesEstudio', data).then(datas => {
       var res: any = datas;
-      this.certificaciones = res.resultado;
+      this.planes_estudio = res.resultado;
+      this.messagesService.closeLoading();
     });
   }
 
@@ -215,7 +224,7 @@ export class CertificacionesComponent implements OnInit {
     this.formCertificacion.controls['id_certificacion'].setValue('');
     this.formCertificacion.controls['fecha_inicio'].setValue('');
     this.formCertificacion.controls['fecha_fin'].setValue('');
-    this.formCertificacion.controls['plan_estudio'].setValue('');
+    this.formCertificacion.controls['id_plan_estudio'].setValue('');
     this.formCertificacion.controls['url'].setValue('');
   }
 
@@ -255,19 +264,34 @@ export class CertificacionesComponent implements OnInit {
       return false;
     }
 
+    data.connection = this.planes_estudio.find(plan => plan.id == data.id_plan_estudio).connection;
+    
     this.messagesService.showLoading();
-    this.certificacionesHTTP.actualizarCertificacion(data).then(datas => {
+    this.certificacionesHTTP.generico('actualizarCertificacion', data).then(datas => {
       var res: any = datas;
       if(res.codigo == 0) this.messagesService.showSuccessDialog(res.mensaje, 'error');
       else {
-        if(res.resultado[0][0].success == 1) {
-          this.messagesService.showSuccessDialog(res.resultado[0][0].message, 'success')
-          .then(() => {
+        let success = 0;
+        let message = '';
+
+        if(data.id_plan_estudio == 'TODOS' || !data.connection) {
+          success = res.resultado.dataDO[0][0].success;
+          message = res.resultado.dataDO[0][0].message;
+        }
+
+        if(data.id_plan_estudio == 'TODOS' || data.connection) {
+          success = success + res.resultado.dataAWS[0][0].success;
+          message += res.resultado.dataAWS[0][0].message;
+        }
+
+        if((data.id_plan_estudio == 'TODOS' && success < 2) || success == 0) this.messagesService.showSuccessDialog(message, 'warning');
+        else {
+          message = (data.id_plan_estudio == 'TODOS' ? 'Certificaciones actualizadas exitosamente.' : 'Certificación actualizada exitosamente.');
+          this.messagesService.showSuccessDialog(message, 'success').then(() => {
             this.modalService.dismissAll();
             this.getCertificaciones();
           });
         }
-        else this.messagesService.showSuccessDialog(res.resultado[0][0].message, 'error');
       }
     });
   }

@@ -47,7 +47,8 @@ export class PromedioEncuestaSatisfaccionComponent implements OnInit {
     'encuesta': '',
     'anio': 0,
     'mes': 0,
-    'periodo': ''
+    'periodo': '',
+    'connection': 0
   }
 
   constructor(
@@ -65,7 +66,7 @@ export class PromedioEncuestaSatisfaccionComponent implements OnInit {
     this.EncuestaService.getPlanes(this.infoGral).then(async datas => {
       var res: any = datas;
       if (res.codigo == 200) {
-        this.planes = res.resultado;
+        this.planes = res.resultado.dataDO.concat(res.resultado.dataAWS);
         this.plan=this.planes[0].id;
         this.infoGral.id_plan_estudio = this.planes[0].id;
         await this.getPromedioMateriasEncuestas();
@@ -81,48 +82,45 @@ export class PromedioEncuestaSatisfaccionComponent implements OnInit {
     this.data = [];
     this.MessagesService.showLoading();
     await this.getPromedioMateriasEncuestas();
-    this.MessagesService.closeLoading();
-    
+    this.MessagesService.closeLoading();    
   }
-
 
   getPromedioMateriasEncuestas() {
     return new Promise((resolve, reject) => {
-    this.EncuestaService.getPromedioMateriasEncuestas(this.infoGral).then(datas => {
-      var res: any = datas;
-      if (res.codigo == 200 && res.resultado[0].length > 0 ) {
+      this.EncuestaService.getPromedioMateriasEncuestas(this.infoGral).then(datas => {
+        var res: any = datas;
+        if (res.codigo == 200 && res.resultado[0].length > 0 ) {
 
-        let materias = res.resultado[0];
-        var labels = new Array();
-        var datos = new Array();
-        materias.forEach((element: any) => {
-          labels.push(element.nombre_materia)
-          datos.push(element.promedio)
-        });
+          let materias = res.resultado[0];
+          var labels = new Array();
+          var datos = new Array();
+          materias.forEach((element: any) => {
+            labels.push(element.nombre_materia)
+            datos.push(element.promedio)
+          });
 
-        this.data = {
-          labels: labels,
-          datasets: [
-            {
-              label: 'Promedio',
-              data: datos,
-              backgroundColor: [
-                '#205db0', '#f7464a', '#f4d03f', '#cccccc', '#5eba7df7', '#689be3'
-              ],
-              hoverBackgroundColor: [
-                '#205db0', '#f7464a', '#f4d03f', '#cccccc', '#5eba7df7', '#689be3'
-              ]
-            }
-          ]
-        };
-        this.promedio = 1;
-        resolve(true);
-      }else{
-        this.MessagesService.showSuccessDialog('No existen registros', 'error');
-      }
-    });
-  })
-
+          this.data = {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Promedio',
+                data: datos,
+                backgroundColor: [
+                  '#205db0', '#f7464a', '#f4d03f', '#cccccc', '#5eba7df7', '#689be3'
+                ],
+                hoverBackgroundColor: [
+                  '#205db0', '#f7464a', '#f4d03f', '#cccccc', '#5eba7df7', '#689be3'
+                ]
+              }
+            ]
+          };
+          this.promedio = 1;
+          resolve(true);
+        }else{
+          this.MessagesService.showSuccessDialog('No existen registros', 'error');
+        }
+      });
+    })
   }
 
 }

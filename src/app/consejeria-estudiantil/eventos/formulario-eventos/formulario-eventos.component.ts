@@ -35,12 +35,7 @@ export class FormularioEventosComponent implements OnInit {
     },
     columns: {
       id: {
-        title: 'ID',
-        type: 'number',
-        width: '5%',
-        editable: false,
-        addable: false,
-        filter: false
+        hide: true
       },
       titulo: {
         title: 'Título',
@@ -78,6 +73,7 @@ export class FormularioEventosComponent implements OnInit {
   bandera: boolean = true
   public editor_cotenido = Editor
   @ViewChild('agregarEvento') agregarEvento: ElementRef;
+  id_plan_estudio: any = 0;
 
   constructor(
     private eventosHTTP: EventosService,
@@ -90,7 +86,8 @@ export class FormularioEventosComponent implements OnInit {
       titulo: ['', [Validators.required]],
       plan_estudio: [null, [Validators.required]],
       contenido: ['', [Validators.required]],
-      estatus: [null, [Validators.required]]
+      estatus: [null, [Validators.required]],
+      connection: [null]
     });
 
     this.defaultFormEvento();
@@ -117,6 +114,7 @@ export class FormularioEventosComponent implements OnInit {
   }
 
   resetAll() {
+    this.id_plan_estudio = 0
     this.formEvento.reset()
     this.defaultFormEvento()
   }
@@ -125,12 +123,17 @@ export class FormularioEventosComponent implements OnInit {
     this.messagesService.showLoading()
     this.eventosHTTP.generico('getEventos').then(datas => {
       var res: any = datas
-      this.registros = res.resultado
+      this.registros = res.resultado.dataDO.concat(res.resultado.dataAWS).sort((a, b) => {
+        let fechaA: any = new Date(a.orden);
+        let fechaB: any = new Date(b.orden);
+        return fechaB - fechaA;
+      });
       this.messagesService.closeLoading()
     });
   }
 
   openModal(modal: any, bandera: boolean) {
+    (!bandera ? this.formEvento.controls['plan_estudio'].disable() : this.formEvento.controls['plan_estudio'].enable())
     this.bandera = bandera
     this.resetAll()
     this.modalService.open(modal, {
@@ -143,25 +146,44 @@ export class FormularioEventosComponent implements OnInit {
   guardarEvento() {
     if(this.formEvento.valid) {
       let estatus = 0
-      if(this.formEvento.value.estatus == false) estatus = 0
-      if(this.formEvento.value.estatus == true) estatus = 1
+      if(this.formEvento.value.estatus) estatus = 1
       this.formEvento.controls['estatus'].setValue(estatus)
+      this.formEvento.controls['connection'].setValue((
+        this.formEvento.value.plan_estudio != 'TODOS'
+          ? this.obtenerConnection((this.id_plan_estudio ? this.id_plan_estudio : this.formEvento.value.plan_estudio)) 
+          : 0
+      ));
       this.messagesService.showLoading()
       this.eventosHTTP.generico('updateEvento', this.formEvento.value).then(datas => {
         var res: any = datas
-        if(res.codigo == 200) {
-          if(res.resultado[0][0]['success'] == 1) {
+
+        if(res.codigo == 0) this.messagesService.showSuccessDialog(res.mensaje, 'error');
+        else {
+          let success = 0;
+          let message = '';
+
+          if(this.formEvento.value.plan_estudio == 'TODOS' || !this.formEvento.value.connection) {
+            success = res.resultado.dataDO[0][0].success;
+            message = res.resultado.dataDO[0][0].message;
+          }
+
+          if(this.formEvento.value.plan_estudio == 'TODOS' || this.formEvento.value.connection) {
+            success = success + res.resultado.dataAWS[0][0].success;
+            message += res.resultado.dataAWS[0][0].message;
+          }
+
+          if((this.formEvento.value.plan_estudio == 'TODOS' && success < 2) || success == 0) this.messagesService.showSuccessDialog(message, 'warning');
+          else {
+            message = (this.formEvento.value.plan_estudio == 'TODOS' ? 'Eventos actualizados exitosamente.' : 'Evento actualizado exitosamente.');
             this.modalService.dismissAll()
-            this.messagesService.showSuccessDialog(res.resultado[0][0]['message']).then((result) => {
+            this.messagesService.showSuccessDialog(message).then((result) => {
               if(result.isConfirmed) {
                 this.resetAll()
                 this.getEventos()
               }
             });
           }
-          else this.messagesService.showSuccessDialog(res.resultado[0][0]['message'], 'error')
         }
-        else this.messagesService.showSuccessDialog(res.mensaje, 'error')
       });
     }
     else this.messagesService.showSuccessDialog('Todos los campos son obligatorios.', 'error');
@@ -170,13 +192,18 @@ export class FormularioEventosComponent implements OnInit {
   onCustom(ev) {
     if(ev.action == 'editar') {
       this.messagesService.showLoading()
-      this.eventosHTTP.generico('getEvento', {id: ev.data.id}).then(datas => {
+      let data = {
+        id: ev.data.id,
+        connection: ev.data.connection
+      }
+      this.eventosHTTP.generico('getEvento', data).then(datas => {
         var res: any = datas
         if(res.codigo == 200) {
           this.messagesService.closeLoading()
           this.openModal(this.agregarEvento, false)
           this.formEvento.controls['id'].setValue(ev.data.id)
           this.formEvento.controls['titulo'].setValue(ev.data.titulo)
+          this.id_plan_estudio = ev.data.id_plan_estudio
           this.formEvento.controls['plan_estudio'].setValue(ev.data.id_plan_estudio)
           this.formEvento.controls['contenido'].setValue(res.resultado[0]['contenido'])
           this.formEvento.controls['estatus'].setValue(res.resultado[0]['estatus'])
@@ -184,6 +211,10 @@ export class FormularioEventosComponent implements OnInit {
         else this.messagesService.showSuccessDialog(res.mensaje, 'error')
       });
     }
+  }
+
+  obtenerConnection(id_plan_estudio) {
+    return this.programas.find(programa => programa.value == id_plan_estudio).connection;
   }
 
 }

@@ -9,6 +9,7 @@ import { AppComponent } from '../app.component';
   templateUrl: './academica.component.html',
   styleUrls: ['./academica.component.css']
 })
+
 export class AcademicaComponent implements OnInit {
   private _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
@@ -44,8 +45,15 @@ export class AcademicaComponent implements OnInit {
 
   getProgramasAcademicos(){
     for(let datos of JSON.parse(localStorage.getItem('programas'))){
-      this.programas.push({id: datos.id, nombre_corto: datos.nombre_corto})
+      this.programas.push(
+        {
+          id: datos.id,
+          nombre_corto: datos.nombre_corto,
+          connection: datos.connection
+        }
+      )
     }
+    
     return this.programas;
   }
 }
