@@ -124,8 +124,8 @@ export class VideosComponent implements OnInit {
     this.videosHTTP.getVideos().then(datas => {
       var res: any = datas;
       this.registros = res.resultado.dataDO.concat(res.resultado.dataAWS).sort((a, b) => {
-        let fechaA: any = new Date(a.fecha_modificacion);
-        let fechaB: any = new Date(b.fecha_modificacion);
+        let fechaA: any = new Date(a.orden);
+        let fechaB: any = new Date(b.orden);
         return fechaB - fechaA;
       });
       this.MessagesService.closeLoading();

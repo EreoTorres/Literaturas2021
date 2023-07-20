@@ -91,7 +91,13 @@ export class LiteraturasComponent implements OnInit {
 
   getProgramasAcademicos(){
     for(let datos of JSON.parse(localStorage.getItem('programas'))){
-      this.programas.push({id: datos.id, nombre_corto: datos.nombre_corto, connection: datos.connection})
+      this.programas.push(
+        {
+          id: datos.id,
+          nombre_corto: datos.nombre_corto,
+          connection: datos.connection
+        }
+      )
     }
   }
 
@@ -100,8 +106,8 @@ export class LiteraturasComponent implements OnInit {
     this.literaturasHTTP.getListados().then(datas => {
       var res: any = datas;
       this.registros = res.resultado.dataDO.concat(res.resultado.dataAWS).sort((a, b) => {
-        let fechaA: any = new Date(a.fecha_modificacion);
-        let fechaB: any = new Date(b.fecha_modificacion);
+        let fechaA: any = new Date(a.orden);
+        let fechaB: any = new Date(b.orden);
         return fechaB - fechaA;
       });
       this.MessagesService.closeLoading();
@@ -114,7 +120,7 @@ export class LiteraturasComponent implements OnInit {
 
       let data = {
         id_plan_estudio: id_plan_estudio,
-        connection: this.programas.find(programa => programa.id == id_plan_estudio).connection
+        connection: this.obtenerConnection(id_plan_estudio)
       };
 
       this.literaturasHTTP.getMaterias(data).then(datas => {
@@ -269,5 +275,9 @@ export class LiteraturasComponent implements OnInit {
     selBox.select();
     document.execCommand('copy');
     document.body.removeChild(selBox);
+  }
+
+  obtenerConnection(id_plan_estudio) {
+    return this.programas.find(programa => programa.id == id_plan_estudio).connection;
   }
 }

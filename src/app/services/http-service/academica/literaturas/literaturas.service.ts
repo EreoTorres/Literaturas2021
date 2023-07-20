@@ -44,9 +44,9 @@ export class LiteraturasService {
     })
   }
 
-  getMaterias(id_planestudio){
+  getMaterias(data){
     return new Promise((resolve, reject) => {
-      this.http.post(this.url+'academica/literaturas/getMaterias',{id: id_planestudio},this.httpHeaders)
+      this.http.post(this.url+'academica/literaturas/getMaterias', data,this.httpHeaders)
       .subscribe(data => {
           resolve(data)
       })
