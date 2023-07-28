@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { EncuestasService } from 'src/app/services/http-service/consejeria-estudiantil/encuestas/encuestas.service';
-import { ConsejeriaEstudiantilComponent } from '../consejeria-estudiantil.component';
+import { AppComponent } from 'src/app/app.component';
 import { UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 
@@ -62,7 +62,7 @@ export class EncuestasComponent implements OnInit {
   constructor(
     private encuestasHTTP: EncuestasService,
     private messagesService: MessagesService,
-    private consejeria_estudiantil:ConsejeriaEstudiantilComponent,
+    private app: AppComponent,
     private formBuilder: UntypedFormBuilder
   ) {
     this.formBusqueda = this.formBuilder.group({
@@ -73,7 +73,7 @@ export class EncuestasComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.programas = this.consejeria_estudiantil.getProgramasAcademicos()
+    this.programas = this.app.getProgramasAcademicos()
   }
 
   getEncuestas(info: any) {
@@ -137,7 +137,7 @@ export class EncuestasComponent implements OnInit {
   getAlumnos() {
     let data = {
       id_plan_estudio: this.formBusqueda.value.id_plan_estudio,
-      connection : this.obtenerConnection(this.formBusqueda.value.id_plan_estudio)
+      connection : this.app.obtenerConnection(this.formBusqueda.value.id_plan_estudio)
     }
 
     this.getEncuestas(data)
@@ -150,7 +150,7 @@ export class EncuestasComponent implements OnInit {
       tipo_busqueda: this.formBusqueda.value.tipo_busqueda,
       alumnos: alumnos,
       id_alumno: 0,
-      connection: this.obtenerConnection(this.formBusqueda.value.id_plan_estudio)
+      connection: this.app.obtenerConnection(this.formBusqueda.value.id_plan_estudio)
     }
 
     this.encuestasHTTP.generico('getAlumnos', info).then(data => {
@@ -328,10 +328,6 @@ export class EncuestasComponent implements OnInit {
         this.inicializarBusqueda()
       }
     })
-  }
-
-  obtenerConnection(id_plan_estudio) {
-    return this.programas.find(programa => programa.id == id_plan_estudio).connection;
   }
 
 }

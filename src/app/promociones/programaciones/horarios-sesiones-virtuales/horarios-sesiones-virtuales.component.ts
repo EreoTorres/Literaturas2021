@@ -179,7 +179,7 @@ export class HorariosSesionesVirtualesComponent implements OnInit {
     });
   }
 
-  aguardar_actualizar(ev) {
+  guardar_actualizar(ev) {
     if (ev.newData.maximo_asistentes == 0) {
       this.MessagesService.showSuccessDialog(
         "Todos los parámetros son requeridos",

@@ -141,7 +141,7 @@ export class FormularioSesionesVirtualesComponent implements OnInit {
     });
   }
 
-  aguardar_actualizar(ev) {
+  guardar_actualizar(ev) {
     if (ev.newData.id == 0 || !ev.newData.id) {
       ev.newData.id = 0;
     }

@@ -7,12 +7,14 @@ import { MessagesService } from 'src/app/services/messages/messages.service';
 import { Chart } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Console } from 'console';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-reporte-encuesta-satisfaccion',
   templateUrl: './reporte-encuesta-satisfaccion.component.html',
   styleUrls: ['./reporte-encuesta-satisfaccion.component.css']
 })
+
 export class ReporteEncuestaSatisfaccionComponent implements OnInit {
 
   formulario: UntypedFormGroup | any;
@@ -149,6 +151,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     private formBuilder: UntypedFormBuilder,
     private EncuestaService: EncuestaService,
     private MessagesService: MessagesService,
+    private app: AppComponent
   ) {
     this.meses = [
       { 'mes': 'Enero', 'value': 1 },
@@ -213,7 +216,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
   getMaterias() {
     this.materias = [];
     return new Promise((resolve, reject) => {
-      this.infoGral.connection = this.obtenerConnection(this.infoGral.id_plan_estudio);
+      this.infoGral.connection = this.app.obtenerConnection(this.infoGral.id_plan_estudio);
       this.EncuestaService.getMaterias(this.infoGral).then(datas => {
         var res: any = datas;
         if (res.codigo == 200 && res.resultado.length > 0) {
@@ -231,7 +234,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     this.periodo = 0;
     this.encuesta_seleccionada = 0;
     this.infoGral.materia = value;
-    this.infoGral.connection = this.obtenerConnection(this.infoGral.id_plan_estudio);
+    this.infoGral.connection = this.app.obtenerConnection(this.infoGral.id_plan_estudio);
     this.MessagesService.showLoading();
     this.registros_pregunta = [];
     this.formulario.reset();
@@ -291,7 +294,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     this.listado_meses = [];
     this.periodos = [];
     this.infoGral.encuesta = value;
-    this.infoGral.connection = this.obtenerConnection(this.infoGral.id_plan_estudio);
+    this.infoGral.connection = this.app.obtenerConnection(this.infoGral.id_plan_estudio);
     this.MessagesService.showLoading();
 
     this.EncuestaService.getEncuestasPeriodos(this.infoGral).then(datas => {
@@ -342,7 +345,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     this.MessagesService.showLoading();
 
     return new Promise((resolve, reject) => {
-      this.infoGral.connection = this.obtenerConnection(this.infoGral.id_plan_estudio);
+      this.infoGral.connection = this.app.obtenerConnection(this.infoGral.id_plan_estudio);
       this.EncuestaService.getRespuestasEncuestas(this.infoGral).then(datas => {
         var res: any = datas;
         this.MessagesService.closeLoading();
@@ -358,7 +361,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
 
   getTotalEncuestasRealizadas() {
     return new Promise((resolve, reject) => {
-      this.infoGral.connection = this.obtenerConnection(this.infoGral.id_plan_estudio);
+      this.infoGral.connection = this.app.obtenerConnection(this.infoGral.id_plan_estudio);
       this.EncuestaService.getTotalEncuestasRealizadas(this.infoGral).then(datas => {
         var res: any = datas;
         if (res.codigo == 200) {
@@ -545,9 +548,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     this.exportToExcel(datos,0);
   }
 
-
   exportToExcel(datos: any, tipo: any): void {
-
     let registros = datos;
     const columnas: { name: any; filterButton: boolean; }[] = [];
     const registrosExcel: any[] = [];
@@ -649,12 +650,6 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
       let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       fs.saveAs(blob, fname + '-' + new Date().valueOf() + '.xlsx');
     });
-
-
-  }
-
-  obtenerConnection(id_plan_estudio) {
-    return this.planes.find(plan => plan.id == id_plan_estudio).connection;
   }
 
 }

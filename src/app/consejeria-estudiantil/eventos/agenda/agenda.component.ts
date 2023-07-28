@@ -4,7 +4,7 @@ import { MessagesService } from 'src/app/services/messages/messages.service';
 import { EventosService } from 'src/app/services/http-service/consejeria-estudiantil/eventos/eventos.service';
 import { SmartTableDatepickerComponent } from 'src/app/components/smart-table-datepicker/smart-table-datepicker.component';
 import { GlobalFunctionsService } from 'src/app/services/http-service/global-functions/global-functions.service';
-import { ConsejeriaEstudiantilComponent } from '../../consejeria-estudiantil.component';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-agenda',
@@ -128,11 +128,11 @@ export class AgendaComponent implements OnInit {
     private eventosHTTP: EventosService,
     private messagesService: MessagesService,
     private globalFunctions: GlobalFunctionsService,
-    private consejeria_estudiantil: ConsejeriaEstudiantilComponent
+    private app: AppComponent
   ) { }
 
   ngOnInit(): void {
-    this.programas = this.consejeria_estudiantil.getProgramasAcademicos();
+    this.programas = this.app.getProgramasAcademicos();
     this.getAgenda()
   }
 
@@ -162,7 +162,7 @@ export class AgendaComponent implements OnInit {
     });
   }
 
-  aguardar_actualizar(ev: any) {
+  guardar_actualizar(ev: any) {
     if(!ev.newData.id) {
       ev.newData.id = 0
       ev.newData.estatus = 1
@@ -174,7 +174,7 @@ export class AgendaComponent implements OnInit {
     else {
       ev.newData.fecha = this.globalFunctions.newUYDate(ev.newData.fecha)
       ev.newData.id_plan_estudio = this.planes_estudio.find(plan_estudio => plan_estudio.title == ev.newData.plan_estudio).value;
-      ev.newData.connection = (ev.newData.id_plan_estudio != 'TODOS' ? this.obtenerConnection(ev.newData.id_plan_estudio) : 0);
+      ev.newData.connection = (ev.newData.id_plan_estudio != 'TODOS' ? this.app.obtenerConnection(ev.newData.id_plan_estudio) : 0);
       this.messagesService.showLoading();
       this.eventosHTTP.generico('addAgenda', ev.newData).then(datas => {
         var res: any = datas;
@@ -206,10 +206,6 @@ export class AgendaComponent implements OnInit {
         }
       });
     }
-  }
-
-  obtenerConnection(id_plan_estudio) {
-    return this.programas.find(programa => programa.id == id_plan_estudio).connection;
   }
 
 }

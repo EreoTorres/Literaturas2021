@@ -5,6 +5,7 @@ import { MessagesService } from 'src/app/services/messages/messages.service';
 import { EventosService } from 'src/app/services/http-service/consejeria-estudiantil/eventos/eventos.service';
 import { UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import Editor from 'src/assets/ckeditor5-build-classic/build/ckeditor';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-formulario-eventos',
@@ -79,7 +80,8 @@ export class FormularioEventosComponent implements OnInit {
     private eventosHTTP: EventosService,
     private modalService: NgbModal,
     private messagesService: MessagesService,
-    private formBuilder: UntypedFormBuilder
+    private formBuilder: UntypedFormBuilder,
+    private app: AppComponent
   ) {
     this.formEvento = this.formBuilder.group({
       id: [0, [Validators.required]],
@@ -150,7 +152,7 @@ export class FormularioEventosComponent implements OnInit {
       this.formEvento.controls['estatus'].setValue(estatus)
       this.formEvento.controls['connection'].setValue((
         this.formEvento.value.plan_estudio != 'TODOS'
-          ? this.obtenerConnection((this.id_plan_estudio ? this.id_plan_estudio : this.formEvento.value.plan_estudio)) 
+          ? this.app.obtenerConnection((this.id_plan_estudio ? this.id_plan_estudio : this.formEvento.value.plan_estudio)) 
           : 0
       ));
       this.messagesService.showLoading()
@@ -211,10 +213,6 @@ export class FormularioEventosComponent implements OnInit {
         else this.messagesService.showSuccessDialog(res.mensaje, 'error')
       });
     }
-  }
-
-  obtenerConnection(id_plan_estudio) {
-    return this.programas.find(programa => programa.value == id_plan_estudio).connection;
   }
 
 }

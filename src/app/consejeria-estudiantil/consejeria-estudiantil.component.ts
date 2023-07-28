@@ -38,11 +38,4 @@ export class ConsejeriaEstudiantilComponent implements OnInit {
     this.mobileQuery.removeListener(this._mobileQueryListener);
   }
 
-  getProgramasAcademicos(){
-    for(let datos of JSON.parse(localStorage.getItem('programas'))){
-      this.programas.push({id: datos.id, nombre_corto: datos.nombre_corto})
-    }
-    return this.programas;
-  }
-
 }

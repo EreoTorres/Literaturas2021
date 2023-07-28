@@ -3,19 +3,19 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as EventEmitter from 'events';
 import { LiteraturasService } from 'src/app/services/http-service/academica/literaturas/literaturas.service';
 import { MessagesService } from 'src/app/services/messages/messages.service';
-import { environment } from 'src/environments/environment';
 import { DatePipe } from '@angular/common';
 import { VideosService } from 'src/app/services/http-service/academica/videos/videos.service';
-import { UntypedFormBuilder, UntypedFormGroup, Validators, FormArray ,NgForm} from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { ValidTipoTextService } from 'src/app/services/validaciones/valid-tipo-text.service';
 import { AcademicaComponent } from '../academica.component';
-import { SmartTableDatepickerComponent, SmartTableDatepickerRenderComponent } from 'src/app/components/smart-table-datepicker/smart-table-datepicker.component';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-videos',
   templateUrl: './videos.component.html',
   styleUrls: ['./videos.component.css']
 })
+
 export class VideosComponent implements OnInit {
 
   @Output() setView  = new EventEmitter();
@@ -105,22 +105,29 @@ export class VideosComponent implements OnInit {
     private modalService: NgbModal,
     private MessagesService: MessagesService,
     private datePipe: DatePipe,
-    private formBuilder: UntypedFormBuilder,
     public validText: ValidTipoTextService,
     private academica:AcademicaComponent,
-    private literaturasHTTP:LiteraturasService
+    private literaturasHTTP:LiteraturasService,
+    private app: AppComponent
   ) { 
   }
 
   ngOnInit(): void {
+    this.MessagesService.showLoading();
     this.date = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
-    this.getVideos();
     this.programas = this.academica.getProgramasAcademicos();
     this.getCategorias();
+    this.getVideos();
   }
 
-  getVideos() {
-    this.MessagesService.showLoading();
+  getCategorias() {
+    this.videosHTTP.getCategorias().then(datas => {
+      var res: any = datas;
+      this.categorias = res.resultado
+    });
+  }
+
+  getVideos() {    
     this.videosHTTP.getVideos().then(datas => {
       var res: any = datas;
       this.registros = res.resultado.dataDO.concat(res.resultado.dataAWS).sort((a, b) => {
@@ -132,20 +139,13 @@ export class VideosComponent implements OnInit {
     });
   }
 
-  getCategorias() {
-    this.MessagesService.showLoading();
-    this.videosHTTP.getCategorias().then(datas => {
-      var res: any = datas;
-      this.categorias = res.resultado
-      this.MessagesService.closeLoading();
-    });
-  }
-
   onCustom(ev) {
     if(ev.action == 'editar') this.openModal(ev.data.id, ev.data.id_plan_estudio);
     else if(ev.action == 'eliminar') {
       this.video.id = ev.data.id;
       this.video.estatus = 0;
+      this.video.id_plan_estudio = ev.data.id_plan_estudio;
+      this.video.connection = this.app.obtenerConnection(ev.data.id_plan_estudio);
       this.MessagesService.showConfirmDialog('¿Seguro que deseas eliminar el video?', '').then((result) => {
         if(result.isConfirmed) {
           this.MessagesService.showLoading();
@@ -153,9 +153,8 @@ export class VideosComponent implements OnInit {
           .then(data => {
             this.MessagesService.closeLoading();
             if(data['codigo'] == 200) {
-              this.MessagesService.showSuccessDialog(data['resultado'][0].message, 'success').then((result) => {
-                if(result.isConfirmed) this.getVideos();
-              })
+              this.MessagesService.showSuccessDialog(data['resultado'][0].message, 'success');
+              this.getVideos();
             }
             else this.MessagesService.showSuccessDialog('Ocurrio un error al eliminar video.', 'error');
           });
@@ -168,7 +167,7 @@ export class VideosComponent implements OnInit {
     this.MessagesService.showLoading();
     let data = {
       id: this.video.id,
-      connection: this.obtenerConnection(id_plan_estudio)
+      connection: this.app.obtenerConnection(id_plan_estudio)
     }
     this.videosHTTP.getVideoUno(data).then(datas => {
       var res: any = datas;
@@ -229,7 +228,7 @@ export class VideosComponent implements OnInit {
     modal.close('Save click');
     this.MessagesService.showLoading();
 
-    this.video.connection = this.obtenerConnection(this.video.id_plan_estudio);
+    this.video.connection = this.app.obtenerConnection(this.video.id_plan_estudio);
     
     this.videosHTTP.updateVideos(this.video)
     .then(data => {
@@ -257,7 +256,7 @@ export class VideosComponent implements OnInit {
 
       let data = {
         id_plan_estudio: id_plan_estudio,
-        connection: this.obtenerConnection(id_plan_estudio)
+        connection: this.app.obtenerConnection(id_plan_estudio)
       }
 
       this.literaturasHTTP.getMaterias(data).then(datas => {
@@ -301,8 +300,5 @@ export class VideosComponent implements OnInit {
       connection: 0
     }
   }
-
-  obtenerConnection(id_plan_estudio) {
-    return this.programas.find(programa => programa.id == id_plan_estudio).connection;
-  }
+  
 }

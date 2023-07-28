@@ -3,12 +3,14 @@ import { EncuestaService } from 'src/app/services/http-service/academica/encuest
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { Chart } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-promedio-materias',
   templateUrl: './promedio-materias.component.html',
   styleUrls: ['./promedio-materias.component.css']
 })
+
 export class PromedioMateriasComponent implements OnInit {
   loading: boolean = false;
 
@@ -53,6 +55,7 @@ export class PromedioMateriasComponent implements OnInit {
   constructor(
     private EncuestaService: EncuestaService,
     private MessagesService: MessagesService,
+    private app: AppComponent
   ) { }
 
   ngOnInit(): void {
@@ -87,7 +90,7 @@ export class PromedioMateriasComponent implements OnInit {
 
   getPromedioMaterias() {
     return new Promise((resolve, reject) => {
-      this.infoGral.connection = this.obtenerConnection(this.infoGral.id_plan_estudio);
+      this.infoGral.connection = this.app.obtenerConnection(this.infoGral.id_plan_estudio);
       this.EncuestaService.getPromedioMaterias(this.infoGral).then(datas => {
         var res: any = datas;
         if (res.codigo == 200 && res.resultado[0].length > 0 ) {
@@ -122,10 +125,6 @@ export class PromedioMateriasComponent implements OnInit {
         }
       });
     })
-  }
-
-  obtenerConnection(id_plan_estudio) {
-    return this.planes.find(plan => plan.id == id_plan_estudio).connection;
   }
 
 }

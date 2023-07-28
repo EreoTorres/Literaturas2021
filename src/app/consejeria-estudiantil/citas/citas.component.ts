@@ -4,7 +4,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { CitasService } from 'src/app/services/http-service/consejeria-estudiantil/citas/citas.service';
 import { SmartTableDatepickerComponent, SmartTableDatepickerRenderComponent } from 'src/app/components/smart-table-datepicker/smart-table-datepicker.component';
-import { ConsejeriaEstudiantilComponent } from '../consejeria-estudiantil.component';
+import { AppComponent } from 'src/app/app.component';
 import { UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 
 @Component({
@@ -163,7 +163,7 @@ export class CitasComponent implements OnInit {
     private citasHTTP: CitasService,
     private modalService: NgbModal,
     private MessagesService: MessagesService,
-    private consejeria_estudiantil: ConsejeriaEstudiantilComponent,
+    private app: AppComponent,
     private formBuilder: UntypedFormBuilder
   ) {
     this.formCita = this.formBuilder.group({
@@ -203,7 +203,7 @@ export class CitasComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.programas = this.consejeria_estudiantil.getProgramasAcademicos();
+    this.programas = this.app.getProgramasAcademicos();
     this.getFormulario();
     this.getCitas();
   }
@@ -279,7 +279,7 @@ export class CitasComponent implements OnInit {
       let alumno: any = {
         numero_empleado: this.formCita.value.numero_empleado,
         id_plan_estudio: this.formCita.value.plan_estudio,
-        connection: this.obtenerConnection(this.formCita.value.plan_estudio)
+        connection: this.app.obtenerConnection(this.formCita.value.plan_estudio)
       }
       this.citasHTTP.generico('getAlumno', alumno).then(datas => {
         var res: any = datas;
@@ -296,7 +296,7 @@ export class CitasComponent implements OnInit {
           this.formCita.controls['nombre_alumno'].setValue(res.resultado[0].nombre_alumno);
           let data = {
             id_alumno: res.resultado[0].id_alumno,
-            connection: this.obtenerConnection(this.formCita.value.plan_estudio)
+            connection: this.app.obtenerConnection(this.formCita.value.plan_estudio)
           };
           this.citasHTTP.generico('getAlumnoTelefonos', data).then(datas => {
             var res: any = datas;
@@ -329,7 +329,7 @@ export class CitasComponent implements OnInit {
   validarCita(tipo: any) {
     (tipo == 1 ? this.formFinal = this.formCita : this.formFinal = this.formAsignacion);
     this.formFinal.controls['responsable'].setValue(sessionStorage.getItem('id'));
-    this.formFinal.controls['connection'].setValue(this.obtenerConnection(this.formFinal.value.plan_estudio));
+    this.formFinal.controls['connection'].setValue(this.app.obtenerConnection(this.formFinal.value.plan_estudio));
     this.formFinal.value.consejero = (this.formFinal.value.consejero == undefined ? 0 : this.formFinal.value.consejero);
     this.formFinal.value.comentarios = (this.formFinal.value.comentarios == null ? '' : this.formFinal.value.comentarios);
     if (this.formFinal.valid) {
@@ -402,7 +402,7 @@ export class CitasComponent implements OnInit {
       let cita = {
         id_cita: ev.data.id_cita,
         responsable: sessionStorage.getItem('id'),
-        connection: this.obtenerConnection(ev.data.id_plan_estudio)
+        connection: this.app.obtenerConnection(ev.data.id_plan_estudio)
       }
       this.citasHTTP.generico('getMovimientos', cita).then(datas => {
         var res: any = datas;
@@ -411,10 +411,6 @@ export class CitasComponent implements OnInit {
         this.MessagesService.closeLoading();
       });
     }
-  }
-
-  obtenerConnection(id_plan_estudio) {
-    return this.programas.find(programa => programa.id == id_plan_estudio).connection;
   }
 
 }

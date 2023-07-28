@@ -6,6 +6,7 @@ import { MessagesService } from 'src/app/services/messages/messages.service';
 import { environment } from 'src/environments/environment';
 import { DatePipe } from '@angular/common';
 import { SmartTableDatepickerComponent, SmartTableDatepickerRenderComponent } from 'src/app/components/smart-table-datepicker/smart-table-datepicker.component';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-literaturas',
@@ -82,6 +83,7 @@ export class LiteraturasComponent implements OnInit {
     private literaturasHTTP: LiteraturasService,
     private modalService: NgbModal,
     private MessagesService: MessagesService,
+    private app: AppComponent
   ) { }
 
   ngOnInit(): void {
@@ -120,7 +122,7 @@ export class LiteraturasComponent implements OnInit {
 
       let data = {
         id_plan_estudio: id_plan_estudio,
-        connection: this.obtenerConnection(id_plan_estudio)
+        connection: this.app.obtenerConnection(id_plan_estudio)
       };
 
       this.literaturasHTTP.getMaterias(data).then(datas => {
@@ -276,8 +278,5 @@ export class LiteraturasComponent implements OnInit {
     document.execCommand('copy');
     document.body.removeChild(selBox);
   }
-
-  obtenerConnection(id_plan_estudio) {
-    return this.programas.find(programa => programa.id == id_plan_estudio).connection;
-  }
+  
 }
