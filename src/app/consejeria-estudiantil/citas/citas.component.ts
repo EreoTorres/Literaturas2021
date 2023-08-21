@@ -6,14 +6,21 @@ import { CitasService } from 'src/app/services/http-service/consejeria-estudiant
 import { SmartTableDatepickerComponent, SmartTableDatepickerRenderComponent } from 'src/app/components/smart-table-datepicker/smart-table-datepicker.component';
 import { AppComponent } from 'src/app/app.component';
 import { UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+import { GlobalFunctionsService } from 'src/app/services/http-service/global-functions/global-functions.service';
 
 @Component({
   selector: 'app-citas',
   templateUrl: 'citas.component.html',
   styleUrls: ['citas.component.css']
 })
+
 export class CitasComponent implements OnInit {
+  id_cita: any = 0;
+  id_plan_estudio: any = 0;
   registros: LocalDataSource = new LocalDataSource()
+  comentarios: LocalDataSource = new LocalDataSource()
   movimientos: LocalDataSource = new LocalDataSource()
   formCita: UntypedFormGroup;
   formAsignacion: UntypedFormGroup;
@@ -25,13 +32,16 @@ export class CitasComponent implements OnInit {
   estatus: any = [];
   estatus2: any = [];
   consejeros: any = [];
+  citaEstatus: any = [];
+  citaMaterias: any = [];
+  citaCumplimientos: any = [];
+  dataComentarios: any = [];
   bandera: any = {
     loading: false,
     formulario: false,
     alumno: false,
     text: ''
   }
-  @ViewChild('asignarEstatusConsejero') asignarEstatusConsejero: ElementRef;
   @ViewChild('historialMovimientos') historialMovimientos: ElementRef;
   settings = {
     actions: {
@@ -73,7 +83,7 @@ export class CitasComponent implements OnInit {
             list: ''
           }
         },
-        filterFunction: (cell?: any, search?: string) => {
+        filterFunction: (cell ?: any, search ?: string) => {
           if (cell == search) return search
         }
       },
@@ -131,6 +141,111 @@ export class CitasComponent implements OnInit {
       }
     }
   };
+  settings_comentarios = {
+    actions: {
+      columnTitle: 'Opciones',
+      add: true,
+      edit: true,
+      delete: false
+    },
+    add: {
+      addButtonContent: '<i class="material-icons-outlined add">add_box</i>',
+      createButtonContent: '<i class="material-icons-outlined">save</i>',
+      cancelButtonContent: '<i class="material-icons-outlined">close</i>',
+      confirmCreate: true
+    },
+    edit: {
+      editButtonContent: '<i class="material-icons-outlined">edit</i>',
+      saveButtonContent: '<i class="material-icons-outlined">save</i>',
+      cancelButtonContent: '<i class="material-icons-outlined">close</i>',
+      confirmSave: true
+    },
+    delete: {
+      deleteButtonContent: '<i class="material-icons-outlined">delete</i>',
+      confirmDelete: true
+    },
+    attr: {
+      class: 'table table-bordered responsive'
+    },
+    pager: {
+      perPage: 5,
+    },
+    columns: {
+      id_cita_comentario: {
+        hide: true
+      },
+      num_cita: {
+        title: 'No. cita',
+        type: 'html',
+        width: '10%',
+        editable:false,
+        addable: false
+      },
+      fecha_cita: {
+        title: 'Fecha cita',
+        type: 'string',
+        filter: true,
+        width: '10%',
+        editor: {
+          type: 'custom',
+          component: SmartTableDatepickerComponent,
+        }
+      },
+      id_estatus: {
+        hide: true
+      },
+      estatus_cita: {
+        title: 'Estatus cita',
+        type: 'html',
+        width: '15%',
+        editor: {
+          type: 'list',
+          config: {
+            selectText: 0,
+            list: ''
+          }
+        }
+      },
+      id_materia: {
+        hide: true
+      },
+      materia_compromiso: {
+        title: 'Materia compromiso',
+        type: 'html',
+        width: '15%',
+        editor: {
+          type: 'list',
+          config: {
+            selectText: 0,
+            list: []
+          }
+        }
+      },
+      id_cumplimiento: {
+        hide: true
+      },
+      cumplimiento: {
+        title: 'Cumplimiento',
+        type: 'html',
+        width: '15%',
+        editor: {
+          type: 'list',
+          config: {
+            selectText: 0,
+            list: ''
+          }
+        }
+      },
+      comentarios: {
+        title: 'Comentarios',
+        type: 'string',
+        width: '40%',
+        editor: {
+          type: 'textarea',
+        }
+      }
+    }
+  };
   settings_movimientos = {
     actions: {
       columnTitle: '',
@@ -162,9 +277,12 @@ export class CitasComponent implements OnInit {
   constructor(
     private citasHTTP: CitasService,
     private modalService: NgbModal,
-    private MessagesService: MessagesService,
+    private messagesService: MessagesService,
     private app: AppComponent,
-    private formBuilder: UntypedFormBuilder
+    private formBuilder: UntypedFormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
+    private globalFunctions: GlobalFunctionsService
   ) {
     this.formCita = this.formBuilder.group({
       id_cita: [0, [Validators.required]],
@@ -177,7 +295,6 @@ export class CitasComponent implements OnInit {
       horario: [null, [Validators.required]],
       estatus: [null, [Validators.required]],
       consejero: [null],
-      comentarios: [''],
       responsable: [null],
       connection: [null]
     });
@@ -196,16 +313,22 @@ export class CitasComponent implements OnInit {
       detalle: [null],
       estatus: [null, [Validators.required]],
       consejero: [null],
-      comentarios: [''],
       responsable: [null],
       connection: [null]
     });
   }
 
   ngOnInit(): void {
+    this.messagesService.showLoading();
     this.programas = this.app.getProgramasAcademicos();
     this.getFormulario();
-    this.getCitas();
+    this.id_cita = this.route.snapshot.paramMap.get('id');
+    this.id_plan_estudio = this.route.snapshot.paramMap.get('plan');
+    if(this.id_cita && this.id_plan_estudio) this.getCita();
+    else {
+      this.id_cita = 0;
+      this.getCitas();
+    }
   }
 
   getFormulario() {
@@ -259,7 +382,7 @@ export class CitasComponent implements OnInit {
   }
 
   getCitas() {
-    this.MessagesService.showLoading();
+    this.messagesService.showLoading();
     this.citasHTTP.generico('getCitas').then(datas => {
       var res: any = datas;
       this.registros = res.resultado.dataDO.concat(res.resultado.dataAWS).sort((a, b) => {
@@ -267,7 +390,7 @@ export class CitasComponent implements OnInit {
         let fechaB: any = new Date(b.orden);
         return fechaB - fechaA;
       });
-      this.MessagesService.closeLoading();
+      this.messagesService.closeLoading();
     });
   }
 
@@ -330,37 +453,98 @@ export class CitasComponent implements OnInit {
     (tipo == 1 ? this.formFinal = this.formCita : this.formFinal = this.formAsignacion);
     this.formFinal.controls['responsable'].setValue(sessionStorage.getItem('id'));
     this.formFinal.controls['connection'].setValue(this.app.obtenerConnection(this.formFinal.value.plan_estudio));
-    this.formFinal.value.consejero = (this.formFinal.value.consejero == undefined ? 0 : this.formFinal.value.consejero);
-    this.formFinal.value.comentarios = (this.formFinal.value.comentarios == null ? '' : this.formFinal.value.comentarios);
     if (this.formFinal.valid) {
-      let estatus = this.formFinal.value.estatus
-      if((estatus == 2 || estatus == 5) && !this.formFinal.value.consejero) this.MessagesService.showSuccessDialog('Lo siento, para aplicar el estatus "' + (estatus = 2 ? 'Asignado' : 'Atendido') + '" se necesita seleccionar un consejero.', 'warning')
+      if(!this.formFinal.value.consejero || this.formFinal.value.consejero == undefined) this.formFinal.value.consejero = 0;
+      let estatus = this.formFinal.value.estatus;
+      if((estatus == 2 || estatus == 5) && !this.formFinal.value.consejero) this.messagesService.showSuccessDialog('Lo siento, para aplicar el estatus "' + (estatus = 2 ? 'Asignado' : 'Atendido') + '" se necesita seleccionar un consejero.', 'warning')
       else if(estatus == 7) {
-        this.MessagesService.showConfirmDialog('¿Está seguro de que desea eliminar este registro?', '').then((result) => {
+        this.messagesService.showConfirmDialog('¿Está seguro de que desea eliminar este registro?', '').then((result) => {
           if(result.isConfirmed) this.actualizarCita();
         });
       }
       else this.actualizarCita();
     }
-    else this.MessagesService.showSuccessDialog('Todos los campos son obligatorios.', 'error');
+    else this.messagesService.showSuccessDialog('Todos los campos son obligatorios.', 'error');
   }
 
   actualizarCita() {
-    this.MessagesService.showLoading();
-    this.citasHTTP.generico('actualizarCita', this.formFinal.value).then(datas => {
+    this.messagesService.showLoading();
+    let info = {
+      cita: this.formFinal.value,
+      comentarios: this.dataComentarios
+    }
+    this.citasHTTP.generico('actualizarCita', info).then(datas => {
       var res: any = datas;
-      if(res.codigo == 0) this.MessagesService.showSuccessDialog(res.mensaje, 'error');
+      if(res.codigo == 0) this.messagesService.showSuccessDialog(res.mensaje, 'error');
       else {
-        if(res.resultado[0][0].success == 1) {
-          this.MessagesService.showSuccessDialog(res.resultado[0][0].message, 'success')
-          .then(() => {
-            this.modalService.dismissAll();
-            this.getCitas();
+        if(!res.resultado[0][0].success) this.messagesService.showSuccessDialog(res.resultado[0][0].message, 'error');
+        else if(this.dataComentarios.length) {
+          this.citasHTTP.generico('actualizarCitaComentarios', info).then(datas => {
+            var res: any = datas;
+            if(res.codigo == 0) this.messagesService.showSuccessDialog(res.mensaje, 'error');
+            else {
+              if(res.resultado[0][0].success == 1) this.cita(res.resultado[0][0].message, 'success');
+              else this.messagesService.showSuccessDialog(res.resultado[0][0].message, 'error');
+            }
           });
         }
-        else this.MessagesService.showSuccessDialog(res.resultado[0][0].message, 'error');
+        else this.cita(res.resultado[0][0].message, 'success');
       }
     });
+  }
+
+  cita(mensaje, tipo) {
+    this.messagesService.showSuccessDialog(mensaje, tipo)
+    .then(() => {
+      this.modalService.dismissAll();
+      (!this.id_cita ? this.getCitas() : '');
+      this.dataComentarios = [];
+    });
+  }
+
+  getCita() {
+    let info = {
+      id_cita: this.id_cita,
+      connection: this.app.obtenerConnection(this.id_plan_estudio)
+    }
+    this.citasHTTP.generico('getCitaEstatus')
+    .then(data => {
+      this.settings_comentarios.columns.estatus_cita.editor.config.list = data['resultado'];
+      this.citaEstatus = data['resultado'];
+      return this.citasHTTP.generico('getCitaMaterias', info);
+    })
+    .then(data => {
+      this.settings_comentarios.columns.materia_compromiso.editor.config.list = data['resultado'];
+      this.citaMaterias = data['resultado'];
+      return this.citasHTTP.generico('getCitaCumplimientos', info);
+    })
+    .then(data => {
+      this.settings_comentarios.columns.cumplimiento.editor.config.list = data['resultado'];
+      this.citaCumplimientos = data['resultado'];
+      this.settings_comentarios = Object.assign({}, this.settings_comentarios);
+      return this.citasHTTP.generico('getCitas', info);      
+    })
+    .then(data => {
+      data = data['resultado'][0];
+      this.formAsignacion.controls['id_cita'].setValue(this.id_cita);
+      this.formAsignacion.controls['idmoodle'].setValue(0);
+      this.formAsignacion.controls['plan_estudio'].setValue(data['id_plan_estudio']);
+      this.formAsignacion.controls['nombre_alumno'].setValue(data['nombre_alumno']);
+      this.formAsignacion.controls['motivo'].setValue(data['motivo']);
+      this.formAsignacion.controls['motivo_descripcion'].setValue(data['motivo_descripcion']);
+      this.formAsignacion.controls['contacto'].setValue('');
+      this.formAsignacion.controls['horario'].setValue(0);
+      this.formAsignacion.controls['detalle'].setValue(data['detalle']);
+      this.formAsignacion.controls['estatus'].setValue(data['id_estatus']);
+      let c = (data['id_consejero'] == 0 ? '' : data['id_consejero']);
+      this.formAsignacion.controls['consejero'].setValue(c);
+      return this.citasHTTP.generico('getCitaComentarios', info);
+    })
+    .then(data => {
+      this.comentarios = data['resultado'];
+      this.messagesService.closeLoading();
+    })
+    .catch(err => this.messagesService.showSuccessDialog(err, 'error'));
   }
 
   resetAll() {
@@ -380,25 +564,25 @@ export class CitasComponent implements OnInit {
     });
   }
 
+  guardar_actualizar(ev: any) {
+    this.dataComentarios = this.dataComentarios.filter(d => d.id_cita_comentario != ev.newData.id_cita_comentario);
+    ev.newData.num_cita = (Object.values(this.comentarios).length + 1);
+    (!ev.newData.id_cita_comentario ? ev.newData.id_cita_comentario = 0 : '');
+    ev.newData.fecha = this.globalFunctions.newUYDate(ev.newData.fecha_cita);
+    ev.newData.id_estatus = this.citaEstatus.find(d => d.value == ev.newData.estatus_cita).id;
+    ev.newData.id_materia = this.citaMaterias.find(d => d.value == ev.newData.materia_compromiso).id;
+    ev.newData.id_cumplimiento = this.citaCumplimientos.find(d => d.value == ev.newData.cumplimiento).id;
+    ev.confirm.resolve(ev.newData);
+    this.dataComentarios.push(ev.newData);
+  }
+
   onCustom(ev) {
     if(ev.action == 'asignar') {
-      this.openModal(this.asignarEstatusConsejero);
-      this.formAsignacion.controls['id_cita'].setValue(ev.data.id_cita);
-      this.formAsignacion.controls['idmoodle'].setValue(0);
-      this.formAsignacion.controls['plan_estudio'].setValue(ev.data.id_plan_estudio);
-      this.formAsignacion.controls['nombre_alumno'].setValue(ev.data.nombre_alumno);
-      this.formAsignacion.controls['motivo'].setValue(ev.data.motivo);
-      this.formAsignacion.controls['motivo_descripcion'].setValue(ev.data.motivo_descripcion);
-      this.formAsignacion.controls['contacto'].setValue('');
-      this.formAsignacion.controls['horario'].setValue(0);
-      this.formAsignacion.controls['detalle'].setValue(ev.data.detalle);
-      this.formAsignacion.controls['estatus'].setValue(ev.data.id_estatus);
-      let c = (ev.data.id_consejero == 0 ? '' : ev.data.id_consejero);
-      this.formAsignacion.controls['consejero'].setValue(c);
-      this.formAsignacion.controls['comentarios'].setValue(ev.data.comentarios);
+      this.messagesService.showLoading();
+      this.router.navigate(['consejeria-estudiantil/citas/cita', ev.data.id_cita, ev.data.id_plan_estudio]);
     }
     else if(ev.action == 'historial') {
-      this.MessagesService.showLoading();
+      this.messagesService.showLoading();
       let cita = {
         id_cita: ev.data.id_cita,
         responsable: sessionStorage.getItem('id'),
@@ -408,9 +592,8 @@ export class CitasComponent implements OnInit {
         var res: any = datas;
         this.movimientos = res.resultado;
         this.openModal(this.historialMovimientos);
-        this.MessagesService.closeLoading();
+        this.messagesService.closeLoading();
       });
     }
   }
-
 }

@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  urlPruebasLocal: 'http://localhost:3000/',
-  urlDesarrollo: 'http://localhost:3000/',
-  urlProduccion: 'http://localhost:3000/'
+  urlPruebasLocal: 'http://literaturas-dev.us-east-2.elasticbeanstalk.com/',
+  urlDesarrollo: 'http://literaturas-dev.us-east-2.elasticbeanstalk.com/',
+  urlProduccion: 'http://literaturas-dev.us-east-2.elasticbeanstalk.com/'
 };
