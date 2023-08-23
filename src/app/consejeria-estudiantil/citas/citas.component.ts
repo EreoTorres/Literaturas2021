@@ -146,7 +146,7 @@ export class CitasComponent implements OnInit {
       columnTitle: 'Opciones',
       add: true,
       edit: true,
-      delete: false
+      delete: true
     },
     add: {
       addButtonContent: '<i class="material-icons-outlined add">add_box</i>',
@@ -168,7 +168,7 @@ export class CitasComponent implements OnInit {
       class: 'table table-bordered responsive'
     },
     pager: {
-      perPage: 5,
+      perPage: 20,
     },
     columns: {
       id_cita_comentario: {
@@ -243,7 +243,10 @@ export class CitasComponent implements OnInit {
         editor: {
           type: 'textarea',
         }
-      }
+      },
+      estatus: {
+        hide: true
+      },
     }
   };
   settings_movimientos = {
@@ -469,28 +472,36 @@ export class CitasComponent implements OnInit {
 
   actualizarCita() {
     this.messagesService.showLoading();
-    let info = {
-      cita: this.formFinal.value,
-      comentarios: this.dataComentarios
-    }
-    this.citasHTTP.generico('actualizarCita', info).then(datas => {
+    this.citasHTTP.generico('actualizarCita', {cita: this.formFinal.value}).then(datas => {
       var res: any = datas;
       if(res.codigo == 0) this.messagesService.showSuccessDialog(res.mensaje, 'error');
       else {
         if(!res.resultado[0][0].success) this.messagesService.showSuccessDialog(res.resultado[0][0].message, 'error');
-        else if(this.dataComentarios.length) {
-          this.citasHTTP.generico('actualizarCitaComentarios', info).then(datas => {
-            var res: any = datas;
-            if(res.codigo == 0) this.messagesService.showSuccessDialog(res.mensaje, 'error');
-            else {
-              if(res.resultado[0][0].success == 1) this.cita(res.resultado[0][0].message, 'success');
-              else this.messagesService.showSuccessDialog(res.resultado[0][0].message, 'error');
-            }
-          });
-        }
-        else this.cita(res.resultado[0][0].message, 'success');
+        else if(this.dataComentarios.length) this.citaComentarios();
+        else this.cita('Cita actualizada exitosamente.', 'success');
       }
     });
+  }
+
+  async citaComentarios() {
+    for (let i = 0; i < this.dataComentarios.length; i++) {
+      await this.actualizarCitaComentarios({cita: this.formFinal.value, comentarios: this.dataComentarios[i]})
+    }
+
+    this.cita('Cita actualizada exitosamente.', 'success');
+  }
+
+  actualizarCitaComentarios(info: any) {
+    return new Promise(resolve => {
+      this.citasHTTP.generico('actualizarCitaComentarios', info).then(datas => {
+        var res: any = datas;
+        if(res.codigo == 0) this.messagesService.showSuccessDialog(res.mensaje, 'error');
+        else {
+          if(!res.resultado[0][0].success) this.messagesService.showSuccessDialog(res.resultado[0][0].message, 'error');
+          else resolve(true);
+        }
+      });
+    })
   }
 
   cita(mensaje, tipo) {
@@ -542,6 +553,7 @@ export class CitasComponent implements OnInit {
     })
     .then(data => {
       this.comentarios = data['resultado'];
+      this.getNumCita(2);
       this.messagesService.closeLoading();
     })
     .catch(err => this.messagesService.showSuccessDialog(err, 'error'));
@@ -564,16 +576,51 @@ export class CitasComponent implements OnInit {
     });
   }
 
-  guardar_actualizar(ev: any) {
-    this.dataComentarios = this.dataComentarios.filter(d => d.id_cita_comentario != ev.newData.id_cita_comentario);
-    ev.newData.num_cita = (Object.values(this.comentarios).length + 1);
-    (!ev.newData.id_cita_comentario ? ev.newData.id_cita_comentario = 0 : '');
-    ev.newData.fecha = this.globalFunctions.newUYDate(ev.newData.fecha_cita);
-    ev.newData.id_estatus = this.citaEstatus.find(d => d.value == ev.newData.estatus_cita).id;
-    ev.newData.id_materia = this.citaMaterias.find(d => d.value == ev.newData.materia_compromiso).id;
-    ev.newData.id_cumplimiento = this.citaCumplimientos.find(d => d.value == ev.newData.cumplimiento).id;
-    ev.confirm.resolve(ev.newData);
-    this.dataComentarios.push(ev.newData);
+  guardar_actualizar(ev: any, tipo: any) {
+    let data;
+    if(tipo == 3) data = ev.data;
+    else data = ev.newData;
+
+    (!data.id_cita_comentario ? data.id_cita_comentario = 0 : '');
+    if(data.id_cita_comentario) this.dataComentarios = this.dataComentarios.filter(d => d.id_cita_comentario != data.id_cita_comentario);
+    if(tipo == 2) {
+      data.num_cita = this.getNumCita();
+      data.estatus = 1;
+    }
+    data.fecha = this.globalFunctions.newUYDate(data.fecha_cita);
+    data.id_estatus = (data.estatus_cita ? this.citaEstatus.find(d => d.value == data.estatus_cita).id : 0);
+    data.id_materia = (data.materia_compromiso ? this.citaMaterias.find(d => d.value == data.materia_compromiso).id : 0);
+    data.id_cumplimiento = (data.cumplimiento ? this.citaCumplimientos.find(d => d.value == data.cumplimiento).id : 0 );
+
+    if(tipo == 3) {
+      this.messagesService.showConfirmDialog('¿Seguro que deseas eliminar el comentario?', '').then((result) => {
+        if(result.isConfirmed) {
+          this.dataComentarios = this.dataComentarios.filter(d => d.num_cita != data.num_cita);
+          data.estatus = 0;
+          ev.confirm.resolve();
+          this.dataComentarios.push(data);
+          this.getNumCita(2);
+        }
+      });
+    }
+    else {
+      ev.confirm.resolve(data);
+      this.dataComentarios.push(data);
+    }
+  }
+
+  getNumCita(tipo: any = 1) {
+    let data = Object.values(this.comentarios);
+    let length = data.filter(d => d.estatus == 1).length + 1;
+    let num_cita = length;
+    for (let i = 0; i < data.length; i++) {
+      if(data[i].estatus) {
+        num_cita--;
+        data[i].num_cita = num_cita;
+      }
+    }
+
+    if(tipo == 1) return length;
   }
 
   onCustom(ev) {
