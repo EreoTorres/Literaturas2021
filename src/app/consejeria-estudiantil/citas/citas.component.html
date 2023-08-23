@@ -1,4 +1,4 @@
-<div class="contentT m-5">
+<div class="contentT m-5" *ngIf="!id_cita">
   <div class="card border-secondary shadow ">
       <div class="card-header text-center" style="font-size: 1.3vw;">
           Módulo de Citas
@@ -9,7 +9,7 @@
                 <mat-icon class="mr-2">calendar_today</mat-icon><span>Agregar nueva cita</span>
               </button>
           </div>
-          <div style="margin-top: 5% !important;width: 100%;">
+          <div style="margin-top: 5% !important; width: 100%;">
               <ng2-smart-table [settings]="settings" [source]="registros" (custom)="onCustom($event)"></ng2-smart-table>
           </div>
       </div>
@@ -110,65 +110,65 @@
   </form>
 </ng-template>
 
-<ng-template #asignarEstatusConsejero let-modal [config]="{backdrop: 'static', keyboard: false}">
-  <div class="modal-header">
-      <h4 class="modal-title" id="modal-basic-title">Asignar Estatus / Consejero</h4>
-      <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');">
-      <span aria-hidden="true">&times;</span>
-    </button>
+<div class="contentT m-5" *ngIf="id_cita">
+  <div class="card border-secondary shadow ">
+      <div class="card-header text-center" style="font-size: 1.3vw;">
+          Asignar Estatus / Consejero
+      </div>
+      <div class="card-body text-secondary">
+        <form [formGroup]="formAsignacion" (ngSubmit)="validarCita(2)" novalidate>
+          <div class="mr-3">
+            <div class="row">
+              <div class="col-6">
+                <span>Nombre del alumno:</span>
+                <input class="form-control" type="text" formControlName="nombre_alumno" [readonly]="true">
+              </div>
+              <div class="col-6">
+                <span>Motivo de la llamada:</span>
+                <input class="form-control" type="text" formControlName="motivo_descripcion" [readonly]="true">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <span>Detalle:</span>
+                <textarea class="form-control" name="textarea" rows="3" cols="20" formControlName="detalle" [readonly]="true"></textarea>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <span>Estatus:</span>
+                <select class="form-control" formControlName="estatus" (change)="validarEstatus(2)">
+                  <option value="">Selecciona una opción</option>
+                  <option [value]="estatu.id" *ngFor="let estatu of estatus2">{{estatu.descripcion}}</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <span>Consejero asignado:</span>
+                <select class="form-control" formControlName="consejero" (change)="validarEstatus(2)">
+                  <option value="">Selecciona una opción</option>
+                  <option [value]="consejero.id" *ngFor="let consejero of consejeros">{{consejero.nombre}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <span>Comentarios:</span>
+                <ng2-smart-table (editConfirm)="guardar_actualizar($event, 1)" (createConfirm)="guardar_actualizar($event, 2)" (deleteConfirm)="guardar_actualizar($event, 3)" [settings]="settings_comentarios" [source]="comentarios"></ng2-smart-table>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top: 10px !important; width: 100%;">
+            <button type="submit" [disabled]="formAsignacion.invalid" class="btn btn-success">
+              <mat-icon class="mr-2">save</mat-icon>Guardar
+            </button>
+            <button type="button" class="btn btn-danger" style="margin-left: 10px;" [routerLink]="['/consejeria-estudiantil/citas']">
+              <mat-icon class="mr-2">cancel</mat-icon>Salir
+            </button>
+          </div>
+        </form>
+      </div>
   </div>
-  <form [formGroup]="formAsignacion" (ngSubmit)="validarCita(2)" novalidate>
-    <div class="modal-body">
-      <div class="row">
-        <div class="col-12">
-          <span>Nombre del alumno:</span>
-          <input class="form-control" type="text" formControlName="nombre_alumno" [readonly]="true">
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <span>Motivo de la llamada:</span>
-          <input class="form-control" type="text" formControlName="motivo_descripcion" [readonly]="true">
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <span>Detalle:</span>
-          <textarea class="form-control" name="textarea" rows="3" cols="20" formControlName="detalle" [readonly]="true"></textarea>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <span>Estatus:</span>
-          <select class="form-control" formControlName="estatus" (change)="validarEstatus(2)">
-            <option value="">Selecciona una opción</option>
-            <option [value]="estatu.id" *ngFor="let estatu of estatus2">{{estatu.descripcion}}</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <span>Consejero asignado:</span>
-          <select class="form-control" formControlName="consejero" (change)="validarEstatus(2)">
-            <option value="">Selecciona una opción</option>
-            <option [value]="consejero.id" *ngFor="let consejero of consejeros">{{consejero.nombre}}</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <span>Comentarios:</span>
-          <textarea class="form-control" name="textarea" rows="10" cols="20" formControlName="comentarios"></textarea>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button type="submit" [disabled]="formAsignacion.invalid" class="btn btn-success">
-        <mat-icon class="mr-2">save</mat-icon>Guardar
-      </button>
-    </div>
-  </form>
-</ng-template>
+</div>
 
 <ng-template #historialMovimientos let-modal [config]="{backdrop: 'static', keyboard: false}">
   <div class="modal-header">
