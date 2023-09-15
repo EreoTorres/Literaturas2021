@@ -323,10 +323,10 @@ export class CitasComponent implements OnInit {
 
   ngOnInit(): void {
     this.messagesService.showLoading();
-    this.programas = this.app.getProgramasAcademicos();
-    this.getFormulario();
     this.id_cita = this.route.snapshot.paramMap.get('id');
     this.id_plan_estudio = this.route.snapshot.paramMap.get('plan');
+    this.programas = this.app.getProgramasAcademicos();
+    this.getFormulario();
     if(this.id_cita && this.id_plan_estudio) this.getCita();
     else {
       this.id_cita = 0;
@@ -335,36 +335,38 @@ export class CitasComponent implements OnInit {
   }
 
   getFormulario() {
-    this.citasHTTP.generico('getPlanesEstudio').then(datas => {
-      var res: any = datas;
-      this.settings.columns.nombre_plan_estudio.filter.config.list = res.resultado.dataDO.concat(res.resultado.dataAWS);
-      this.settings = Object.assign({}, this.settings);
-    });
+    if(!this.id_cita) {
+      this.citasHTTP.generico('getPlanesEstudio').then(datas => {
+        var res: any = datas;
+        this.settings.columns.nombre_plan_estudio.filter.config.list = res.resultado.dataDO.concat(res.resultado.dataAWS);
+        this.settings = Object.assign({}, this.settings);
+      });
+  
+      this.citasHTTP.generico('getMotivos').then(datas => {
+        var res: any = datas;
+        this.motivos = res.resultado;
+      });
+  
+      this.citasHTTP.generico('getHorarios').then(datas => {
+        var res: any = datas;
+        this.horarios = res.resultado;
+      });
+  
+      this.citasHTTP.generico('getEstatus', {tipo : 1, select: 0}).then(datas => {
+        var res: any = datas;
+        this.estatus = res.resultado;
+      });
 
-    this.citasHTTP.generico('getMotivos').then(datas => {
-      var res: any = datas;
-      this.motivos = res.resultado;
-    });
-
-    this.citasHTTP.generico('getHorarios').then(datas => {
-      var res: any = datas;
-      this.horarios = res.resultado;
-    });
-
-    this.citasHTTP.generico('getEstatus', {tipo : 1, select: 0}).then(datas => {
-      var res: any = datas;
-      this.estatus = res.resultado;
-    });
+      this.citasHTTP.generico('getEstatus', {tipo : 1, select: 1}).then(datas => {
+        var res: any = datas;
+        this.settings.columns.estatus.filter.config.list = res.resultado
+        this.settings = Object.assign({}, this.settings)
+      });
+    }
 
     this.citasHTTP.generico('getEstatus', {tipo : 2, select: 0}).then(datas => {
       var res: any = datas;
       this.estatus2 = res.resultado;
-    });
-
-    this.citasHTTP.generico('getEstatus', {tipo : 1, select: 1}).then(datas => {
-      var res: any = datas;
-      this.settings.columns.estatus.filter.config.list = res.resultado
-      this.settings = Object.assign({}, this.settings)
     });
 
     this.citasHTTP.generico('getConsejeros').then(datas => {
@@ -516,24 +518,22 @@ export class CitasComponent implements OnInit {
   getCita() {
     let info = {
       id_cita: this.id_cita,
+      id_plan_estudio: this.id_plan_estudio,
       connection: this.app.obtenerConnection(this.id_plan_estudio)
     }
-    this.citasHTTP.generico('getCitaEstatus')
+    this.citasHTTP.generico('getCitaInfo', info)
     .then(data => {
-      this.settings_comentarios.columns.estatus_cita.editor.config.list = data['resultado'];
-      this.citaEstatus = data['resultado'];
-      return this.citasHTTP.generico('getCitaMaterias', info);
-    })
-    .then(data => {
-      this.settings_comentarios.columns.materia_compromiso.editor.config.list = data['resultado'];
-      this.citaMaterias = data['resultado'];
-      return this.citasHTTP.generico('getCitaCumplimientos', info);
-    })
-    .then(data => {
-      this.settings_comentarios.columns.cumplimiento.editor.config.list = data['resultado'];
-      this.citaCumplimientos = data['resultado'];
+      let cita_info = data['resultado'];
+      this.settings_comentarios.columns.estatus_cita.editor.config.list = cita_info['estatus'];
+      this.citaEstatus = cita_info['estatus'];
+      this.settings_comentarios.columns.materia_compromiso.editor.config.list = cita_info['materias'];
+      this.citaMaterias = cita_info['materias'];
+      this.settings_comentarios.columns.cumplimiento.editor.config.list = cita_info['cumplimientos'];
+      this.citaCumplimientos = cita_info['cumplimientos'];
       this.settings_comentarios = Object.assign({}, this.settings_comentarios);
-      return this.citasHTTP.generico('getCitas', info);      
+      this.comentarios = cita_info['cita_comentarios'];
+      this.getNumCita(2);
+      return this.citasHTTP.generico('getCitas', info);
     })
     .then(data => {
       data = data['resultado'][0];
@@ -549,11 +549,6 @@ export class CitasComponent implements OnInit {
       this.formAsignacion.controls['estatus'].setValue(data['id_estatus']);
       let c = (data['id_consejero'] == 0 ? '' : data['id_consejero']);
       this.formAsignacion.controls['consejero'].setValue(c);
-      return this.citasHTTP.generico('getCitaComentarios', info);
-    })
-    .then(data => {
-      this.comentarios = data['resultado'];
-      this.getNumCita(2);
       this.messagesService.closeLoading();
     })
     .catch(err => this.messagesService.showSuccessDialog(err, 'error'));

@@ -19,7 +19,9 @@ export class AppComponent {
     private literaturasHTTP: LiteraturasService,
     private formulariosHTTP: FormulariosSesionesvirtualesService,
     public router: Router
-  ) {
+  ) {}
+
+  ngOnInit() {
     this.inicializarProgramasAcademicos()
   }
 
@@ -41,6 +43,7 @@ export class AppComponent {
   }
 
   inicializarProgramasAcademicos() {
+    console.log("INICIALIZA AQUI")
     this.literaturasHTTP.getProgramasAcademicos().then(datas => {
       var res: any = datas;
       
