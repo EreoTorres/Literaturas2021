@@ -86,7 +86,6 @@
           <div class="col-12">
             <span>Estatus de la cita:</span>
             <select class="form-control" formControlName="estatus" (change)="validarEstatus(1)">
-              <option value="">Selecciona una opción</option>
               <option [value]="estatu.id" *ngFor="let estatu of estatus">{{estatu.descripcion}}</option>
             </select>
           </div>
@@ -116,7 +115,7 @@
           Asignar Estatus / Consejero
       </div>
       <div class="card-body text-secondary">
-        <form [formGroup]="formAsignacion" (ngSubmit)="validarCita(2)" novalidate>
+        <form [formGroup]="formAsignacion">
           <div class="mr-3">
             <div class="row">
               <div class="col-6">
@@ -138,7 +137,6 @@
               <div class="col-6">
                 <span>Estatus:</span>
                 <select class="form-control" formControlName="estatus" (change)="validarEstatus(2)">
-                  <option value="">Selecciona una opción</option>
                   <option [value]="estatu.id" *ngFor="let estatu of estatus2">{{estatu.descripcion}}</option>
                 </select>
               </div>
@@ -158,9 +156,6 @@
             </div>
           </div>
           <div style="margin-top: 10px !important; width: 100%;">
-            <button type="submit" [disabled]="formAsignacion.invalid" class="btn btn-success">
-              <mat-icon class="mr-2">save</mat-icon>Guardar
-            </button>
             <button type="button" class="btn btn-danger" style="margin-left: 10px;" [routerLink]="['/consejeria-estudiantil/citas']">
               <mat-icon class="mr-2">cancel</mat-icon>Salir
             </button>
