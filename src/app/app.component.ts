@@ -43,7 +43,6 @@ export class AppComponent {
   }
 
   inicializarProgramasAcademicos() {
-    console.log("INICIALIZA AQUI")
     this.literaturasHTTP.getProgramasAcademicos().then(datas => {
       var res: any = datas;
       
