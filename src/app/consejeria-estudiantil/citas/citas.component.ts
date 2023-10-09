@@ -491,7 +491,7 @@ export class CitasComponent implements OnInit {
               this.getCitas();
             });
           }
-          else this.messagesService.showToast(res.resultado[0][0].message, 'success');
+          else this.showMessage(res.resultado[0][0].message, 'success');
         }
       }
     });
@@ -591,13 +591,12 @@ export class CitasComponent implements OnInit {
         if(!res.resultado[0][0].success) this.showMessage(res.resultado[0][0].message, 'error');
         else {
           data.id_cita_comentario = res.resultado[0][0].id_cita_comentario;
-          this.messagesService.showToast(res.resultado[0][0].message, 'success').then(() => {
-            if(tipo == 3) {
-              ev.confirm.resolve();
-              this.getNumCita(2);
-            }
-            else ev.confirm.resolve(data);
-          });
+          if(tipo == 3) {
+            ev.confirm.resolve();
+            this.getNumCita(2);
+          }
+          else ev.confirm.resolve(data);
+          this.showMessage(res.resultado[0][0].message, 'success');
         }
       }
     });
