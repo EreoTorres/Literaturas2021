@@ -136,4 +136,21 @@ export class MessagesService {
       }
     });
   }
+
+  showToast(message: string, topIconType: any = 'success') {
+    let sweetAlertType: SweetAlertIcon = topIconType;
+
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-right',
+      showConfirmButton: false,
+      timer: 1500,
+      timerProgressBar: true
+    })
+    
+    return Toast.fire({
+      icon: sweetAlertType,
+      title: message
+    })
+  }
 }
