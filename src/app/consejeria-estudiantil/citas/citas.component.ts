@@ -465,7 +465,7 @@ export class CitasComponent implements OnInit {
       if(!this.formFinal.value.consejero || this.formFinal.value.consejero == undefined) this.formFinal.value.consejero = 0;
       let estatus = this.formFinal.value.estatus;
       if((estatus == 2 || estatus == 5) && !this.formFinal.value.consejero) {
-        this.messagesService.showSuccessDialog('Lo siento, para aplicar el estatus "' + (estatus = 2 ? 'Asignado' : 'Atendido') + '" se necesita seleccionar un consejero.', 'warning');
+        this.showMessage('Lo siento, para aplicar el estatus "' + (estatus = 2 ? 'Asignado' : 'Atendido') + '" se necesita seleccionar un consejero.', 'warning');
       }
       else if(estatus == 7) {
         this.messagesService.showConfirmDialog('¿Está seguro de que desea eliminar este registro?', '').then((result) => {
@@ -474,23 +474,24 @@ export class CitasComponent implements OnInit {
       }
       else this.actualizarCita();
     }
-    else this.messagesService.showSuccessDialog('Campo obligatorio.', 'error');
+    else this.showMessage('Campo obligatorio.', 'error');
   }
 
   actualizarCita() {
     this.messagesService.showLoading();
     this.citasHTTP.generico('actualizarCita', {cita: this.formFinal.value}).then(datas => {
       var res: any = datas;
-      if(res.codigo == 0) this.messagesService.showSuccessDialog(res.mensaje, 'error');
+      if(res.codigo == 0) this.showMessage(res.mensaje, 'error');
       else {
-        if(!res.resultado[0][0].success) this.messagesService.showSuccessDialog(res.resultado[0][0].message, 'error');
+        if(!res.resultado[0][0].success) this.showMessage(res.resultado[0][0].message, 'error');
         else {
-          this.messagesService.showSuccessDialog(res.resultado[0][0].message, 'success').then(() => {
-            if(!this.id_cita) {
+          if(!this.id_cita) {
+            this.messagesService.showSuccessDialog(res.resultado[0][0].message, 'success').then(() => {
               this.modalService.dismissAll();
               this.getCitas();
-            }
-          });
+            });
+          }
+          else this.messagesService.showToast(res.resultado[0][0].message, 'success');
         }
       }
     });
@@ -532,7 +533,7 @@ export class CitasComponent implements OnInit {
       this.formAsignacion.controls['consejero'].setValue(c);
       this.messagesService.closeLoading();
     })
-    .catch(err => this.messagesService.showSuccessDialog(err, 'error'));
+    .catch(err => this.showMessage(err, 'error'));
   }
 
   resetAll() {
@@ -585,12 +586,12 @@ export class CitasComponent implements OnInit {
     this.formAsignacion.controls['connection'].setValue(this.app.obtenerConnection(this.formAsignacion.value.plan_estudio));
     this.citasHTTP.generico('actualizarCitaComentarios', {cita: this.formAsignacion.value, comentarios: data}).then(datas => {
       var res: any = datas;
-      if(res.codigo == 0) this.messagesService.showSuccessDialog(res.mensaje, 'error');
+      if(res.codigo == 0) this.showMessage(res.mensaje, 'error');
       else {
-        if(!res.resultado[0][0].success) this.messagesService.showSuccessDialog(res.resultado[0][0].message, 'error');
+        if(!res.resultado[0][0].success) this.showMessage(res.resultado[0][0].message, 'error');
         else {
           data.id_cita_comentario = res.resultado[0][0].id_cita_comentario;
-          this.messagesService.showSuccessDialog(res.resultado[0][0].message, 'success').then(() => {
+          this.messagesService.showToast(res.resultado[0][0].message, 'success').then(() => {
             if(tipo == 3) {
               ev.confirm.resolve();
               this.getNumCita(2);
@@ -635,5 +636,10 @@ export class CitasComponent implements OnInit {
         this.messagesService.closeLoading();
       });
     }
+  }
+
+  showMessage(message: string, type: string) {
+    if(!this.id_cita) this.messagesService.showSuccessDialog(message, type);
+    else this.messagesService.showToast(message, type);
   }
 }
