@@ -35,6 +35,8 @@ export class VideosComponent implements OnInit {
   categorias: any;
   materias2: any;
   formulario: UntypedFormGroup;
+  generaciones_required:any = ['50', '89'];
+  generacion_required:boolean = false;
   video: any = {
     servicio: 'video',
     titulo_video: '',
@@ -207,20 +209,20 @@ export class VideosComponent implements OnInit {
   }
 
   guardar(modal, links) {
-    if(this.video.id_plan_estudio ==0) {
+    if(this.video.id_plan_estudio == 0) {
       this.MessagesService.showSuccessDialog("El plan de estudio es requerido.", 'error');
       return;
     }
-    if(this.video.tipo == 1 && this.video.id_materia==0) {
+    if(this.video.tipo == 1 && this.video.id_materia == 0) {
       this.MessagesService.showSuccessDialog("La materia es requerida.", 'error');
       return;
     }
-    if(this.video.tipo == 2 && this.video.id_categoria==0){
+    if(this.video.tipo == 2 && this.video.id_categoria == 0){
       this.MessagesService.showSuccessDialog("La categoria es requerida.", 'error');
       return;
     }
 
-    if(this.video.id_plan_estudio == 50 && (this.video.id_generacion==0 || this.video.id_generacion==undefined)){
+    if(this.generaciones_required.includes(this.video.id_plan_estudio) && (this.video.id_generacion == 0 || this.video.id_generacion == undefined)){
       this.MessagesService.showSuccessDialog("La generación es requerida.", 'error');
       return;
     }
@@ -279,7 +281,11 @@ export class VideosComponent implements OnInit {
 
   getPlanEstudioChange(modal, id_plan_estudio) {
     this.getMaterias(modal, id_plan_estudio);
-    this.getGeneraciones(id_plan_estudio);
+    if(this.generaciones_required.includes(id_plan_estudio)) {
+      this.generacion_required = true;
+      this.getGeneraciones(id_plan_estudio);
+    }
+    else this.generacion_required = false;
   }
 
   resetForm(id_video) {
