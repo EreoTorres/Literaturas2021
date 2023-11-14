@@ -19,7 +19,7 @@
     </div>
 </div>
 
-<ng-template #links let-modal [config]="{backdrop: 'static',  keyboard: false}">
+<ng-template #links let-modal [config]="{backdrop: 'static', keyboard: false}">
     <div class="modal-header">
         <h4 class="modal-title" id="modal-basic-title">{{titulo_videos}}</h4>
         <button type="button" style="color: white;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');">
@@ -70,11 +70,11 @@
                     <textarea class="form-control" required id="descripcion" name="descripcion" [(ngModel)]="video.descripcion" style="height: 100px !important;max-height: 100px !important;" placeholder="Descripción del {{video.servicio}}"></textarea>
                 </div>
             </div>
-            <div class="row" *ngIf="video.id_plan_estudio == 50">
+            <div class="row" *ngIf="generacion_required">
                 <div class="col-12">
                     <br>
                     <span>Generación Académica:</span>
-                    <select class="form-control" [required]="video.id_plan_estudio == 50" id="id_generacion" name="id_generacion" [(ngModel)]="video.id_generacion">
+                    <select class="form-control" [required]="generacion_required" id="id_generacion" name="id_generacion" [(ngModel)]="video.id_generacion">
                         <option value="undefined" disabled selected>Selecciona una generación</option>
                         <option [value]="item.id" *ngFor="let item of generaciones">{{item.generacion}}</option>
                     </select>
