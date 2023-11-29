@@ -2,6 +2,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { MessagesService } from 'src/app/services/messages/messages.service';
+import { Workbook } from 'exceljs';
+import * as fs from 'file-saver';
 
 @Injectable({
   providedIn: 'root'
@@ -148,6 +150,67 @@ export class GlobalFunctionsService {
     } else {
       return yyyy + '-' + mm + '-' + dd;
     }
+  }
+
+  exportToExcel(titulo, data: any): void {
+    data = data.map(elemento => Object.entries(elemento));
+    const columnas: { name: any; filterButton: boolean; }[] = [];
+
+    // Obtener los títulos de las columnas
+    let nombre_columnas = [];
+    for (let a = 0; a < data[0].length; a++) {
+      let columna = data[0][a][0];
+      columna = columna.replace( /[_]/g, ' ');
+      columna = columna[0].toUpperCase() + columna.slice(1);
+      nombre_columnas.push(columna);
+    }
+
+    nombre_columnas.forEach(colum => {
+      columnas.push(
+        {
+          name: colum,
+          filterButton: true
+        }
+      );
+    });
+
+    // Obtener los registros
+    let registrosExcel = [];
+    let respuesta = [];
+    for (let a = 0; a < data.length; a++) {
+      respuesta = [];
+      for (let b = 0; b < data[a].length; b++) respuesta.push(data[a][b][1]);
+      registrosExcel.push(Object.values(respuesta));
+    }
+
+    let workbook = new Workbook();
+
+    let worksheet = workbook.addWorksheet(titulo);
+    worksheet.addTable({
+      name: 'MyTable',
+      ref: 'A1',
+      headerRow: true,
+      style: {
+        theme: 'TableStyleLight1',
+        showRowStripes: true,
+      },
+      columns: columnas,
+      rows: registrosExcel,
+    });
+
+    worksheet.columns.forEach(function (column, i) {
+      worksheet.getColumn(i + 1).alignment = { wrapText: true };
+      worksheet.getColumn(i + 1).width = 50;
+    });
+
+    //set downloadable file name
+    let fname = titulo;
+    //add data and file name and download
+    workbook.xlsx.writeBuffer().then((data) => {
+      let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      fs.saveAs(blob, fname + '-' + new Date().valueOf() + '.xlsx');
+      this.messagesService.closeLoading();
+    });
   }
 
 }
