@@ -4,14 +4,29 @@
           Módulo de Citas
       </div>
       <div class="card-body text-secondary">
-          <div class="mr-3">
+        <form [formGroup]="formReporte">
+          <div class="row">
+            <div class="col-3">
+              <span>Fecha inicio:</span>
+              <input class="form-control" type="date" formControlName="fecha_inicio">
+            </div>
+            <div class="col-3">
+              <span>Fecha fin:</span>
+              <input class="form-control" type="date" formControlName="fecha_fin" max="{{fecha_actual}}">
+            </div>
+            <div class="col-6" style="margin-top: 22px;">
+              <button class="btn btn-info" [disabled]="formReporte.invalid" (click)="generarReporte()">
+                <mat-icon class="mr-2">description</mat-icon><span>Generar reporte</span>
+              </button>
               <button class="btn btn-success float-right" (click)="openModal(agregarNuevaCita)">
                 <mat-icon class="mr-2">calendar_today</mat-icon><span>Agregar nueva cita</span>
               </button>
+            </div>
           </div>
-          <div style="margin-top: 5% !important; width: 100%;">
-              <ng2-smart-table [settings]="settings" [source]="registros" (custom)="onCustom($event)"></ng2-smart-table>
-          </div>
+        </form>
+        <div style="margin-top: 5% !important; width: 100%;">
+            <ng2-smart-table [settings]="settings" [source]="registros" (custom)="onCustom($event)"></ng2-smart-table>
+        </div>
       </div>
   </div>
 </div>

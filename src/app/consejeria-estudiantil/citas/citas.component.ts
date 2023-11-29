@@ -25,6 +25,7 @@ export class CitasComponent implements OnInit {
   formCita: UntypedFormGroup;
   formAsignacion: UntypedFormGroup;
   formFinal: UntypedFormGroup;
+  formReporte: UntypedFormGroup;
   programas: any = [];
   motivos: any = [];
   contactos: any = [];
@@ -41,10 +42,11 @@ export class CitasComponent implements OnInit {
     alumno: false,
     text: ''
   }
+  fecha_actual: any;
   @ViewChild('historialMovimientos') historialMovimientos: ElementRef;
   settings = {
     actions: {
-      columnTitle: '',
+      columnTitle: 'Opciones',
       add: false,
       edit: false,
       delete: false,
@@ -318,10 +320,17 @@ export class CitasComponent implements OnInit {
       responsable: [null],
       connection: [null]
     });
+
+    this.formReporte = this.formBuilder.group({
+      fecha_inicio: ['', [Validators.required]],
+      fecha_fin: ['', [Validators.required]]
+    });
   }
 
   ngOnInit(): void {
     this.messagesService.showLoading();
+    this.fecha_actual = new Date();
+    this.fecha_actual = this.fecha_actual.getFullYear() + '-' + (this.fecha_actual.getMonth() + 1) + '-' + this.fecha_actual.getDate();
     this.id_cita = this.route.snapshot.paramMap.get('id');
     this.id_plan_estudio = this.route.snapshot.paramMap.get('plan');
     this.programas = this.app.getProgramasAcademicos();
@@ -336,40 +345,40 @@ export class CitasComponent implements OnInit {
   getFormulario() {
     if(!this.id_cita) {
       this.citasHTTP.generico('getPlanesEstudio').then(datas => {
-        var res: any = datas;
+        let res: any = datas;
         this.settings.columns.nombre_plan_estudio.filter.config.list = res.resultado.dataDO.concat(res.resultado.dataAWS);
         this.settings = Object.assign({}, this.settings);
       });
   
       this.citasHTTP.generico('getMotivos').then(datas => {
-        var res: any = datas;
+        let res: any = datas;
         this.motivos = res.resultado;
       });
   
       this.citasHTTP.generico('getHorarios').then(datas => {
-        var res: any = datas;
+        let res: any = datas;
         this.horarios = res.resultado;
       });
   
       this.citasHTTP.generico('getEstatus', {tipo : 1, select: 0}).then(datas => {
-        var res: any = datas;
+        let res: any = datas;
         this.estatus = res.resultado;
       });
 
       this.citasHTTP.generico('getEstatus', {tipo : 1, select: 1}).then(datas => {
-        var res: any = datas;
+        let res: any = datas;
         this.settings.columns.estatus.filter.config.list = res.resultado
         this.settings = Object.assign({}, this.settings)
       });
     }
 
     this.citasHTTP.generico('getEstatus', {tipo : 2, select: 0}).then(datas => {
-      var res: any = datas;
+      let res: any = datas;
       this.estatus2 = res.resultado;
     });
 
     this.citasHTTP.generico('getConsejeros').then(datas => {
-      var res: any = datas;
+      let res: any = datas;
       this.consejeros = res.resultado;
     });
   }
@@ -388,7 +397,7 @@ export class CitasComponent implements OnInit {
   getCitas() {
     this.messagesService.showLoading();
     this.citasHTTP.generico('getCitas').then(datas => {
-      var res: any = datas;
+      let res: any = datas;
       this.registros = res.resultado.dataDO.concat(res.resultado.dataAWS).sort((a, b) => {
         let fechaA: any = new Date(a.orden);
         let fechaB: any = new Date(b.orden);
@@ -409,7 +418,7 @@ export class CitasComponent implements OnInit {
         connection: this.app.obtenerConnection(this.formCita.value.plan_estudio)
       }
       this.citasHTTP.generico('getAlumno', alumno).then(datas => {
-        var res: any = datas;
+        let res: any = datas;
         if(res.codigo == 0) {
           this.formCita.controls['nombre_alumno'].setValue('');
           this.contactos = [];
@@ -427,7 +436,7 @@ export class CitasComponent implements OnInit {
             connection: this.app.obtenerConnection(this.formCita.value.plan_estudio)
           };
           this.citasHTTP.generico('getAlumnoTelefonos', data).then(datas => {
-            var res: any = datas;
+            let res: any = datas;
             this.contactos = res.resultado;
             this.bandera.loading = false;
             this.bandera.formulario = true;
@@ -480,7 +489,7 @@ export class CitasComponent implements OnInit {
   actualizarCita() {
     this.messagesService.showLoading();
     this.citasHTTP.generico('actualizarCita', {cita: this.formFinal.value}).then(datas => {
-      var res: any = datas;
+      let res: any = datas;
       if(res.codigo == 0) this.showMessage(res.mensaje, 'error');
       else {
         if(!res.resultado[0][0].success) this.showMessage(res.resultado[0][0].message, 'error');
@@ -585,7 +594,7 @@ export class CitasComponent implements OnInit {
     this.formAsignacion.controls['responsable'].setValue(sessionStorage.getItem('id'));
     this.formAsignacion.controls['connection'].setValue(this.app.obtenerConnection(this.formAsignacion.value.plan_estudio));
     this.citasHTTP.generico('actualizarCitaComentarios', {cita: this.formAsignacion.value, comentarios: data}).then(datas => {
-      var res: any = datas;
+      let res: any = datas;
       if(res.codigo == 0) this.showMessage(res.mensaje, 'error');
       else {
         if(!res.resultado[0][0].success) this.showMessage(res.resultado[0][0].message, 'error');
@@ -629,7 +638,7 @@ export class CitasComponent implements OnInit {
         connection: this.app.obtenerConnection(ev.data.id_plan_estudio)
       }
       this.citasHTTP.generico('getMovimientos', cita).then(datas => {
-        var res: any = datas;
+        let res: any = datas;
         this.movimientos = res.resultado;
         this.openModal(this.historialMovimientos);
         this.messagesService.closeLoading();
@@ -640,5 +649,20 @@ export class CitasComponent implements OnInit {
   showMessage(message: string, type: string) {
     if(!this.id_cita) this.messagesService.showSuccessDialog(message, type);
     else this.messagesService.showToast(message, type);
+  }
+
+  generarReporte() {
+    this.messagesService.showLoading();
+    if(this.formReporte.value.fecha_inicio > this.formReporte.value.fecha_fin) {
+      this.messagesService.showToast('La fecha fin no puede ser mayor a la fecha inicio.', 'error');
+    }
+    else {
+      this.citasHTTP.generico('reporteCitas', this.formReporte.value).then(datas => {
+        let res: any = datas;
+        res = res.resultado.dataDO[0].concat(res.resultado.dataAWS[0]);
+        if(res.length) this.globalFunctions.exportToExcel("Reporte de Citas", res);
+        else this.messagesService.showToast('Error al obtener reporte.', 'error');
+      });
+    }
   }
 }
