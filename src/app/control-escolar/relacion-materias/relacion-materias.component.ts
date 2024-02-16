@@ -8,6 +8,7 @@ import * as EventEmitter from 'events';
 import { InputprogramasComponent } from 'src/app/components/inputprogramas/inputprogramas.component';
 import { RelacionMateriasService } from 'src/app/services/http-service/control-escolar/relacion-materias/relacion-materias.service';
 import { InputprogramasAllComponent } from 'src/app/components/inputprogramas-all/inputprogramas-all.component';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-relacion-materias',
@@ -109,7 +110,8 @@ export class RelacionMateriasComponent implements OnInit {
     private modalService: NgbModal,
     private MessagesService: MessagesService,
     private datePipe: DatePipe,
-    public validText: ValidTipoTextService
+    public validText: ValidTipoTextService,
+    private app: AppComponent
   ) {
   }
 
@@ -140,7 +142,12 @@ export class RelacionMateriasComponent implements OnInit {
 
   getMaterias(id, plan_autoridad: any = 1) {
     if(id != 0){
-      this.relacionHTTP.getMaterias({ id_plan_estudio: id, tipo: plan_autoridad }).then(datas => {
+      let data = {
+        id_plan_estudio: id,
+        tipo: plan_autoridad,
+        connection: this.app.obtenerConnection(id)
+      }
+      this.relacionHTTP.getMaterias(data).then(datas => {
         var res: any = datas;
   
         if (plan_autoridad == 1) {
@@ -163,7 +170,14 @@ export class RelacionMateriasComponent implements OnInit {
       return;
     }
 
-    var datos = {id: this.id_relacion,id_materia: this.id_materia_programa,id_plan_estudio: this.id_plan_estudio,id_materia_autoridad: this.id_materia_autoridad, id_autoridad: this.id_plan_autoridad};
+    var datos = {
+      id: this.id_relacion,
+      id_materia: this.id_materia_programa,
+      id_plan_estudio: this.id_plan_estudio,
+      id_materia_autoridad: this.id_materia_autoridad,
+      id_autoridad: this.id_plan_autoridad,
+      connection: this.app.obtenerConnection(this.id_plan_estudio)
+    };
     this.MessagesService.showLoading();
 
     this.relacionHTTP.setRelaciones(datos).then(datas => {
@@ -200,7 +214,12 @@ export class RelacionMateriasComponent implements OnInit {
   getRelacion() {
     if(this.id_plan_estudio != 0 && this.id_plan_autoridad != 0){
       this.MessagesService.showLoading();
-      this.relacionHTTP.getRelacion({ id_plan_estudio: this.id_plan_estudio, id_plan_autodiad: this.id_plan_autoridad }).then(datas => {
+      let datos = {
+        id_plan_estudio: this.id_plan_estudio,
+        id_plan_autodiad: this.id_plan_autoridad,
+        connection: this.app.obtenerConnection(this.id_plan_estudio)
+      }
+      this.relacionHTTP.getRelacion(datos).then(datas => {
         var res: any = datas;
         this.registros = res.resultado
         this.getMaterias(this.id_plan_estudio,1);

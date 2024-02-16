@@ -152,8 +152,8 @@ export class GlobalFunctionsService {
     }
   }
 
-  exportToExcel(titulo, data: any): void {
-    data = data.map(elemento => Object.entries(elemento));
+  exportToExcel(titulo: string, data: any): void {
+    data = data.map((elemento: { [s: string]: unknown; } | ArrayLike<unknown>) => Object.entries(elemento));
     const columnas: { name: any; filterButton: boolean; }[] = [];
 
     // Obtener los títulos de las columnas
@@ -209,7 +209,6 @@ export class GlobalFunctionsService {
     workbook.xlsx.writeBuffer().then((data) => {
       let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       fs.saveAs(blob, fname + '-' + new Date().valueOf() + '.xlsx');
-      this.messagesService.closeLoading();
     });
   }
 
