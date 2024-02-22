@@ -597,7 +597,8 @@ export class RutasCursamientoComponent implements OnInit {
   nombre_grupo(grupo :any ){
     if(grupo && grupo != 'Ninguno'){
     let nombre_grupo = this.grupos.filter((obj: any )=> obj.value == grupo);
-    return nombre_grupo[0].title;
+    let grupo_filter = (nombre_grupo.length>0)?nombre_grupo[0].title:'Ninguno';
+    return  grupo_filter;
     }
     else{
       return grupo;
