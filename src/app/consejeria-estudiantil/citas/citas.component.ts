@@ -660,6 +660,7 @@ export class CitasComponent implements OnInit {
       this.citasHTTP.generico('reporteCitas', this.formReporte.value).then(datas => {
         let res: any = datas;
         res = res.resultado.dataDO[0].concat(res.resultado.dataAWS[0]);
+        this.messagesService.closeLoading();
         if(res.length) this.globalFunctions.exportToExcel("Reporte de Citas", res);
         else this.messagesService.showToast('Error al obtener reporte.', 'error');
       });
