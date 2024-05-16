@@ -53,6 +53,15 @@ export class EncuestaService {
     })
   }
 
+  getTipoEncuestas(registro: object) {
+    return new Promise((resolve, reject) => {
+      this.http.post(this.url+'academica/encuesta/getTipoEncuestas', registro, this.httpHeaders)
+      .subscribe(data => {
+          resolve(data)
+      })
+    })
+  }
+
   getPromedioMaterias(registro: object) {
     return new Promise((resolve, reject) => {
       this.http.post(this.url+'academica/encuesta/getPromedioMaterias', registro, this.httpHeaders)
