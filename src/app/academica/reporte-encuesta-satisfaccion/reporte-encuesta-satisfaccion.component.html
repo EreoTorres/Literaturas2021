@@ -25,7 +25,19 @@
                                 [formGroup]="formulario" style="width: -webkit-fill-available;">
                                 <div class="row justify-content-left">
 
-                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12" *ngIf="plan != 0 && materias.length>0">
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12" *ngIf="plan != 0 && tipos">
+                                        <mat-form-field appearance="fill" class="col-12">
+                                            <mat-label>Tipo de encuesta</mat-label>
+                                            <mat-select formControlName="tipo_encuesta" [(value)]="tipo_encuesta"
+                                                (selectionChange)="getMaterias(tipo_encuesta)">
+                                                <mat-option *ngFor="let tipo of tipos" [value]="tipo.id" >
+                                                    {{tipo.nombre}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12" *ngIf="plan != 0 && materias && tipo_encuesta == 2">
                                         <mat-form-field appearance="fill" class="col-12">
                                             <mat-label>Curso (materia)</mat-label>
                                             <mat-select formControlName="curso" [(value)]="curso"
@@ -37,7 +49,7 @@
                                         </mat-form-field>
                                     </div>
 
-                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12" *ngIf="curso != 0">
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12" *ngIf="curso != 0 ||  tipo_encuesta == 4">
                                         <mat-form-field appearance="fill" class="col-12">
                                             <mat-label>Encuesta</mat-label>
                                             <mat-select formControlName="encuesta" [(value)]="encuesta_seleccionada"
@@ -51,7 +63,7 @@
                                     </div>
 
                                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12"
-                                        *ngIf="encuesta_seleccionada != 0 && periodos.length > 0">
+                                        *ngIf="encuesta_seleccionada != 0 && periodos.length > 0  && tipo_encuesta == 2">
                                         <mat-form-field appearance="fill" class="col-12">
                                             <mat-label>Periodo</mat-label>
                                             <mat-select formControlName="periodo" [(value)]="periodo" required>
@@ -86,11 +98,11 @@
                                         </mat-form-field>
                                     </div>
 
-                                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12" *ngIf="formulario.valid||periodo == 6 || (periodo == 5 && anio_select)">
+                                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12" *ngIf="formulario.valid||periodo == 6 || (periodo == 5 && anio_select) ||(tipo_encuesta == 4 && encuesta_seleccionada!=0)">
                                         <button class="btn btn-outline-secondary btn-lg" (click)="generarGraficas(formul.value)" style="margin-top: 12px; height: 47px; margin-left: 15px;">
                                             Generar gráficos</button>
                                     </div>
-                                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12" *ngIf="formulario.valid||periodo == 6 || (periodo == 5 && anio_select)">
+                                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12" *ngIf="formulario.valid||periodo == 6 || (periodo == 5 && anio_select) ||(tipo_encuesta == 4 && encuesta_seleccionada!=0)">
                                         <button class="btn btn-success" (click)="getRegistrosExcel(formul.value)" style="margin-top: 12px; height: 47px; margin-left: 15px;">
                                             <div style="display: flex"><mat-icon
                                                     style="margin-right: 10px;">cloud_download</mat-icon>Descargar reporte en
@@ -103,7 +115,21 @@
                         </div>
                     </div>
                 </p-tabPanel>
-                <p-tabPanel header="Encuestas inactivas" id="encuesta-inactiva">
+                <p-tabPanel header="Encuestas inactivas" id="encuesta-inactiva" class="text-center">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12" *ngIf="plan != 0 && tipos" style="margin: 0 auto;">
+                            <mat-form-field appearance="fill" class="col-12">
+                                <mat-label>Tipo de encuesta</mat-label>
+                                <mat-select  [(value)]="tipo_encuesta_inactiva"
+                                    (selectionChange)="getRegitrosEncuestasInactivas(tipo_encuesta_inactiva)">
+                                    <mat-option *ngFor="let tipo of tipos" [value]="tipo.id" >
+                                        {{tipo.nombre}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
                     <div class="table-responsive" style="margin-top: 1%">
                         <p-table #dt1 id="registros-sugerencias" [value]="encuestas_inactivas" dataKey="id"
                             responsiveLayout="scroll" [totalRecords]="totalRecords" [paginator]="true" [rows]="6"
@@ -113,7 +139,7 @@
                                 <tr>
                                     <th pSortableColumn="id" class="flex justify-content-center align-items-center">#ID
                                     </th>
-                                    <th pSortableColumn="nombre_materia"
+                                    <th pSortableColumn="nombre_materia" *ngIf="tipo_encuesta_inactiva==2"
                                         class="flex justify-content-center align-items-center">Materia
                                     </th>
                                     <th pSortableColumn="titulo" class="flex justify-content-center align-items-center">
@@ -136,7 +162,7 @@
                                         <p-columnFilter field="id" [showMatchModes]="false" [showOperator]="false"
                                             [showAddButton]="false" [showMenu]="false"></p-columnFilter>
                                     </th>
-                                    <th>
+                                    <th *ngIf="tipo_encuesta_inactiva==2">
                                         <p-columnFilter field="nombre_materia" [showMatchModes]="false"
                                             [showOperator]="false" [showAddButton]="false"
                                             [showMenu]="false"></p-columnFilter>
@@ -157,7 +183,7 @@
                             <ng-template pTemplate="body" let-registros>
                                 <tr>
                                     <td>{{registros.id}}</td>
-                                    <td>{{registros.nombre_materia}}</td>
+                                    <td *ngIf="tipo_encuesta_inactiva==2">{{registros.nombre_materia}}</td>
                                     <td>{{registros.titulo}}</td>
                                     <td>{{registros.fecha_registro}}</td>
                                     <td>
@@ -189,13 +215,13 @@
         </div>
         <div class="card-body text-secondary" style="background: white;">
             <div class="row">
-                <div class="col-4">
+                <div class="col-4" *ngIf="tipo_encuesta==2">
                     <h4 style="color: black;">Materia: <b>{{this.curso_info}}</b></h4>
                 </div>
                 <div class="col-4">
                     <h4 style="color: black;">Fecha de registro: <b>{{this.encuesta_info[0].fecha_registro}}</b></h4>
                 </div>
-                <div class="col-4" *ngIf="!planes_sinPromedio.includes(infoGral.id_plan_estudio)">
+                <div class="col-4" *ngIf="!planes_sinPromedio.includes(infoGral.id_plan_estudio) && (tipo_encuesta==2 ||tipo_encuesta_inactiva==2 )">
                     <h4 style="color: black;">Promedio general: <b>{{promedio_general}}</b></h4>
                 </div>
                 <div class="col-4">

@@ -25,12 +25,15 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
   listado_anios: any[] = [];
   periodos: any[] = [];
   materias!: any[];
+  tipos!: any[];
   planes!: any[];
   promedio_general :any = 0;
   encuestas!: any[];
   selectedData: any;
   anio_select!: any;
   curso: number = 0;
+  tipo_encuesta :number = 0;
+  tipo_encuesta_inactiva :number = 0;
   plan: number = 0;
   ventana:number = 0;
   curso_info!: any;
@@ -142,7 +145,9 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
       'anio': 0,
       'mes': 0,
       'periodo': '',
-      'connection': 0
+      'connection': 0,
+      'tipo_encuesta': 0,
+      'encuesta_inactiva': 0
     }
 
     planes_sinPromedio: any = [18,59,50,39,12];
@@ -177,6 +182,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
 
   initForm() {
     this.formulario = this.formBuilder.group({
+      tipo: [null],
       curso: [null],
       encuesta: [null],
       periodo: [null, Validators.required],
@@ -193,7 +199,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
         this.planes = res.resultado.dataDO.concat(res.resultado.dataAWS);
         this.plan = this.planes[0].id;
         this.infoGral.id_plan_estudio = this.planes[0].id;
-        await this.getMaterias();
+         await this.getTipoEncuestas();
       }
       this.MessagesService.closeLoading();
     });
@@ -209,24 +215,51 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     this.encuestas_inactivas = [];
     this.formulario.reset();
     this.MessagesService.showLoading();
-    (this.ventana == 0)? await this.getMaterias(): await this.getEncuestasInactivas({'index':1});
+    (this.ventana == 0)? await this.getTipoEncuestas(): await this.getEncuestasInactivas({'index':1});
     this.MessagesService.closeLoading();
   }
 
-  getMaterias() {
+  getTipoEncuestas() {
+    this.tipos = [];
+      return new Promise((resolve, reject) => {
+        this.infoGral.connection = this.app.obtenerConnection(this.infoGral.id_plan_estudio);
+        this.EncuestaService.getTipoEncuestas(this.infoGral).then(datas => {
+          var res: any = datas;
+          if (res.codigo == 200 && res.resultado.length > 0) {
+            this.tipos= res.resultado;
+            resolve(true);
+          }else{
+            this.MessagesService.showSuccessDialog('No existen encuestas para este plan', 'error');
+          }
+        });
+      })
+  }
+
+  getMaterias(tipo : number) {
+    this.MessagesService.showLoading();
+    this.encuesta_seleccionada = 0;
+    this.curso = 0;
     this.materias = [];
-    return new Promise((resolve, reject) => {
-      this.infoGral.connection = this.app.obtenerConnection(this.infoGral.id_plan_estudio);
-      this.EncuestaService.getMaterias(this.infoGral).then(datas => {
-        var res: any = datas;
-        if (res.codigo == 200 && res.resultado.length > 0) {
-          this.materias = res.resultado;
-          resolve(true);
-        }else{
-          this.MessagesService.showSuccessDialog('No existen materias', 'error');
-        }
-      });
-    })
+    if(tipo == 2){
+      return new Promise((resolve, reject) => {
+        this.infoGral.connection = this.app.obtenerConnection(this.infoGral.id_plan_estudio);
+        this.EncuestaService.getMaterias(this.infoGral).then(datas => {
+          var res: any = datas;
+          if (res.codigo == 200 && res.resultado.length > 0) {
+            this.materias = res.resultado;
+            resolve(true);
+          }else{
+            this.MessagesService.showSuccessDialog('No existen materias', 'error');
+          }
+          this.MessagesService.closeLoading();
+        });
+      })
+    }
+    else{
+      this.getEncuestas(null);
+    }
+
+
   }
 
   getEncuestas(value: any) {
@@ -257,11 +290,22 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     this.ventana = value.index;
     this.totalRecords = 0;
     this.registros_pregunta= [];
-    if (value.index == 1) {
+    this.tipo_encuesta = 0;
+    this.tipo_encuesta_inactiva = 0;
+    this.encuesta_seleccionada =0;
+    this.infoGral.encuesta_inactiva = value.index;
+    this.MessagesService.showLoading();
+    await this.getTipoEncuestas();
+    this.MessagesService.closeLoading();
+  }
+
+  async getRegitrosEncuestasInactivas(tipo: any) {
       this.curso = 0;
       this.periodo = 0;
       this.encuesta_seleccionada = 0;
+      this.registros_pregunta = [];
       this.MessagesService.showLoading();
+      this.infoGral.tipo_encuesta = tipo;
       return new Promise((resolve, reject) => {
       this.EncuestaService.getEncuestasMateriasInactivas(this.infoGral).then(datas => {
         var res: any = datas;
@@ -276,12 +320,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
        
       });
     })
-    }else{
-      this.MessagesService.showLoading();
-      await this.getMaterias();
-      this.MessagesService.closeLoading();
-      
-    }
+ 
   }
 
 
@@ -483,7 +522,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
     }
 
     let materia = this.materias.filter((res: any) => res.id == this.curso)
-    this.curso_info = materia[0].nombre;
+    this.curso_info = (this.tipo_encuesta == 2)?materia[0].nombre:'';
     this.encuesta_info = this.encuestas.filter((res: any) => res.id == this.encuesta_seleccionada);
 
     this.getTotalEncuestasRealizadas();
