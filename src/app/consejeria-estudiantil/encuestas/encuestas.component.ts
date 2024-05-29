@@ -36,9 +36,13 @@ export class EncuestasComponent implements OnInit {
   banderaBusqueda: number = 0
   datosFinal: any = []
   encuesta: any = {
-    id: 0,
-    asignadas: []
+    idAWS: 0,
+    idDO:0,
+    titulo:''
   }
+
+  encuestas_asignadas : any = [];
+
   settings = {
     actions: {
       columnTitle: 'Opciones',
@@ -73,25 +77,47 @@ export class EncuestasComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.programas = this.app.getProgramasAcademicos()
+    this.getPlanes();
+  }
+
+  getPlanes() {
+    this.messagesService.showLoading();
+    this.encuestasHTTP.generico('getPlanes', {}).then(datas => {
+      var res: any = datas;
+     let aux = res.resultado.dataAWS;
+      aux = aux.concat(res.resultado.dataDO);
+      aux.sort((a:any, b:any) => {
+        if (a.nombre_corto < b.nombre_corto) { return 1; }
+        if (a.nombre_corto > b.nombre_corto) { return -1;}
+        return 0;
+      });
+
+      this.programas = aux;
+      this.messagesService.closeLoading();
+    });
   }
 
   getEncuestas(info: any) {
     this.encuestasHTTP.generico('getEncuestas', info).then(datas => {
-      var res: any = datas
-      this.encuestas = res.resultado
+      var res: any = datas;
+      let aux = res.resultado.dataAWS.map((val : any)=>{
+                  return {titulo:val.titulo, idAWS:val.id, idDO:0}
+                });
+
+      aux = aux.concat(res.resultado.dataDO.map((val : any)=>{return {titulo:val.titulo, idAWS:0, idDO:val.id}}));
+      this.encuestas = aux;
       
       if(this.encuestas) {
         for (let x = 0; x < this.encuestas.length; x++) {
-          let encuesta = this.encuestas[x]
-          this.settings.columns['encuesta_' + encuesta.id] = {
-            title: encuesta.titulo,
+          let encuesta_aux = this.encuestas[x]
+          this.settings.columns['encuesta_' + encuesta_aux.idAWS+'_'+encuesta_aux.idDO] = {
+            title: encuesta_aux.titulo,
             type: 'html',
             width: '12%'
           }
         }
   
-        this.settings = Object.assign({}, this.settings)
+        this.settings = Object.assign({}, this.settings);
       }
     })
   }
@@ -156,7 +182,8 @@ export class EncuestasComponent implements OnInit {
     this.encuestasHTTP.generico('getAlumnos', info).then(data => {
       var res: any = data
       if(res.codigo == 200) {
-        this.datosFinal = data['resultado'][0]
+        this.datosFinal = data['resultado'].dataDO[0]
+        this.datosFinal = this.datosFinal.concat(data['resultado'].dataAWS[0])
         let length = this.datosFinal.length
         this.datos.datos_encontrados = (this.banderaBusqueda == 0 ? length : 0)
         this.datos.datos_faltantes = this.datos.datos_origen - length
@@ -216,8 +243,10 @@ export class EncuestasComponent implements OnInit {
   }
 
   inicializarBusqueda2() {
-    this.encuesta.id = ''
-    this.encuesta.asignadas = []
+    this.encuesta.idDO = 0;
+    this.encuesta.idAWS = 0;
+    this.encuesta.titulo = '';
+    this.encuestas_asignadas = []
   }
 
   defaultBusqueda() {
@@ -231,23 +260,24 @@ export class EncuestasComponent implements OnInit {
 
   asignarEncuesta() {
     let asignacion = 0
-    if(!this.registros) this.messagesService.showSuccessDialog('No es posible asignar encuesta, no se encontraron alumnos.', 'error')
-    if(!this.encuesta.id) this.messagesService.showSuccessDialog('Selecciona una encuesta.', 'error')
+    if(!this.registros) this.messagesService.showSuccessDialog('No es posible asignar encuesta, no se encontraron alumnos.', 'error');
+    if(!this.encuesta.titulo) this.messagesService.showSuccessDialog('Selecciona una encuesta.', 'error');
     else {
       let data = this.registros['data']
       let txtAsignar = "<span class='estatus verde'>ASIGNAR</span>"
       for (let i = 0; i < data.length; i++) {
-        let actual = data[i]['encuesta_' + this.encuesta.id]
-
-        if(!actual || (actual.indexOf('ASIGNADA') == -1 && actual.indexOf('CONTESTADA') == -1)) {
-          data[i]['encuesta_' + this.encuesta.id] = txtAsignar
-          asignacion++
+        let actual = data[i]['encuesta_' + this.encuesta.idAWS+'_'+this.encuesta.idDO]
+        if((this.encuesta.idDO > 0 && data[i]['connection'] == 0)|| (this.encuesta.idAWS > 0 && data[i]['connection'] == 1)) {
+          if(!actual || (actual.indexOf('ASIGNADA') == -1 && actual.indexOf('CONTESTADA') == -1)) {
+            data[i]['encuesta_' + this.encuesta.idAWS+'_'+this.encuesta.idDO] = txtAsignar;
+            asignacion++
+          }
         }
       }
         
-      if(this.encuesta.asignadas.indexOf(this.encuesta.id) == -1) {
+      if(this.encuestas_asignadas.indexOf(this.encuesta.idAWS+'_'+this.encuesta.idDO) == -1) {
         if(asignacion > 0) {
-          this.encuesta.asignadas.push(this.encuesta.id)
+          this.encuestas_asignadas.push(this.encuesta.idAWS+'_'+this.encuesta.idDO)
           this.registros.load(data)
         }
         else this.messagesService.showSuccessDialog('No es posible aplicar la encuesta, todos los alumnos de la lista ya la tienen asignada.', 'warning')
@@ -257,23 +287,32 @@ export class EncuestasComponent implements OnInit {
   }
 
   async guardarCambios() {
-    let length = this.encuesta.asignadas.length
-    if(!length) this.messagesService.showSuccessDialog('No se encontraron encuestas para asignar.', 'error')
+    let id_encuestasAWS = this.encuestas_asignadas.map((val : string)=>{ return parseInt(val.split('_')[0]) }).filter((a: any) => a> 0)
+    let id_encuestasDO = this.encuestas_asignadas.map((val : string)=>{ return parseInt(val.split('_')[1]) }).filter((a: any) => a> 0)
+
+    if(!id_encuestasAWS.length && !id_encuestasDO.length) this.messagesService.showSuccessDialog('No se encontraron encuestas para asignar.', 'error')
     else if(!this.registros['data'].length) this.messagesService.showSuccessDialog('La lista de alumnos está vacía, realiza otra búsqueda.', 'info')
     else {
       this.messagesService.showLoading()
-      for (let x = 0; x < length; x++) {
-        let alumnos = ''
-        let length2 = this.registros['data'].length
-        for (let i = 0; i < this.registros['data'].length; i++) alumnos += this.registros['data'][i].id_alumno + (i < (length2 - 1) ? ', ' : '')
-
+      let alumnosAWS = this.registros['data'].filter((a : any)=> a.connection == 1).map((val : any)=>{ return parseInt(val.id_alumno) }).join();
+      
+      for(let x = 0; x < id_encuestasAWS.length; x++) { 
         let info = {
-          id_encuesta: this.encuesta.asignadas[x],
-          alumnos: alumnos,
-          connection: this.registros['data'][0].connection
-        }
+          id_encuesta: id_encuestasAWS[x],
+          alumnos: alumnosAWS,
+          connection: 1 // Para mandar AWS
+        }      
+        await this.asignarEncuestaAlumnos(info)  
+      }
 
-        await this.asignarEncuestaAlumnos(info)
+      let alumnosDO = this.registros['data'].filter((a : any)=> a.connection == 0).map((val : any)=>{ return parseInt(val.id_alumno) }).join();
+      for(let x = 0; x < id_encuestasDO.length; x++) { 
+        let info = {
+          id_encuesta: id_encuestasDO[x],
+          alumnos: alumnosDO,
+          connection: 1 // Para mandar AWS
+        }      
+        await this.asignarEncuestaAlumnos(info)  
       }
 
       this.messagesService.showSuccessDialog('Proceso de asignación de encuestas terminado exitosamente.', 'success').then((result) => {
