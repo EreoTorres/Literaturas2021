@@ -17,7 +17,7 @@ const routes: Routes = [{
       canActivate:[ConsejeriaEstudiantilService]
     },
     {
-      path: 'citas/cita/:id/:plan',
+      path: 'citas/cita/:id/:plan/:conn',
       component: CitasComponent,
       canActivate:[ConsejeriaEstudiantilService]
     },

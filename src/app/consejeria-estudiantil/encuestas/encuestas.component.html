@@ -77,9 +77,9 @@
                 <div class="col-3" style="margin-top: 10px;">
                     <div class="float-left">
                         <span>Encuestas:</span>
-                        <select class="form-control" id="id_encuesta" name="id_encuesta" [(ngModel)]="encuesta.id">
+                        <select class="form-control" id="id_encuesta" name="id_encuesta" [(ngModel)]="encuesta">
                             <option value="" disabled selected>Selecciona una opción</option>
-                            <option [value]="encuesta.id" *ngFor="let encuesta of encuestas">{{ encuesta.titulo }}</option>
+                            <option [ngValue]="e" *ngFor="let e of encuestas">{{ e.titulo }}</option>
                         </select>
                     </div>
                 </div>

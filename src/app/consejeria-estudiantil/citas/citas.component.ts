@@ -19,6 +19,7 @@ import { GlobalFunctionsService } from 'src/app/services/http-service/global-fun
 export class CitasComponent implements OnInit {
   id_cita: any = 0;
   id_plan_estudio: any = 0;
+  connection: any = 0;
   registros: LocalDataSource = new LocalDataSource()
   comentarios: LocalDataSource = new LocalDataSource()
   movimientos: LocalDataSource = new LocalDataSource()
@@ -333,6 +334,7 @@ export class CitasComponent implements OnInit {
     this.fecha_actual = this.fecha_actual.getFullYear() + '-' + (this.fecha_actual.getMonth() + 1) + '-' + this.fecha_actual.getDate();
     this.id_cita = this.route.snapshot.paramMap.get('id');
     this.id_plan_estudio = this.route.snapshot.paramMap.get('plan');
+    this.connection = parseInt(this.route.snapshot.paramMap.get('conn'));
     this.programas = this.app.getProgramasAcademicos();
     this.getFormulario();
     if(this.id_cita && this.id_plan_estudio) this.getCita();
@@ -414,8 +416,7 @@ export class CitasComponent implements OnInit {
       this.bandera.loading = true;
       let alumno: any = {
         numero_empleado: this.formCita.value.numero_empleado,
-        id_plan_estudio: this.formCita.value.plan_estudio,
-        connection: this.app.obtenerConnection(this.formCita.value.plan_estudio)
+        id_plan_estudio: this.formCita.value.plan_estudio
       }
       this.citasHTTP.generico('getAlumno', alumno).then(datas => {
         let res: any = datas;
@@ -431,9 +432,10 @@ export class CitasComponent implements OnInit {
           this.formCita.controls['idmoodle'].setValue(res.resultado[0].idmoodle);
           this.formCita.controls['nombre_alumno'].setValue(res.resultado[0].nombre_alumno);
           this.formCita.controls['estatus'].setValue(1);
+          this.formCita.controls['connection'].setValue(parseInt(res.resultado[0].connection));
           let data = {
             id_alumno: res.resultado[0].id_alumno,
-            connection: this.app.obtenerConnection(this.formCita.value.plan_estudio)
+            connection: parseInt(res.resultado[0].connection)
           };
           this.citasHTTP.generico('getAlumnoTelefonos', data).then(datas => {
             let res: any = datas;
@@ -469,7 +471,7 @@ export class CitasComponent implements OnInit {
   validarCita(tipo: any) {
     this.formFinal = (tipo == 1 ? this.formCita : this.formAsignacion);
     this.formFinal.controls['responsable'].setValue(sessionStorage.getItem('id'));
-    this.formFinal.controls['connection'].setValue(this.app.obtenerConnection(this.formFinal.value.plan_estudio));
+    //this.formFinal.controls['connection'].setValue(this.app.obtenerConnection(this.formFinal.value.plan_estudio));
     if (this.formFinal.valid) {
       if(!this.formFinal.value.consejero || this.formFinal.value.consejero == undefined) this.formFinal.value.consejero = 0;
       let estatus = this.formFinal.value.estatus;
@@ -510,7 +512,7 @@ export class CitasComponent implements OnInit {
     let info = {
       id_cita: this.id_cita,
       id_plan_estudio: this.id_plan_estudio,
-      connection: this.app.obtenerConnection(this.id_plan_estudio)
+      connection: this.connection// this.app.obtenerConnection(this.id_plan_estudio)
     }
     this.citasHTTP.generico('getCitaInfo', info)
     .then(data => {
@@ -529,6 +531,7 @@ export class CitasComponent implements OnInit {
     .then(data => {
       data = data['resultado'][0];
       this.formAsignacion.controls['id_cita'].setValue(this.id_cita);
+      this.formAsignacion.controls['connection'].setValue(this.connection);
       this.formAsignacion.controls['idmoodle'].setValue(0);
       this.formAsignacion.controls['plan_estudio'].setValue(data['id_plan_estudio']);
       this.formAsignacion.controls['nombre_alumno'].setValue(data['nombre_alumno']);
@@ -592,7 +595,7 @@ export class CitasComponent implements OnInit {
   actualizarCitaComentarios(tipo: any, ev: any, data: any) {
     this.messagesService.showLoading();
     this.formAsignacion.controls['responsable'].setValue(sessionStorage.getItem('id'));
-    this.formAsignacion.controls['connection'].setValue(this.app.obtenerConnection(this.formAsignacion.value.plan_estudio));
+    //this.formAsignacion.controls['connection'].setValue(this.app.obtenerConnection(this.formAsignacion.value.plan_estudio));
     this.citasHTTP.generico('actualizarCitaComentarios', {cita: this.formAsignacion.value, comentarios: data}).then(datas => {
       let res: any = datas;
       if(res.codigo == 0) this.showMessage(res.mensaje, 'error');
@@ -628,14 +631,14 @@ export class CitasComponent implements OnInit {
   onCustom(ev) {
     if(ev.action == 'asignar') {
       this.messagesService.showLoading();
-      this.router.navigate(['consejeria-estudiantil/citas/cita', ev.data.id_cita, ev.data.id_plan_estudio]);
+      this.router.navigate(['consejeria-estudiantil/citas/cita', ev.data.id_cita, ev.data.id_plan_estudio, ev.data.connection]);
     }
     else if(ev.action == 'historial') {
       this.messagesService.showLoading();
       let cita = {
         id_cita: ev.data.id_cita,
         responsable: sessionStorage.getItem('id'),
-        connection: this.app.obtenerConnection(ev.data.id_plan_estudio)
+        connection: parseInt(ev.data.connection)//this.app.obtenerConnection(ev.data.id_plan_estudio)
       }
       this.citasHTTP.generico('getMovimientos', cita).then(datas => {
         let res: any = datas;
