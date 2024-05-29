@@ -56,23 +56,30 @@
             <div *ngIf="m['imagen'].errors && m['imagen'].errors['pattern']">Se requiere una URL valida</div>
           </div>
         </div>
-        <div class="col-4">
+        <div class="col-3">
           <span>Requiere Vigencias:</span>
           <select class="form-control" formControlName="requiere_vigencias">
             <option value="0">No</option>
             <option value="1">Si</option>
           </select>
         </div>
-        <div class="col-4">
+        <div class="col-3">
           <span>Es Ruta de Prueba:</span>
           <select class="form-control" formControlName="prueba">
             <option value="0">No</option>
             <option value="1">Si</option>
           </select>
         </div>
-        <div class="col-4">
+        <div class="col-3">
           <span>Es Ruta para Familia:</span>
           <select class="form-control" formControlName="familia">
+            <option value="0">No</option>
+            <option value="1">Si</option>
+          </select>
+        </div>
+        <div class="col-3">
+          <span>Es Autoridad:</span>
+          <select class="form-control" formControlName="autoridad">
             <option value="0">No</option>
             <option value="1">Si</option>
           </select>
