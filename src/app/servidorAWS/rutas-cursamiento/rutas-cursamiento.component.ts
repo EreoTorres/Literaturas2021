@@ -118,6 +118,18 @@ export class RutasCursamientoComponent implements OnInit {
           },
         }
       },
+      autoridad_t: {
+        title: 'Es autoridad',
+        type: 'string',
+        width: '8%',
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'TODOS',
+            list: this.list_filtro
+          },
+        }
+      },
       fecha_registro: {
         title: 'Fecha de creación',
         type: 'string',
@@ -361,7 +373,8 @@ export class RutasCursamientoComponent implements OnInit {
       imagen: ['', [Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')]],
       url_informacion: ['', [Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')]],
       responsable: [null],
-      familia: [0, [Validators.required]]
+      familia: [0, [Validators.required]],
+      autoridad: [0, [Validators.required]]
     });
 
     this.defaultFormRuta();
@@ -390,6 +403,7 @@ export class RutasCursamientoComponent implements OnInit {
     this.formRutas.controls['imagen'].setValue('');
     this.formRutas.controls['url_informacion'].setValue('');
     this.formRutas.controls['familia'].setValue(0);
+    this.formRutas.controls['autoridad'].setValue(0);
   }
 
   getRegistros() {
@@ -645,6 +659,7 @@ export class RutasCursamientoComponent implements OnInit {
         this.formRutas.controls['url_informacion'].setValue(ev.data.url_informacion);
         this.formRutas.controls['imagen'].setValue(ev.data.imagen);
         this.formRutas.controls['familia'].setValue(ev.data.familia);
+        this.formRutas.controls['autoridad'].setValue(ev.data.autoridad);
       } else {
         this.MessagesService.showSuccessDialog("La ruta de cursamiento ya se encuentra registrada en escolar, no puede ser editada !!", 'error');
       }
