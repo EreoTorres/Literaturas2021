@@ -106,6 +106,18 @@ export class RutasCursamientoComponent implements OnInit {
           },
         }
       },
+      familia_t: {
+        title: 'Es Familia',
+        type: 'string',
+        width: '8%',
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'TODOS',
+            list: this.list_filtro
+          },
+        }
+      },
       fecha_registro: {
         title: 'Fecha de creación',
         type: 'string',
@@ -348,7 +360,8 @@ export class RutasCursamientoComponent implements OnInit {
       prueba: [0, [Validators.required]],
       imagen: ['', [Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')]],
       url_informacion: ['', [Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')]],
-      responsable: [null]
+      responsable: [null],
+      familia: [0, [Validators.required]]
     });
 
     this.defaultFormRuta();
@@ -361,6 +374,7 @@ export class RutasCursamientoComponent implements OnInit {
   ngOnInit(): void {
     this.programas = this.servidorAWS.getProgramasAcademicos();
     this.getRegistros();
+    this.disableFamilia();
   }
 
   get m(){
@@ -375,6 +389,7 @@ export class RutasCursamientoComponent implements OnInit {
     this.formRutas.controls['prueba'].setValue(0);
     this.formRutas.controls['imagen'].setValue('');
     this.formRutas.controls['url_informacion'].setValue('');
+    this.formRutas.controls['familia'].setValue(0);
   }
 
   getRegistros() {
@@ -444,7 +459,7 @@ export class RutasCursamientoComponent implements OnInit {
     this.MessagesService.showConfirmDialog('¿Está seguro de continuar con el registro?', '').then((result) => {
       if(result.isConfirmed) {
         this.MessagesService.showLoading();
-        this.rutasHTTP.generico('actualizarRutasCursamiento', this.formFinal.value).then(datas => {
+        this.rutasHTTP.generico('actualizarRutasCursamiento', this.formFinal.getRawValue()).then(datas => {
           var res: any = datas;
           if(res.codigo == 0) this.MessagesService.showSuccessDialog(res.mensaje, 'error');
           else {
@@ -629,6 +644,7 @@ export class RutasCursamientoComponent implements OnInit {
         this.formRutas.controls['prueba'].setValue(ev.data.prueba);
         this.formRutas.controls['url_informacion'].setValue(ev.data.url_informacion);
         this.formRutas.controls['imagen'].setValue(ev.data.imagen);
+        this.formRutas.controls['familia'].setValue(ev.data.familia);
       } else {
         this.MessagesService.showSuccessDialog("La ruta de cursamiento ya se encuentra registrada en escolar, no puede ser editada !!", 'error');
       }
@@ -810,6 +826,18 @@ export class RutasCursamientoComponent implements OnInit {
         });
     }
 
+  }
+
+  disableFamilia() {
+    this.formRutas.get('plan_estudio').valueChanges.subscribe(value => {
+      if(value) {
+        if(!(JSON.parse(localStorage.getItem('programas')).find(programa => programa.id == value).ruta_familia)) {
+          this.formRutas.controls['familia'].setValue(0);
+          this.formRutas.get('familia').disable();
+        }
+        else this.formRutas.get('familia').enable();
+      }
+    });
   }
 
 }
