@@ -14,7 +14,6 @@ import { AppComponent } from 'src/app/app.component';
 export class AgendaComponent implements OnInit {
   
   registros: LocalDataSource = new LocalDataSource()
-  programas: any = []
   planes_estudio: any = []
   estatus: any = [
     {
@@ -132,7 +131,6 @@ export class AgendaComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.programas = this.app.getProgramasAcademicos();
     this.getAgenda()
   }
 
@@ -166,6 +164,8 @@ export class AgendaComponent implements OnInit {
     if(!ev.newData.id) {
       ev.newData.id = 0
       ev.newData.estatus = 1
+      ev.newData.id_plan_estudio = this.planes_estudio.find(plan_estudio => plan_estudio.title == ev.newData.plan_estudio).value;
+      ev.newData.connection = (ev.newData.id_plan_estudio != 'TODOS' ?  this.planes_estudio.find(plan_estudio => plan_estudio.title == ev.newData.plan_estudio).connection : 0);
     }
     else ev.newData.estatus = (ev.newData.estatus == 'Si' ? 1 : 0)
 
@@ -173,9 +173,9 @@ export class AgendaComponent implements OnInit {
     else if (ev.newData.plan_estudio == "") this.messagesService.showSuccessDialog('El campo Plan de estudios es obligatorio.', 'error')
     else {
       ev.newData.fecha = this.globalFunctions.newUYDate(ev.newData.fecha)
-      ev.newData.id_plan_estudio = this.planes_estudio.find(plan_estudio => plan_estudio.title == ev.newData.plan_estudio).value;
-      ev.newData.connection = (ev.newData.id_plan_estudio != 'TODOS' ? this.app.obtenerConnection(ev.newData.id_plan_estudio) : 0);
+      
       this.messagesService.showLoading();
+      
       this.eventosHTTP.generico('addAgenda', ev.newData).then(datas => {
         var res: any = datas;
         if(res.codigo == 0) this.messagesService.showSuccessDialog(res.mensaje, 'error');
@@ -183,12 +183,12 @@ export class AgendaComponent implements OnInit {
           let success = 0;
           let message = '';
 
-          if(ev.newData.plan_estudio == 'TODOS' || !ev.newData.connection) {
+          if(ev.newData.plan_estudio == 'TODOS' || [0,2].includes(ev.newData.connection)) {
             success = res.resultado.dataDO[0][0].success;
             message = res.resultado.dataDO[0][0].message;
           }
 
-          if(ev.newData.plan_estudio == 'TODOS' || ev.newData.connection) {
+          if(ev.newData.plan_estudio == 'TODOS' || [1,2].includes(ev.newData.connection)) {
             success = success + res.resultado.dataAWS[0][0].success;
             message += res.resultado.dataAWS[0][0].message;
           }

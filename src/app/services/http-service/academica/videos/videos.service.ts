@@ -17,6 +17,15 @@ export class VideosService {
     };
   }
 
+  getProgramas(){
+    return new Promise((resolve, reject) => {
+      this.http.post(this.url+'academica/videos/getPlanesVideos', {},this.httpHeaders)
+      .subscribe(data => {
+        resolve(data)
+      })
+    });
+  }
+
   getVideos(){
     return new Promise((resolve, reject) => {
       this.http.post(this.url+'academica/videos/getVideos', {},this.httpHeaders)

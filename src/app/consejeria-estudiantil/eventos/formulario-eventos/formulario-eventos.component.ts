@@ -145,6 +145,10 @@ export class FormularioEventosComponent implements OnInit {
     });
   }
 
+  obtenerConnection(id_plan_estudio: any) {
+    return this.programas.find((programa : any) => programa.value == id_plan_estudio).connection;
+  }
+
   guardarEvento() {
     if(this.formEvento.valid) {
       let estatus = 0
@@ -152,9 +156,10 @@ export class FormularioEventosComponent implements OnInit {
       this.formEvento.controls['estatus'].setValue(estatus)
       this.formEvento.controls['connection'].setValue((
         this.formEvento.value.plan_estudio != 'TODOS'
-          ? this.app.obtenerConnection((this.id_plan_estudio ? this.id_plan_estudio : this.formEvento.value.plan_estudio)) 
+          ? this.obtenerConnection((this.id_plan_estudio ? this.id_plan_estudio : this.formEvento.value.plan_estudio)) 
           : 0
       ));
+
       this.messagesService.showLoading()
       this.eventosHTTP.generico('updateEvento', this.formEvento.value).then(datas => {
         var res: any = datas
