@@ -8,7 +8,7 @@
                 <a class="btn btn-secondary float-right" style="margin-left: 1% !important;" target="_blank" href="https://agcollege.edu.mx/literaturas/62/4/Manual_registro_en_videoteca.pdf">
                     <mat-icon class="mr-2" style="color: white !important;">cloud_download</mat-icon><span>Descargar Manual</span>
                 </a>
-                <button class="btn btn-success float-right" (click)="openModal(0)">
+                <button class="btn btn-success float-right" (click)="openModal({id:0, connection: 0})">
                   <mat-icon class="mr-2" style="color: white !important;">cloud_upload</mat-icon><span>Agregar Video</span> 
                 </button>
             </div>
@@ -75,7 +75,7 @@
                     <br>
                     <span>Generación Académica:</span>
                     <select class="form-control" [required]="generacion_required" id="id_generacion" name="id_generacion" [(ngModel)]="video.id_generacion">
-                        <option value="undefined" disabled selected>Selecciona una generación</option>
+                        <option [value]="undefined" disabled selected>Selecciona una generación</option>
                         <option [value]="item.id" *ngFor="let item of generaciones">{{item.generacion}}</option>
                     </select>
                </div>
@@ -84,9 +84,9 @@
             <div class="row">
                 <div class="col-6">
                     <span>Tipo:</span>
-                    <select class="form-control" required id="tipo" name="tipo" [(ngModel)]="video.tipo">
-                        <option value="1">Por materia</option>
-                        <option value="2">Por categoria</option>
+                    <select class="form-control" required id="tipo" name="tipo" (change)="tipoCategoriaChange(1, $event.target.value)" [(ngModel)]="video.tipo">
+                        <option value="undefined" disabled selected>Selecciona un tipo</option>
+                        <option [value]="t.id" *ngFor="let t of tipo_categoria">{{t.tipo}}</option>
                     </select>
                 </div>
                 <div class="col-6" *ngIf="video.tipo == 1">
