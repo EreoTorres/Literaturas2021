@@ -11,7 +11,7 @@
                             <span>Plan de estudio:</span>
                             <select class="form-control" formControlName="id_plan_estudio">
                                 <option value="" disabled selected>Selecciona una opción</option>
-                                <option [value]="programa.id" *ngFor="let programa of programas">{{ programa.nombre_corto }}</option>
+                                <option [value]="get_id_plan(programa.id, programa.connection)" *ngFor="let programa of programas">{{ programa.nombre_corto }}</option>
                             </select>
                         </div>
                     </div>

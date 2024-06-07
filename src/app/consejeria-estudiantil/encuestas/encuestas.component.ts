@@ -160,10 +160,16 @@ export class EncuestasComponent implements OnInit {
     return resultado
   }
 
+  get_id_plan(id, connection)
+  {
+    return id+ "_" + connection;
+  }
+
   getAlumnos() {
+    let aux = this.formBusqueda.value.id_plan_estudio.split('_');
     let data = {
-      id_plan_estudio: this.formBusqueda.value.id_plan_estudio,
-      connection : this.app.obtenerConnection(this.formBusqueda.value.id_plan_estudio)
+      id_plan_estudio: aux[0],
+      connection : parseInt(aux[1])
     }
 
     this.getEncuestas(data)
@@ -172,18 +178,22 @@ export class EncuestasComponent implements OnInit {
     let alumnos = this.datos.alumnos.toString()
 
     let info = {
-      id_plan_estudio: this.formBusqueda.value.id_plan_estudio,
+      id_plan_estudio: aux[0],
       tipo_busqueda: this.formBusqueda.value.tipo_busqueda,
       alumnos: alumnos,
       id_alumno: 0,
-      connection: this.app.obtenerConnection(this.formBusqueda.value.id_plan_estudio)
+      connection: parseInt(aux[1])
     }
 
-    this.encuestasHTTP.generico('getAlumnos', info).then(data => {
-      var res: any = data
+
+    this.encuestasHTTP.generico('getAlumnos', info).then(datas => {
+      let res: any = datas
       if(res.codigo == 200) {
-        this.datosFinal = data['resultado'].dataDO[0]
-        this.datosFinal = this.datosFinal.concat(data['resultado'].dataAWS[0])
+        let dat = res.resultado
+        let datDO = (dat.dataDO.length>0)? dat.dataDO[0] : [];
+        let datAWS = (dat.dataAWS.length>0)? dat.dataAWS[0] : [];
+
+        this.datosFinal = datDO.concat(datAWS)
         let length = this.datosFinal.length
         this.datos.datos_encontrados = (this.banderaBusqueda == 0 ? length : 0)
         this.datos.datos_faltantes = this.datos.datos_origen - length
@@ -275,9 +285,9 @@ export class EncuestasComponent implements OnInit {
         }
       }
         
-      if(this.encuestas_asignadas.indexOf(this.encuesta.idAWS+'_'+this.encuesta.idDO) == -1) {
+      if(this.encuestas_asignadas.indexOf(this.encuesta.idDO+'_'+this.encuesta.idAWS) == -1) {
         if(asignacion > 0) {
-          this.encuestas_asignadas.push(this.encuesta.idAWS+'_'+this.encuesta.idDO)
+          this.encuestas_asignadas.push(this.encuesta.idDO+'_'+this.encuesta.idAWS)
           this.registros.load(data)
         }
         else this.messagesService.showSuccessDialog('No es posible aplicar la encuesta, todos los alumnos de la lista ya la tienen asignada.', 'warning')
@@ -287,25 +297,23 @@ export class EncuestasComponent implements OnInit {
   }
 
   async guardarCambios() {
-    let id_encuestasAWS = this.encuestas_asignadas.map((val : string)=>{ return parseInt(val.split('_')[0]) }).filter((a: any) => a> 0)
-    let id_encuestasDO = this.encuestas_asignadas.map((val : string)=>{ return parseInt(val.split('_')[1]) }).filter((a: any) => a> 0)
-
-    if(!id_encuestasAWS.length && !id_encuestasDO.length) this.messagesService.showSuccessDialog('No se encontraron encuestas para asignar.', 'error')
+    let aux = this.formBusqueda.value.id_plan_estudio.split('_');
+    let id_encuestas = this.encuestas_asignadas.map((val : string)=>{ return parseInt(val.split('_')[aux[1]]) }).filter((a: any) => a> 0)
+    if(!id_encuestas.length) this.messagesService.showSuccessDialog('No se encontraron encuestas para asignar.', 'error')
     else if(!this.registros['data'].length) this.messagesService.showSuccessDialog('La lista de alumnos está vacía, realiza otra búsqueda.', 'info')
     else {
       this.messagesService.showLoading()
-      let alumnosAWS = this.registros['data'].filter((a : any)=> a.connection == 1).map((val : any)=>{ return parseInt(val.id_alumno) }).join();
-      
-      for(let x = 0; x < id_encuestasAWS.length; x++) { 
+      let alumnos = this.registros['data'].filter((a : any)=> a.connection == parseInt(aux[1])).map((val : any)=>{ return parseInt(val.id_alumno) }).join();
+      for(let x = 0; x < id_encuestas.length; x++) { 
         let info = {
-          id_encuesta: id_encuestasAWS[x],
-          alumnos: alumnosAWS,
-          connection: 1 // Para mandar AWS
+          id_encuesta: id_encuestas[x],
+          alumnos: alumnos,
+          connection: parseInt(aux[1]) 
         }      
         await this.asignarEncuestaAlumnos(info)  
       }
 
-      let alumnosDO = this.registros['data'].filter((a : any)=> a.connection == 0).map((val : any)=>{ return parseInt(val.id_alumno) }).join();
+/*      let alumnosDO = this.registros['data'].filter((a : any)=> a.connection == 0).map((val : any)=>{ return parseInt(val.id_alumno) }).join();
       for(let x = 0; x < id_encuestasDO.length; x++) { 
         let info = {
           id_encuesta: id_encuestasDO[x],
@@ -313,7 +321,7 @@ export class EncuestasComponent implements OnInit {
           connection: 1 // Para mandar AWS
         }      
         await this.asignarEncuestaAlumnos(info)  
-      }
+      }*/
 
       this.messagesService.showSuccessDialog('Proceso de asignación de encuestas terminado exitosamente.', 'success').then((result) => {
         if(result.isConfirmed) {
