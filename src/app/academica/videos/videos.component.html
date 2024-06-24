@@ -89,9 +89,9 @@
                         <option [value]="t.id" *ngFor="let t of tipo_categoria">{{t.tipo}}</option>
                     </select>
                 </div>
-                <div class="col-6" *ngIf="video.tipo == 1">
+                <div class="col-6" *ngIf="video.tipo != 2">
                     <span>Materia:</span>
-                    <select class="form-control" [required]="video.tipo == 1" id="id_materia" name="id_materia" [(ngModel)]="video.id_materia" >
+                    <select class="form-control" [required]="video.tipo != 2" id="id_materia" name="id_materia" [(ngModel)]="video.id_materia" >
                         <option value="undefined" disabled selected>Selecciona una materia</option>
                         <option [value]="item.id_moodle" *ngFor="let item of materias2">[Periodo {{item.periodo}}] {{item.nombre}}</option>
                     </select>
