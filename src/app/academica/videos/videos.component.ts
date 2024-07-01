@@ -306,7 +306,7 @@ export class VideosComponent implements OnInit {
     {
       this.tipo_categoria = [{id:1, tipo: 'Por Materia', connection: connection},{id:2, tipo: 'Por Categoria', connection:connection}]
     } else {
-      this.tipo_categoria = [{id:1, tipo: 'Por Materia - DO', connection: 0},{id:3, tipo: 'Por Materia - AWS', connection: 1}, {id:2, tipo: 'Por Categoria', connection:0}]
+      this.tipo_categoria = [{id:1, tipo: 'Por Materia - DO', connection: 0},{id:3, tipo: 'Por Materia - AWS', connection: 1}, {id:2, tipo: 'Por Categoria - DO', connection:0}, {id:4, tipo: 'Por Categoria - AWS', connection:1}]
     }
     
     if (this.video.id == 0) {

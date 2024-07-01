@@ -75,6 +75,7 @@ export class FormularioEventosComponent implements OnInit {
   public editor_cotenido = Editor
   @ViewChild('agregarEvento') agregarEvento: ElementRef;
   id_plan_estudio: any = 0;
+  connection: number = 0;
 
   constructor(
     private eventosHTTP: EventosService,
@@ -145,8 +146,8 @@ export class FormularioEventosComponent implements OnInit {
     });
   }
 
-  obtenerConnection(id_plan_estudio: any) {
-    return this.programas.find((programa : any) => programa.value == id_plan_estudio).connection;
+  onSelectChangeConnection(event: Event) {
+    this.connection = event.target['selectedOptions'][0].getAttribute('connection');
   }
 
   guardarEvento() {
@@ -154,11 +155,7 @@ export class FormularioEventosComponent implements OnInit {
       let estatus = 0
       if(this.formEvento.value.estatus) estatus = 1
       this.formEvento.controls['estatus'].setValue(estatus)
-      this.formEvento.controls['connection'].setValue((
-        this.formEvento.value.plan_estudio != 'TODOS'
-          ? this.obtenerConnection((this.id_plan_estudio ? this.id_plan_estudio : this.formEvento.value.plan_estudio)) 
-          : 0
-      ));
+      this.formEvento.controls['connection'].setValue((this.formEvento.value.plan_estudio != 'TODOS' ? this.connection : 0));
 
       this.messagesService.showLoading()
       this.eventosHTTP.generico('updateEvento', this.formEvento.value).then(datas => {

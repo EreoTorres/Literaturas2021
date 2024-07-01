@@ -48,6 +48,7 @@ export class RutasCursamientoComponent implements OnInit {
     estatus: '',
     consejero: ''
   }
+  empresas: any = [];
   settings = {
     actions: {
       columnTitle: '',
@@ -129,6 +130,11 @@ export class RutasCursamientoComponent implements OnInit {
             list: this.list_filtro
           },
         }
+      },
+      empresa_t: {
+        title: 'Empresa',
+        type: 'string',
+        width: '15%'
       },
       fecha_registro: {
         title: 'Fecha de creación',
@@ -374,7 +380,8 @@ export class RutasCursamientoComponent implements OnInit {
       url_informacion: ['', [Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')]],
       responsable: [null],
       familia: [0, [Validators.required]],
-      autoridad: [0, [Validators.required]]
+      autoridad: [0, [Validators.required]],
+      empresa: [0, [Validators.required]]
     });
 
     this.defaultFormRuta();
@@ -387,7 +394,6 @@ export class RutasCursamientoComponent implements OnInit {
   ngOnInit(): void {
     this.programas = this.servidorAWS.getProgramasAcademicos();
     this.getRegistros();
-    this.disableFamilia();
   }
 
   get m(){
@@ -404,6 +410,7 @@ export class RutasCursamientoComponent implements OnInit {
     this.formRutas.controls['url_informacion'].setValue('');
     this.formRutas.controls['familia'].setValue(0);
     this.formRutas.controls['autoridad'].setValue(0);
+    this.formRutas.controls['empresa'].setValue(0);
   }
 
   getRegistros() {
@@ -495,6 +502,7 @@ export class RutasCursamientoComponent implements OnInit {
   resetAll() {
     this.formRutas.reset();
     this.defaultFormRuta();
+    this.empresas = [];
   }
 
   openModal(modal) {
@@ -660,6 +668,7 @@ export class RutasCursamientoComponent implements OnInit {
         this.formRutas.controls['imagen'].setValue(ev.data.imagen);
         this.formRutas.controls['familia'].setValue(ev.data.familia);
         this.formRutas.controls['autoridad'].setValue(ev.data.autoridad);
+        this.getEmpresas(ev.data.empresa);
       } else {
         this.MessagesService.showSuccessDialog("La ruta de cursamiento ya se encuentra registrada en escolar, no puede ser editada !!", 'error');
       }
@@ -843,15 +852,26 @@ export class RutasCursamientoComponent implements OnInit {
 
   }
 
-  disableFamilia() {
-    this.formRutas.get('plan_estudio').valueChanges.subscribe(value => {
-      if(value) {
-        if(!(JSON.parse(localStorage.getItem('programas')).find(programa => programa.id == value).ruta_familia)) {
-          this.formRutas.controls['familia'].setValue(0);
-          this.formRutas.get('familia').disable();
-        }
-        else this.formRutas.get('familia').enable();
+  ngModelChangePlanEstudio(value: any) {
+    if(value) {
+      // RUTA FAMILIA
+      if(!(JSON.parse(localStorage.getItem('programas')).find(programa => programa.id == value).ruta_familia)) {
+        this.formRutas.controls['familia'].setValue(0);
+        this.formRutas.get('familia').disable();
       }
+      else this.formRutas.get('familia').enable();
+
+      // EMPRESAS
+      this.getEmpresas(0);
+    }
+  }
+
+  getEmpresas(id_empresa: any) {
+    this.empresas = [];
+    this.rutasHTTP.generico('getEmpresas', {plan_estudio: this.formRutas.controls['plan_estudio'].value}).then(datas => {
+      let res: any = datas;
+      this.empresas = res.resultado;
+      this.formRutas.controls['empresa'].setValue(id_empresa);
     });
   }
 

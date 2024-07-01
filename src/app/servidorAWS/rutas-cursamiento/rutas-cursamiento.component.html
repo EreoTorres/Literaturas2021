@@ -31,7 +31,7 @@
       <div class="row">
         <div class="col-12">
           <span>Plan de Estudio:</span>
-          <select class="form-control" formControlName="plan_estudio">
+          <select class="form-control" formControlName="plan_estudio" (ngModelChange)="ngModelChangePlanEstudio($event)">
             <option value="">Selecciona una opción</option>
             <option [value]="programa.id" *ngFor="let programa of programas">{{programa.nombre_corto}}</option>
           </select>
@@ -40,7 +40,7 @@
           <span>Nombre de la ruta de cursamiento:</span>
           <input class="form-control" type="text" formControlName="nombre_ruta" >
         </div>
-        <div class="col-12">
+        <div class="col-4">
           <span>URL del PDF de Información:</span>
           <input class="form-control" type="url" formControlName="url_informacion" >
           <div *ngIf="m['url_informacion'].touched && m['url_informacion'].invalid" class="alert alert-danger">
@@ -48,13 +48,20 @@
             <div *ngIf="m['url_informacion'].errors && m['url_informacion'].errors['pattern']">Se requiere una URL valida</div>
           </div>
         </div>
-        <div class="col-12">
+        <div class="col-4">
           <span>URL de la Imagén:</span><br>
           <input class="form-control" type="url" formControlName="imagen" >
           <div *ngIf="m['imagen'].touched && m['imagen'].invalid" class="alert alert-danger">
             <div *ngIf="m['imagen'].errors && m['imagen'].errors['required']">Se requiere que escriba la URL de la imagén</div>
             <div *ngIf="m['imagen'].errors && m['imagen'].errors['pattern']">Se requiere una URL valida</div>
           </div>
+        </div>        
+        <div class="col-4">
+          <span>Empresa:</span>
+          <select class="form-control" formControlName="empresa">
+            <option value="0"></option>
+            <option [value]="empresa.id" *ngFor="let empresa of empresas">{{empresa.nombre}}</option>
+          </select>
         </div>
         <div class="col-3">
           <span>Requiere Vigencias:</span>

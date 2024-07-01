@@ -89,16 +89,16 @@
                         <option [value]="t.id" *ngFor="let t of tipo_categoria">{{t.tipo}}</option>
                     </select>
                 </div>
-                <div class="col-6" *ngIf="video.tipo != 2">
+                <div class="col-6" *ngIf="video.tipo != 2 && video.tipo != 4">
                     <span>Materia:</span>
-                    <select class="form-control" [required]="video.tipo != 2" id="id_materia" name="id_materia" [(ngModel)]="video.id_materia" >
+                    <select class="form-control" [required]="video.tipo != 2 && video.tipo != 4" id="id_materia" name="id_materia" [(ngModel)]="video.id_materia" >
                         <option value="undefined" disabled selected>Selecciona una materia</option>
                         <option [value]="item.id_moodle" *ngFor="let item of materias2">[Periodo {{item.periodo}}] {{item.nombre}}</option>
                     </select>
                 </div>
-                <div class="col-6" *ngIf="video.tipo == 2">
+                <div class="col-6" *ngIf="video.tipo == 2 || video.tipo == 4">
                     <span>Categoría:</span>
-                    <select class="form-control" [required]="video.tipo == 2" id="id_categoria" name="id_categoria" [(ngModel)]="video.id_categoria" >
+                    <select class="form-control" [required]="video.tipo == 2 || video.tipo == 4" id="id_categoria" name="id_categoria" [(ngModel)]="video.id_categoria" >
                         <option value="undefined" disabled selected>Selecciona una categoría</option>
                         <option [value]="item.id" *ngFor="let item of categorias">{{item.categoria}}</option>
                     </select>

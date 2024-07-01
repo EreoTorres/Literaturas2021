@@ -27,10 +27,10 @@
     <div class="row">
       <div class="col-6">
         <span>Programa:</span>
-        <select class="form-control" formControlName="plan_estudio">
+        <select class="form-control" formControlName="plan_estudio" (change)="onSelectChangeConnection($event)">
           <option value="">SELECCIONA UNA OPCIÓN</option>
           <option value="TODOS" *ngIf="bandera">TODOS</option>
-          <option [value]="programa.value" *ngFor="let programa of programas">{{programa.title}}</option>
+          <option [value]="programa.value" *ngFor="let programa of programas" [attr.connection]="programa.connection">{{programa.title}}</option>
         </select>
       </div>
       <div class="col-6">
