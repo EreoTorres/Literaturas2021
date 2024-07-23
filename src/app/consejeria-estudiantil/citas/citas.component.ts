@@ -485,7 +485,7 @@ export class CitasComponent implements OnInit {
       }
       else this.actualizarCita();
     }
-    else this.showMessage('Campo obligatorio.', 'error');
+    else this.showMessage('Lo siento, faltan campos obligatorios.', 'error');
   }
 
   actualizarCita() {

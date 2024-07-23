@@ -139,7 +139,7 @@
         <div class="col-5 dual-select">
         <mat-selection-list #matNoSeleccionadas>
           <mat-list-option *ngFor="let mat of materiasNoSeleccionadas" [value]="mat.id">
-            {{mat.id+'-'+mat.materia}}
+            {{ mat.materia }}
           </mat-list-option>
         </mat-selection-list>
         </div>
@@ -150,7 +150,7 @@
         <div class="col-5 dual-select">
           <mat-selection-list #matSeleccionadas>
             <mat-list-option *ngFor="let mat of materiasSeleccionadas" [value]="mat.id">
-              {{mat.id+'-'+mat.materia}}
+              {{ mat.materia }}
             </mat-list-option>
           </mat-selection-list>
         </div>
@@ -204,6 +204,7 @@
     </button>
   </div>
 </ng-template>
+
 <ng-template #configurarMaterias let-modal [config]="{backdrop: 'static', keyboard: false}">
   <div class="modal-header">
       <h4 class="modal-title" id="modal-basic-title">Configurar materias</h4>
