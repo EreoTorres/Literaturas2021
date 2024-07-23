@@ -75,7 +75,6 @@ export class FormularioEventosComponent implements OnInit {
   public editor_cotenido = Editor
   @ViewChild('agregarEvento') agregarEvento: ElementRef;
   id_plan_estudio: any = 0;
-  connection: number = 0;
 
   constructor(
     private eventosHTTP: EventosService,
@@ -147,7 +146,7 @@ export class FormularioEventosComponent implements OnInit {
   }
 
   onSelectChangeConnection(event: Event) {
-    this.connection = event.target['selectedOptions'][0].getAttribute('connection');
+    this.formEvento.controls['connection'].setValue((this.formEvento.value.plan_estudio != 'TODOS' ? event.target['selectedOptions'][0].getAttribute('connection') : 0));
   }
 
   guardarEvento() {
@@ -155,7 +154,6 @@ export class FormularioEventosComponent implements OnInit {
       let estatus = 0
       if(this.formEvento.value.estatus) estatus = 1
       this.formEvento.controls['estatus'].setValue(estatus)
-      this.formEvento.controls['connection'].setValue((this.formEvento.value.plan_estudio != 'TODOS' ? this.connection : 0));
 
       this.messagesService.showLoading()
       this.eventosHTTP.generico('updateEvento', this.formEvento.value).then(datas => {
@@ -166,12 +164,12 @@ export class FormularioEventosComponent implements OnInit {
           let success = 0;
           let message = '';
 
-          if(this.formEvento.value.plan_estudio == 'TODOS' || !this.formEvento.value.connection) {
+          if(this.formEvento.value.plan_estudio == 'TODOS' || this.formEvento.value.connection == 0) {
             success = res.resultado.dataDO[0][0].success;
             message = res.resultado.dataDO[0][0].message;
           }
 
-          if(this.formEvento.value.plan_estudio == 'TODOS' || this.formEvento.value.connection) {
+          if(this.formEvento.value.plan_estudio == 'TODOS' || this.formEvento.value.connection == 1) {
             success = success + res.resultado.dataAWS[0][0].success;
             message += res.resultado.dataAWS[0][0].message;
           }
@@ -209,6 +207,7 @@ export class FormularioEventosComponent implements OnInit {
           this.formEvento.controls['titulo'].setValue(ev.data.titulo)
           this.id_plan_estudio = ev.data.id_plan_estudio
           this.formEvento.controls['plan_estudio'].setValue(ev.data.id_plan_estudio)
+          this.formEvento.controls['connection'].setValue(ev.data.connection)
           this.formEvento.controls['contenido'].setValue(res.resultado[0]['contenido'])
           this.formEvento.controls['estatus'].setValue(res.resultado[0]['estatus'])
         }
