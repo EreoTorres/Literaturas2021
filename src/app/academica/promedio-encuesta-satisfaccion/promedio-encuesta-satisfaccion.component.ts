@@ -3,6 +3,7 @@ import { EncuestaService } from 'src/app/services/http-service/academica/encuest
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { Chart } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-promedio-encuesta-satisfaccion',
@@ -54,6 +55,7 @@ export class PromedioEncuestaSatisfaccionComponent implements OnInit {
   constructor(
     private EncuestaService: EncuestaService,
     private MessagesService: MessagesService,
+    private app: AppComponent
   ) { }
 
   ngOnInit(): void {
@@ -67,8 +69,9 @@ export class PromedioEncuestaSatisfaccionComponent implements OnInit {
       var res: any = datas;
       if (res.codigo == 200) {
         this.planes = res.resultado.dataDO.concat(res.resultado.dataAWS);
-        this.plan=this.planes[0].id;
+        this.plan=this.planes[0];
         this.infoGral.id_plan_estudio = this.planes[0].id;
+        this.infoGral.connection = this.planes[0].connection;
         await this.getPromedioMateriasEncuestas();
       }
       this.MessagesService.closeLoading();
@@ -76,9 +79,10 @@ export class PromedioEncuestaSatisfaccionComponent implements OnInit {
 
   }
 
-  async cambiarPlan(value: any){
-    this.plan=value;
-    this.infoGral.id_plan_estudio = value;
+  async cambiarPlan(plan: any){
+    this.plan=plan;
+    this.infoGral.id_plan_estudio = plan.id;
+    this.infoGral.connection= plan.connection;
     this.data = [];
     this.MessagesService.showLoading();
     await this.getPromedioMateriasEncuestas();
