@@ -521,7 +521,7 @@ export class ReporteEncuestaSatisfaccionComponent implements OnInit {
         break;
     }
 
-    let materia = this.materias.filter((res: any) => res.id == this.curso)
+    let materia =(this.infoGral.connection == 0)? this.materias.filter((res: any) =>res.id == this.curso) : this.materias.filter((res: any) =>res.id_moodle == this.curso);
     this.curso_info = (this.tipo_encuesta == 2)?materia[0].nombre:'';
     this.encuesta_info = this.encuestas.filter((res: any) => res.id == this.encuesta_seleccionada);
 

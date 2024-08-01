@@ -42,7 +42,7 @@
                                             <mat-label>Curso (materia)</mat-label>
                                             <mat-select formControlName="curso" [(value)]="curso"
                                                 (selectionChange)="getEncuestas($event.value)">
-                                                <mat-option *ngFor="let materia of materias" [value]="materia.id" >
+                                                <mat-option *ngFor="let materia of materias" [value]="(materia.id_moodle == 0)?materia.id:materia.id_moodle" >
                                                     {{materia.nombre}}
                                                 </mat-option>
                                             </mat-select>
