@@ -185,12 +185,6 @@ export class CertificacionesComponent implements OnInit {
       });
     });
 
-    // this.certificacionesHTTP.generico('getCertificacionesPlanesEstudio', {tipo: 1}).then(datas => {
-    //   var res: any = datas;
-    //   this.settings.columns.plan_estudio.filter.config.list = res.resultado;
-    //   this.settings = Object.assign({}, this.settings)
-    // });
-
     this.certificacionesHTTP.generico('getListaCertificaciones').then(datas => {
       var res: any = datas;
       this.certificaciones = res.resultado;
@@ -199,15 +193,16 @@ export class CertificacionesComponent implements OnInit {
   }
 
   getCertificacionPlanesEstudio(id_certificacion) {
-    this.messagesService.showLoading();
-    let data = {
-      tipo: 2,
-      id_certificacion: id_certificacion
-    };
-    this.certificacionesHTTP.generico('getCertificacionesPlanesEstudio', data).then(datas => {
-      var res: any = datas;
-      this.planes_estudio = res.resultado;
-      this.messagesService.closeLoading();
+    this.planes_estudio = this.registros.filter(certificacion => certificacion.id_certificacion == id_certificacion).map(plan_estudio => ({
+      id: plan_estudio.id_plan_estudio,
+      nombre: plan_estudio.plan_estudio,
+      connection: plan_estudio.connection
+    }));
+
+    this.planes_estudio.unshift({
+      id: 'TODOS',
+      nombre: 'TODOS',
+      connection: 0
     });
   }
 
