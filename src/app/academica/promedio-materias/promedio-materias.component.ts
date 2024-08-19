@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EncuestaService } from 'src/app/services/http-service/academica/encuesta/encuesta.service';
 import { MessagesService } from 'src/app/services/messages/messages.service';
-import { Chart } from 'chart.js';
+import { Chart, scales } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { AppComponent } from 'src/app/app.component';
 
@@ -15,7 +15,7 @@ export class PromedioMateriasComponent implements OnInit {
   loading: boolean = false;
 
   options_grafica = {
-    responsive: true,
+    responsive: false,
     indexAxis: 'y',
     plugins: {
       datalabels: {
@@ -31,6 +31,15 @@ export class PromedioMateriasComponent implements OnInit {
 
       }
     },
+    scales:{
+      y: {
+        ticks:{
+          autoSkip: false,
+          maxTicksLimit: 100,
+          stepSize: 1
+        }
+      }
+    }
   }
 
   chartJs = Chart;
