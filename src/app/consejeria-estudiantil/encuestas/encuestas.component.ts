@@ -18,11 +18,11 @@ export class EncuestasComponent implements OnInit {
   tipos_busqueda: any = [
     {
       id: 'idmoodle',
-      nombre: 'ID de Moodle'
+      nombre: 'ID MOODLE'
     },
     {
       id: 'numero_empleado',
-      nombre: 'Número de empleado'
+      nombre: 'NÚMERO DE EMPLEADO'
     }
   ]
   registros: LocalDataSource = new LocalDataSource()
@@ -84,11 +84,9 @@ export class EncuestasComponent implements OnInit {
     this.messagesService.showLoading();
     this.encuestasHTTP.generico('getPlanes', {}).then(datas => {
       var res: any = datas;
-     let aux = res.resultado.dataAWS;
-      aux = aux.concat(res.resultado.dataDO);
-      aux.sort((a:any, b:any) => {
-        if (a.nombre_corto < b.nombre_corto) { return 1; }
-        if (a.nombre_corto > b.nombre_corto) { return -1;}
+      let aux = res.resultado.dataAWS.concat(res.resultado.dataDO).sort((a, b) => {
+        if (a.nombre_corto < b.nombre_corto) return -1;
+        if (a.nombre_corto > b.nombre_corto) return 1;
         return 0;
       });
 

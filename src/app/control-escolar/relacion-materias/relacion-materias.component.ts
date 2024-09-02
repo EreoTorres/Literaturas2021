@@ -1,13 +1,11 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { ValidTipoTextService } from 'src/app/services/validaciones/valid-tipo-text.service';
 import * as EventEmitter from 'events';
-import { InputprogramasComponent } from 'src/app/components/inputprogramas/inputprogramas.component';
 import { RelacionMateriasService } from 'src/app/services/http-service/control-escolar/relacion-materias/relacion-materias.service';
-import { InputprogramasAllComponent } from 'src/app/components/inputprogramas-all/inputprogramas-all.component';
 import { AppComponent } from 'src/app/app.component';
 
 @Component({
@@ -117,20 +115,17 @@ export class RelacionMateriasComponent implements OnInit {
 
   ngOnInit(): void {
     this.date = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
-    this.getProgramasAcademicos();
+    this.programas = this.app.getProgramasAcademicos();
     this.getAutoridad();
     this.getRelacion();
   }
 
   onCustomAction(event) {
-
     this.id_materia_programa = event.data.id_materia;
     this.id_materia_autoridad = event.data.id_materia_autoridad;
     this.id_relacion = event.data.id;
-
     this.openModal(this.docs2);
   }
-
 
   getAutoridad() {
     this.relacionHTTP.getAutoridad().then(datas => {
@@ -145,16 +140,14 @@ export class RelacionMateriasComponent implements OnInit {
       let data = {
         id_plan_estudio: id,
         tipo: plan_autoridad,
-        connection: this.app.obtenerConnection(id)
+        connection: this.id_plan_estudio.connection
       }
+
       this.relacionHTTP.getMaterias(data).then(datas => {
         var res: any = datas;
   
-        if (plan_autoridad == 1) {
-          this.materias_plan = res.resultado
-        } else {
-          this.materias_autoridad = res.resultado
-        }
+        if (plan_autoridad == 1) this.materias_plan = res.resultado;
+        else this.materias_autoridad = res.resultado;
   
         this.MessagesService.closeLoading();
       });
@@ -173,11 +166,12 @@ export class RelacionMateriasComponent implements OnInit {
     var datos = {
       id: this.id_relacion,
       id_materia: this.id_materia_programa,
-      id_plan_estudio: this.id_plan_estudio,
+      id_plan_estudio: this.id_plan_estudio.id,
       id_materia_autoridad: this.id_materia_autoridad,
       id_autoridad: this.id_plan_autoridad,
-      connection: this.app.obtenerConnection(this.id_plan_estudio)
+      connection: this.id_plan_estudio.connection
     };
+    
     this.MessagesService.showLoading();
 
     this.relacionHTTP.setRelaciones(datos).then(datas => {
@@ -205,25 +199,20 @@ export class RelacionMateriasComponent implements OnInit {
     });
   }
 
-  getProgramasAcademicos() {
-    for (let datos of JSON.parse(localStorage.getItem('programas'))) {
-      this.programas.push({ id: datos.id, nombre_corto: datos.nombre_corto })
-    }
-  }
-
   getRelacion() {
-    if(this.id_plan_estudio != 0 && this.id_plan_autoridad != 0){
+    if(this.id_plan_estudio.id != 0 && this.id_plan_autoridad != 0) {
       this.MessagesService.showLoading();
       let datos = {
-        id_plan_estudio: this.id_plan_estudio,
+        id_plan_estudio: this.id_plan_estudio.id,
         id_plan_autodiad: this.id_plan_autoridad,
-        connection: this.app.obtenerConnection(this.id_plan_estudio)
+        connection: this.id_plan_estudio.connection
       }
+      
       this.relacionHTTP.getRelacion(datos).then(datas => {
         var res: any = datas;
-        this.registros = res.resultado
-        this.getMaterias(this.id_plan_estudio,1);
-        this.getMaterias(this.id_plan_autoridad,2);
+        this.registros = res.resultado;
+        this.getMaterias(this.id_plan_estudio.id, 1);
+        this.getMaterias(this.id_plan_autoridad, 2);
   
         this.MessagesService.closeLoading();
       });
@@ -233,7 +222,7 @@ export class RelacionMateriasComponent implements OnInit {
   openModal(docs){
     this.modalService.open(docs, {
       backdrop: 'static',
-      keyboard: false,  // to prevent closing with Esc button (if you want this too)
+      keyboard: false,
       size: 'xl'
     }); 
   }

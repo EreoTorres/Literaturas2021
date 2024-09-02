@@ -1,9 +1,9 @@
-import { Component, Input, OnInit, OnChanges, SimpleChanges, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LocalDataSource } from 'ng2-smart-table';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { CitasService } from 'src/app/services/http-service/consejeria-estudiantil/citas/citas.service';
-import { SmartTableDatepickerComponent, SmartTableDatepickerRenderComponent } from 'src/app/components/smart-table-datepicker/smart-table-datepicker.component';
+import { SmartTableDatepickerComponent } from 'src/app/components/smart-table-datepicker/smart-table-datepicker.component';
 import { AppComponent } from 'src/app/app.component';
 import { UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -471,7 +471,6 @@ export class CitasComponent implements OnInit {
   validarCita(tipo: any) {
     this.formFinal = (tipo == 1 ? this.formCita : this.formAsignacion);
     this.formFinal.controls['responsable'].setValue(sessionStorage.getItem('id'));
-    //this.formFinal.controls['connection'].setValue(this.app.obtenerConnection(this.formFinal.value.plan_estudio));
     if (this.formFinal.valid) {
       if(!this.formFinal.value.consejero || this.formFinal.value.consejero == undefined) this.formFinal.value.consejero = 0;
       let estatus = this.formFinal.value.estatus;
@@ -512,7 +511,7 @@ export class CitasComponent implements OnInit {
     let info = {
       id_cita: this.id_cita,
       id_plan_estudio: this.id_plan_estudio,
-      connection: this.connection// this.app.obtenerConnection(this.id_plan_estudio)
+      connection: this.connection
     }
     this.citasHTTP.generico('getCitaInfo', info)
     .then(data => {
@@ -595,7 +594,6 @@ export class CitasComponent implements OnInit {
   actualizarCitaComentarios(tipo: any, ev: any, data: any) {
     this.messagesService.showLoading();
     this.formAsignacion.controls['responsable'].setValue(sessionStorage.getItem('id'));
-    //this.formAsignacion.controls['connection'].setValue(this.app.obtenerConnection(this.formAsignacion.value.plan_estudio));
     this.citasHTTP.generico('actualizarCitaComentarios', {cita: this.formAsignacion.value, comentarios: data}).then(datas => {
       let res: any = datas;
       if(res.codigo == 0) this.showMessage(res.mensaje, 'error');
@@ -638,7 +636,7 @@ export class CitasComponent implements OnInit {
       let cita = {
         id_cita: ev.data.id_cita,
         responsable: sessionStorage.getItem('id'),
-        connection: parseInt(ev.data.connection)//this.app.obtenerConnection(ev.data.id_plan_estudio)
+        connection: parseInt(ev.data.connection)
       }
       this.citasHTTP.generico('getMovimientos', cita).then(datas => {
         let res: any = datas;

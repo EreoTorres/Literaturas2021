@@ -1,11 +1,9 @@
-import { Component, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import * as EventEmitter from 'events';
 import { LiteraturasService } from 'src/app/services/http-service/academica/literaturas/literaturas.service';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { environment } from 'src/environments/environment';
-import { DatePipe } from '@angular/common';
-import { SmartTableDatepickerComponent, SmartTableDatepickerRenderComponent } from 'src/app/components/smart-table-datepicker/smart-table-datepicker.component';
+import { SmartTableDatepickerComponent } from 'src/app/components/smart-table-datepicker/smart-table-datepicker.component';
 import { AppComponent } from 'src/app/app.component';
 
 @Component({
@@ -22,6 +20,7 @@ export class LiteraturasComponent implements OnInit {
   programas: any = [];
   materias: any;
   materias2: any;
+  id_plan_estudio: any = 0;
   tipofiltro: any = '1';
   files: File[] = [];
   obj_detalle: any = 0;
@@ -87,23 +86,11 @@ export class LiteraturasComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getProgramasAcademicos();
+    this.programas = this.app.getProgramasAcademicos();
     this.getLiteraturas();
   }
 
-  getProgramasAcademicos(){
-    for(let datos of JSON.parse(localStorage.getItem('programas'))){
-      this.programas.push(
-        {
-          id: datos.id,
-          nombre_corto: datos.nombre_corto,
-          connection: datos.connection
-        }
-      )
-    }
-  }
-
-  getLiteraturas(){
+  getLiteraturas() {
     this.MessagesService.showLoading();
     this.literaturasHTTP.getListados().then(datas => {
       var res: any = datas;
@@ -116,13 +103,13 @@ export class LiteraturasComponent implements OnInit {
     });
   }
 
-  getMaterias(modal, id_plan_estudio){
-    if(id_plan_estudio > 0 ){
+  getMaterias(modal) {
+    if(this.id_plan_estudio.id > 0 ){
       this.MessagesService.showLoading();
 
       let data = {
-        id_plan_estudio: id_plan_estudio,
-        connection: this.app.obtenerConnection(id_plan_estudio)
+        id_plan_estudio: this.id_plan_estudio.id,
+        connection: this.id_plan_estudio.connection
       };
 
       this.literaturasHTTP.getMaterias(data).then(datas => {
@@ -146,7 +133,7 @@ export class LiteraturasComponent implements OnInit {
   openModal(docs){
     this.modalService.open(docs, {
       backdrop: 'static',
-      keyboard: false,  // to prevent closing with Esc button (if you want this too)
+      keyboard: false,
       size: 'xl'
     }); 
   }

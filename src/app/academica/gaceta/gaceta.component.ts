@@ -2,8 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { GacetaService } from 'src/app/services/http-service/academica/gaceta/gaceta.service';
-import { SmartTableDatepickerComponent, SmartTableDatepickerRenderComponent } from 'src/app/components/smart-table-datepicker/smart-table-datepicker.component';
-import { AcademicaComponent } from '../academica.component';
+import { SmartTableDatepickerComponent } from 'src/app/components/smart-table-datepicker/smart-table-datepicker.component';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-gaceta',
@@ -82,12 +82,12 @@ export class GacetaComponent implements OnInit {
     private gacetaHTTP: GacetaService,
     private modalService: NgbModal,
     private MessagesService: MessagesService,
-    private academica:AcademicaComponent
+    private app: AppComponent
   ) { }
 
   ngOnInit(): void {
     this.getGaceta();
-    this.programas = this.academica.getProgramasAcademicos();
+    this.programas = this.app.getProgramasAcademicos();
   }
 
   getGaceta(){
