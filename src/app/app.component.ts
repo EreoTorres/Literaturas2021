@@ -78,7 +78,18 @@ export class AppComponent {
   }
 
   getProgramasAcademicos() {
-    return JSON.parse(localStorage.getItem('programas'));
+    let programas = [];
+    for(let datos of JSON.parse(localStorage.getItem('programas'))){
+      programas.push(
+        {
+          id: datos.id,
+          nombre_corto: datos.nombre_corto,
+          connection: datos.connection
+        }
+      )
+    }
+    
+    return programas;
   }
 
   obtenerConnection(id_plan_estudio: any) {

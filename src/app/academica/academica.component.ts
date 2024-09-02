@@ -42,18 +42,4 @@ export class AcademicaComponent implements OnInit {
   ngOnDestroy(): void {
     this.mobileQuery.removeListener(this._mobileQueryListener);
   }
-
-  getProgramasAcademicos(){
-    for(let datos of JSON.parse(localStorage.getItem('programas'))){
-      this.programas.push(
-        {
-          id: datos.id,
-          nombre_corto: datos.nombre_corto,
-          connection: datos.connection
-        }
-      )
-    }
-    
-    return this.programas;
-  }
 }

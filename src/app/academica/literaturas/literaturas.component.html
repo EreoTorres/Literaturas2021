@@ -30,16 +30,16 @@
         <div class="row">
             <div class="col-6">
                 <span>Planes de estudio:</span>
-                <select class="form-control" (change)="getMaterias(1,$event.target.value)" [(ngModal)]="mp_estuadios">
-            <option value="0" disabled selected>Selecciona un plan de estudio</option>
-            <option [value]="item.id" *ngFor="let item of programas">{{item.nombre_corto}}</option>
-          </select>
+                <select class="form-control" (change)="getMaterias(1, $event.target.value)" [(ngModel)]="id_plan_estudio" [(ngModal)]="mp_estuadios">
+                    <option value="0" disabled selected>Selecciona un plan de estudio</option>
+                    <option [ngValue]="item" *ngFor="let item of programas">{{item.nombre_corto}}</option>
+                </select>
             </div>
             <div class="col-6">
                 <span>Materia:</span>
                 <select class="form-control" [(ngModel)]="obj_detalle">
-            <option value="0" disabled selected>Selecciona una materia</option>
-            <option [value]="item | json" *ngFor="let item of materias2">[Periodo {{item.periodo}}] {{item.nombre}}</option>
+                <option value="0" disabled selected>Selecciona una materia</option>
+                <option [value]="item | json" *ngFor="let item of materias2">[Periodo {{item.periodo}}] {{item.nombre}}</option>
           </select>
             </div>
         </div>

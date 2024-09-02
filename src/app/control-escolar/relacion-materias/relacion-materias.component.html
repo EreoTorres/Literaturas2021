@@ -10,7 +10,7 @@
                         <span>Planes de estudio:</span>
                         <select class="form-control" id="id_plan_estudio" name="id_plan_estudio" [(ngModel)]="id_plan_estudio" (change)="getRelacion();">
                             <option value="0" disabled selected>Selecciona un plan de estudio</option>
-                            <option [value]="item.id" *ngFor="let item of programas">{{item.nombre_corto}}</option>
+                            <option [ngValue]="item" *ngFor="let item of programas">{{item.nombre_corto}}</option>
                         </select>
                     </div>
                     <div class="float-right">
