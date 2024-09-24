@@ -70,16 +70,6 @@
                     <textarea class="form-control" required id="descripcion" name="descripcion" [(ngModel)]="video.descripcion" style="height: 100px !important;max-height: 100px !important;" placeholder="Descripción del {{video.servicio}}"></textarea>
                 </div>
             </div>
-            <div class="row" *ngIf="generacion_required">
-                <div class="col-12">
-                    <br>
-                    <span>Generación Académica:</span>
-                    <select class="form-control" [required]="generacion_required" id="id_generacion" name="id_generacion" [(ngModel)]="video.id_generacion">
-                        <option [value]="undefined" disabled selected>Selecciona una generación</option>
-                        <option [value]="item.id" *ngFor="let item of generaciones">{{item.generacion}}</option>
-                    </select>
-               </div>
-            </div>
             <br>
             <div class="row">
                 <div class="col-6">
@@ -103,6 +93,16 @@
                         <option [value]="item.id" *ngFor="let item of categorias">{{item.categoria}}</option>
                     </select>
                 </div>
+            </div>
+            <br>
+            <div class="row" *ngIf="generacion_required">
+                <div class="col-12">
+                    <span>Generación Académica:</span>
+                    <select class="form-control" [required]="generacion_required" id="id_generacion" name="id_generacion" [(ngModel)]="video.id_generacion">
+                        <option [value]="undefined" disabled selected>Selecciona una generación</option>
+                        <option [value]="item.id" *ngFor="let item of generaciones">{{item.generacion}}</option>
+                    </select>
+               </div>
             </div>
         </div>
         <div class="modal-footer">
