@@ -142,7 +142,8 @@ export class VideosComponent implements OnInit {
     });
   }
 
-  getVideos() {    
+  getVideos() {
+    this.MessagesService.showLoading();
     this.videosHTTP.getVideos().then(datas => {
       var res: any = datas;
       this.registros = res.resultado.dataDO.concat(res.resultado.dataAWS).sort((a, b) => {
@@ -160,6 +161,7 @@ export class VideosComponent implements OnInit {
     else if(ev.action == 'eliminar') {
       this.video.id = ev.data.id;
       this.video.estatus = 0;
+      this.video.tipo = 0;
       this.video.id_plan_estudio = ev.data.id_plan_estudio;
       this.video.connection = ev.data.connection;
       this.MessagesService.showConfirmDialog('¿Seguro que deseas eliminar el video?', '').then((result) => {
@@ -169,8 +171,10 @@ export class VideosComponent implements OnInit {
           .then(data => {
             this.MessagesService.closeLoading();
             if(data['codigo'] == 200) {
-              this.MessagesService.showSuccessDialog(data['resultado'][0].message, 'success');
-              this.getVideos();
+              this.MessagesService.showSuccessDialog(data['resultado'][0][0].message, 'success')
+              .then(() => {
+                this.getVideos();
+              });
             }
             else this.MessagesService.showSuccessDialog('Ocurrio un error al eliminar video.', 'error');
           });
@@ -192,23 +196,23 @@ export class VideosComponent implements OnInit {
       
       this.getPlanEstudioChange(1, this.video.id_plan_estudio);
       this.tipoCategoriaChange(1, this.video.tipo)
-      this.MessagesService.closeLoading();
     });
   }
 
-  getGeneraciones(id_plan_estudio) {
-    this.generaciones = null;
-    if(id_plan_estudio > 0 ){
-      this.MessagesService.showLoading();
-      this.videosHTTP.getGeneraciones({id:id_plan_estudio}).then(datas => {
-        var res: any = datas;
-        this.generaciones = res.resultado
-        this.MessagesService.closeLoading();
-      });
-    }else{
-      this.getVideos();
+  getGeneraciones(connection: number) {
+    this.MessagesService.showLoading();
+    if(this.generaciones_required.includes(this.video.id_plan_estudio.toString())) {
+      this.generacion_required = true;
+      this.generaciones = null;
+      if(this.video.id_plan_estudio > 0) {
+        this.videosHTTP.getGeneraciones({id: this.video.id_plan_estudio, connection: connection}).then(datas => {
+          var res: any = datas;
+          this.generaciones = res.resultado
+          this.MessagesService.closeLoading();
+        });
+      }
     }
-    this.video.id_generacion = undefined;
+    else this.video.id_generacion = undefined;
   }
 
   openModal(video) {
@@ -260,8 +264,8 @@ export class VideosComponent implements OnInit {
       if(res[0][0].success) {
         this.MessagesService.showSuccessDialog(res[0][0].message, 'success')
         .then(() => {
-          this.getVideos();
           this.modalService.dismissAll();
+          this.getVideos();
         });
       }
       else this.MessagesService.showSuccessDialog('Error al registrar.', 'error');
@@ -283,8 +287,6 @@ export class VideosComponent implements OnInit {
       this.literaturasHTTP.getMaterias(data).then(datas => {
         var res: any = datas;
         this.MessagesService.closeLoading();
-  
-
         if(modal != 1){
           this.materias = res.resultado
           this.getVideos();
@@ -309,21 +311,14 @@ export class VideosComponent implements OnInit {
       this.tipo_categoria = [{id:1, tipo: 'Por Materia - DO', connection: 0},{id:3, tipo: 'Por Materia - AWS', connection: 1}, {id:2, tipo: 'Por Categoria - DO', connection:0}, {id:4, tipo: 'Por Categoria - AWS', connection:1}]
     }
     
-    if (this.video.id == 0) {
-      this.video.tipo = undefined;
-    }
-
-   // this.getMaterias(modal, id_plan_estudio);
-    if(this.generaciones_required.includes(id_plan_estudio)) {
-      this.generacion_required = true;
-      this.getGeneraciones(id_plan_estudio);
-    }
-    else this.generacion_required = false;
+    if (this.video.id == 0) this.video.tipo = undefined;    
+    this.generacion_required = false;
   }
 
   tipoCategoriaChange(modal, tipo){
-    let connection = this.tipo_categoria.find((t : any) => t.id == tipo).connection
-    this.getMaterias(modal, connection)
+    let connection = this.tipo_categoria.find((t : any) => t.id == tipo).connection;
+    this.getMaterias(modal, connection);
+    this.getGeneraciones(connection);
   }
 
   resetForm(video) {
@@ -343,6 +338,8 @@ export class VideosComponent implements OnInit {
       id_usuario: sessionStorage.getItem('id'),
       connection: video.connection
     }
+
+    this.generacion_required = false;
 
     this.tipo_categoria = [{
       id:0,
