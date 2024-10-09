@@ -37,7 +37,7 @@
                 <span>Plan de estudios:</span>
                 <select class="form-control" formControlName="id_plan_estudio">
                     <option value="">Selecciona una opción</option>
-                    <option [value]="plan_estudio.id" *ngFor="let plan_estudio of planes_estudio">{{plan_estudio.nombre}}</option>
+                    <option [ngValue]="plan_estudio" *ngFor="let plan_estudio of planes_estudio">{{plan_estudio.nombre}}</option>
                 </select>
             </div>
         </div>

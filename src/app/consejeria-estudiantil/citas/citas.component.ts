@@ -475,7 +475,7 @@ export class CitasComponent implements OnInit {
       if(!this.formFinal.value.consejero || this.formFinal.value.consejero == undefined) this.formFinal.value.consejero = 0;
       let estatus = this.formFinal.value.estatus;
       if((estatus == 2 || estatus == 5) && !this.formFinal.value.consejero) {
-        this.showMessage('Lo siento, para aplicar el estatus "' + (estatus = 2 ? 'Asignado' : 'Atendido') + '" se necesita seleccionar un consejero.', 'warning');
+        this.showMessage('Lo siento, para aplicar el estatus "' + (estatus == 2 ? 'Asignado' : 'Atendido') + '" se necesita seleccionar un consejero.', 'warning');
       }
       else if(estatus == 7) {
         this.messagesService.showConfirmDialog('¿Está seguro de que desea eliminar este registro?', '').then((result) => {
