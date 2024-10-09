@@ -25,7 +25,7 @@ export class CertificacionesComponent implements OnInit {
       id: 'NO',
       nombre: 'NO'
     }
-  ]
+  ];
   planes_estudio: any = [];
   settings = {
     actions: {
@@ -54,29 +54,19 @@ export class CertificacionesComponent implements OnInit {
           type: 'list',
           config: {
             selectText: 'TODOS',
-            list: [
-              {
-                value: 'IDS COPPEL',
-                title: 'IDS COPPEL'
-              },
-              {
-                value: 'IDS UMI',
-                title: 'IDS UMI'
-              },
-              {
-                value: 'IDS INDEX',
-                title: 'IDS INDEX'
-              }
-            ],
+            list: [],
           },
         },
         editable: false,
-        width: '8%'
+        width: '20%',
+        filterFunction: (cell ?: any, search ?: string) => {
+          if (cell == search) return search
+        }
       },
       nombre: {
         title: 'Nombre',
         type: 'string',
-        width: '20%',
+        width: '25%',
         editable: false,
         addable: false
       },
@@ -149,8 +139,7 @@ export class CertificacionesComponent implements OnInit {
       }
     }
   };
-
-  fecha_actual:any = new Date();
+  fecha_actual: any = new Date();
 
   constructor(
     private certificacionesHTTP: CertificacionesService,
@@ -170,12 +159,19 @@ export class CertificacionesComponent implements OnInit {
 
   ngOnInit(): void {
     this.fecha_actual = this.fecha_actual.toISOString().split('T')[0];
+    this.getListaCertificaciones();
     this.getCertificaciones();
+  }
+
+  getListaCertificaciones() {
+    this.certificacionesHTTP.generico('getListaCertificaciones').then(datas => {
+      var res: any = datas;
+      this.certificaciones = res.resultado;
+    });
   }
 
   getCertificaciones() {
     this.messagesService.showLoading();
-
     this.certificacionesHTTP.generico('getCertificaciones').then(datas => {
       var res: any = datas;
       this.registros = res.resultado.dataDO[0].concat(res.resultado.dataAWS[0]).sort(function(a, b){
@@ -183,11 +179,17 @@ export class CertificacionesComponent implements OnInit {
         if(a.nombre > b.nombre) return 1;
         return 0;
       });
-    });
 
-    this.certificacionesHTTP.generico('getListaCertificaciones').then(datas => {
-      var res: any = datas;
-      this.certificaciones = res.resultado;
+      this.settings.columns.plan_estudio.filter.config.list = this.registros
+      .filter((certificacion, index, self) =>
+        index === self.findIndex((c) => c.plan_estudio === certificacion.plan_estudio)
+      )
+      .map(plan_estudio => ({
+        title: plan_estudio.plan_estudio,
+        value: plan_estudio.plan_estudio
+      }));
+      this.settings = Object.assign({}, this.settings);
+
       this.messagesService.closeLoading();
     });
   }
@@ -241,7 +243,11 @@ export class CertificacionesComponent implements OnInit {
         this.messagesService.showSuccessDialog('Todos los campos son obligatorios.', 'error');
         return false;
       }
-      else data = this.formCertificacion.value
+      else {
+        data = this.formCertificacion.value
+        data.connection = data.id_plan_estudio.connection
+        data.id_plan_estudio = data.id_plan_estudio.id
+      }
 
       if(data.fecha_inicio < this.fecha_actual) {
         this.messagesService.showSuccessDialog('La fecha inicio es inválida.', 'warning');
@@ -258,8 +264,6 @@ export class CertificacionesComponent implements OnInit {
       this.messagesService.showSuccessDialog('La fecha fin de no puede ser mayor a la fecha inicio.', 'warning');
       return false;
     }
-
-    data.connection = this.planes_estudio.find(plan => plan.id == data.id_plan_estudio).connection;
     
     this.messagesService.showLoading();
     this.certificacionesHTTP.generico('actualizarCertificacion', data).then(datas => {
