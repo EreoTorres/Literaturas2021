@@ -56,7 +56,17 @@
       </button>
     </div>
     <div class="modal-body">
-        <div class="row">
+        <div class="row" *ngIf="conexion == 1">
+            <div class="col-12">
+                <span>Ruta de cursamiento:</span>
+                <select class="form-control" [(ngModel)]="id_ruta" (change)="getMateriasRuta()">
+                    <option value="0" disabled selected>Selecciona una ruta</option>
+                    <option value="{{item.id}}" *ngFor="let item of rutas_cursamiento">{{item.nombre}}</option>
+                </select>
+            </div>
+        </div>
+        <br>
+        <div class="row" *ngIf="id_ruta != null || conexion==0">
             <div class="col-12">
                 <span>Materia Plan Estudio:</span>
                 <select class="form-control" [(ngModel)]="id_materia_programa">
@@ -66,7 +76,7 @@
             </div>
         </div>
         <br>
-        <div class="row">
+        <div class="row"  *ngIf="id_ruta != null || conexion==0">
             <div class="col-12">
                 <span>Materia Autoridad:</span>
                 <select class="form-control" [(ngModel)]="id_materia_autoridad">

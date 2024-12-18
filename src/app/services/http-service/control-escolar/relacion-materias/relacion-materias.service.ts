@@ -53,4 +53,14 @@ export class RelacionMateriasService {
       })
     });
   }
+
+  getRutas(data){
+    return new Promise((resolve, reject) => {
+      this.http.post(this.url+'control_escolar/relacion_materia/getRutas', data,this.httpHeaders)
+      .subscribe(data => {
+          resolve(data)
+      })
+    })
+  }
+
 }
