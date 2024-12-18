@@ -33,75 +33,60 @@ export class RelacionMateriasComponent implements OnInit {
   materias_plan: any = [];
   materias_autoridad: any = [];
   id_materia_programa: any = 0;
+  id_ruta: number = null;
+  conexion: number = 0;
+  rutas_cursamiento: any = [];
   id_materia_autoridad: any = 0;
   id_relacion: any = 0;
 
-  settings = {
-    actions: {
-      columnTitle: 'Opciones',
-      add: false,
-      edit: false,
-      delete: false,
-      custom: [
-        { name: 'editar', title: '<i class="material-icons-outlined">edit</i>&nbsp;' },
-      ],
-      position: 'right'
+  columnas: any = {
+    id: {
+      title: 'ID',
+      type: 'string',
+      width: '10%',
+      editable: false,
+      addable: false,
+      filter: false
     },
-    delete: {
-      deleteButtonContent: '<i class="material-icons-outlined">delete</i>',
+    nombre_materia_autoridad: {
+      title: 'Materia Autoridad',
+      type: 'string',
+      width: '20%',
     },
-    attr: {
-      class: 'table table-bordered responsive'
+    
+    /*nombre_plan_estudio_autoridad: {
+      title: 'Autoridad',
+      type: 'string',
+      width: '10%',
+      editable: false,
+      addable: false,
+      filter: false
     },
-    pager: {
-      display: false,
+    nombre_plan_estudio: {
+      title: 'Plan de estudios',
+      type: 'string',
+      width: '10%',
+      editable: false,
+      addable: false,
+      filter: false
+    },*/
+    nombre_materia: {
+      title: 'Materia Plan de estudios',
+      type: 'string',
+      filter: true
     },
-    columns: {
-      id: {
-        title: 'ID',
-        type: 'string',
-        width: '10%',
-        editable: false,
-        addable: false,
-        filter: false
-      },
-      nombre_materia_autoridad: {
-        title: 'Materia Autoridad',
-        type: 'string',
-        width: '20%',
-      },
-      
-      /*nombre_plan_estudio_autoridad: {
-        title: 'Autoridad',
-        type: 'string',
-        width: '10%',
-        editable: false,
-        addable: false,
-        filter: false
-      },
-      nombre_plan_estudio: {
-        title: 'Plan de estudios',
-        type: 'string',
-        width: '10%',
-        editable: false,
-        addable: false,
-        filter: false
-      },*/
-      nombre_materia: {
-        title: 'Materia Plan de estudios',
-        type: 'string',
-        filter: true
-      },
-      fecha_registro: {
-        title: 'Fecha de registro',
-        type: 'string',
-        width: '15%',
-        editable: false,
-        addable: false,
-        filter: true
-      }
+    fecha_registro: {
+      title: 'Fecha de registro',
+      type: 'string',
+      width: '15%',
+      editable: false,
+      addable: false,
+      filter: true
     }
-  };
+  }
+
+  settings: any;
+
 
   constructor(
     private relacionHTTP: RelacionMateriasService,
@@ -121,10 +106,16 @@ export class RelacionMateriasComponent implements OnInit {
   }
 
   onCustomAction(event) {
+    this.id_ruta = event.data.id_ruta_cursamiento;
     this.id_materia_programa = event.data.id_materia;
     this.id_materia_autoridad = event.data.id_materia_autoridad;
     this.id_relacion = event.data.id;
+    if(this.id_ruta != null){
+      this.getMateriasRuta();
+    }
     this.openModal(this.docs2);
+
+
   }
 
   getAutoridad() {
@@ -140,6 +131,7 @@ export class RelacionMateriasComponent implements OnInit {
       let data = {
         id_plan_estudio: id,
         tipo: plan_autoridad,
+        id_ruta: this.id_ruta,
         connection: this.id_plan_estudio.connection
       }
 
@@ -152,6 +144,27 @@ export class RelacionMateriasComponent implements OnInit {
         this.MessagesService.closeLoading();
       });
     }
+  }
+
+  getMateriasRuta(){
+    this.MessagesService.showLoading();
+    this.materias_plan = [];
+    this.materias_autoridad=[];
+    this.getMaterias(this.id_plan_estudio.id, 1);
+    this.getMaterias(this.id_plan_autoridad, 2);
+
+  }
+
+  getRutaCursamiento(id_plan_estudio) {
+      let data = {
+        id_plan_estudio: id_plan_estudio,
+        connection: this.id_plan_estudio.connection
+      }
+      this.relacionHTTP.getRutas(data).then(datas => {
+        var res: any = datas;
+        this.rutas_cursamiento = res.resultado;
+        this.MessagesService.closeLoading();
+      });
   }
 
   guardar(){
@@ -200,6 +213,49 @@ export class RelacionMateriasComponent implements OnInit {
   }
 
   getRelacion() {
+    let columnas_ruta = {};
+    this.settings = {};
+    this.id_ruta = null;
+    this.materias_plan = [];
+    this.materias_autoridad = [];
+    this.rutas_cursamiento = [];
+    columnas_ruta = {...this.columnas};
+
+    if(this.id_plan_estudio.connection == 1){
+      columnas_ruta['nombre_ruta'] = {
+        title: 'Ruta',
+        type: 'string',
+        width: '15%',
+        editable: false,
+        addable: false,
+        filter: true
+      }
+    }
+
+      this.settings = {
+        actions: {
+          columnTitle: 'Opciones',
+          add: false,
+          edit: false,
+          delete: false,
+          custom: [
+            { name: 'editar', title: '<i class="material-icons-outlined">edit</i>&nbsp;' },
+          ],
+          position: 'right'
+        },
+        delete: {
+          deleteButtonContent: '<i class="material-icons-outlined">delete</i>',
+        },
+        attr: {
+          class: 'table table-bordered responsive'
+        },
+        pager: {
+          display: false,
+        },
+        columns: (this.id_plan_estudio.connection == 1)?columnas_ruta:this.columnas
+      };
+
+   
     if(this.id_plan_estudio.id != 0 && this.id_plan_autoridad != 0) {
       this.MessagesService.showLoading();
       let datos = {
@@ -211,9 +267,18 @@ export class RelacionMateriasComponent implements OnInit {
       this.relacionHTTP.getRelacion(datos).then(datas => {
         var res: any = datas;
         this.registros = res.resultado;
-        this.getMaterias(this.id_plan_estudio.id, 1);
-        this.getMaterias(this.id_plan_autoridad, 2);
-  
+        this.conexion = this.id_plan_estudio.connection;
+
+        if(this.conexion == 1){
+          this.getRutaCursamiento(this.id_plan_estudio.id);
+        }
+        else{
+          this.getMaterias(this.id_plan_estudio.id, 1);
+          this.getMaterias(this.id_plan_autoridad, 2);
+        }
+
+
+
         this.MessagesService.closeLoading();
       });
     }
